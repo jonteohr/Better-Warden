@@ -1,9 +1,7 @@
 /*
-* 
-* INCLUDE FOR THE SOURCEMOD PLUGIN; WARDEN MENU
-* https://forums.alliedmods.net/showthread.php?t=298907
-* 
+* https://github.com/condolent/Better-Warden
 */
+
 #if defined cmenuincluded
  #endinput
 #endif

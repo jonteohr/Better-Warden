@@ -17,7 +17,6 @@
 #include <adminmenu>
 #define REQUIRE_PLUGIN
 #include <betterwarden>
-#include <smartjaildoors>
 #undef REQUIRE_PLUGIN
 
 #define VERSION "1.2.6"
@@ -34,7 +33,7 @@
 #define CHOICE8 "#choice8"
 
 bool IsGameActive = false;
-char cmenuPrefix[] = "[{blue}WardenMenu{default}]";
+char cmenuPrefix[] = "[{bluegrey}WardenMenu{default}]";
 
 // Current game
 int hnsActive = 0;
@@ -70,12 +69,9 @@ ConVar cvGravStrength;
 ConVar cvGravTimes;
 ConVar cvRestFreeday;
 ConVar cvNoblock;
-ConVar cvNoblockStandard;
 ConVar cvEnableWeapons;
 ConVar cvEnablePlayerFreeday;
 ConVar cvEnableDoors;
-
-ConVar noblock;
 
 Handle gF_OnCMenuOpened = null;
 Handle gF_OnEventDayCreated = null;
@@ -109,7 +105,6 @@ public OnPluginStart() {
 	
 	AutoExecConfig(true, "cmenu");
 	
-	//var = CreateConVar("cvar_name", "default_value", "description", cvarFlag, true, min, true, max);
 	cvVersion = CreateConVar("sm_cmenu_version", VERSION, "Current version running. Debugging purposes only!\nDo NOT change this!", FCVAR_DONTRECORD|FCVAR_NOTIFY); // Not visible in config
 	cvHnS = CreateConVar("sm_cmenu_hns", "1", "Add an option for Hide and Seek in the menu?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	cvHnSGod = CreateConVar("sm_cmenu_hns_godmode", "1", "Makes CT's invulnerable against attacks from T's during HnS to prevent rebels.\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
@@ -122,29 +117,26 @@ public OnPluginStart() {
 	cvGravTeam = CreateConVar("sm_cmenu_gravity_team", "2", "Which team should get a special gravity on Gravity Freedays?\n0 = All teams.\n1 = Counter-Terrorists.\n2 = Terorrists.", FCVAR_NOTIFY, true, 0.0, true, 2.0);
 	cvGravStrength = CreateConVar("sm_cmenu_gravity_strength", "0.5", "What should the gravity be set to on Gravity Freedays?", FCVAR_NOTIFY);
 	cvGravTimes = CreateConVar("sm_cmenu_gravity_rounds", "1", "How many times is a Gravity Freeday allowed per map?\nSet to 0 for unlimited.", FCVAR_NOTIFY);
-	cvNoblock = CreateConVar("sm_cmenu_noblock", "1", "Add an option for toggling noblock in the menu?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	cvNoblockStandard = CreateConVar("sm_cmenu_noblock_standard", "1", "What should the noblock rules be as default on start of each round?\nThis should have the same value as your mp_solid_teammates cvar in server.cfg.\n1 = Solid teammates.\n0 = No block.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	cvNoblock = CreateConVar("sm_cmenu_noblock", "1", "sm_warden_noblock needs to be set to 1 for this to work!\nAdd an option for toggling noblock in the menu?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	cvAutoOpen = CreateConVar("sm_cmenu_auto_open", "1", "Automatically open the menu when a user becomes warden?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	cvEnableWeapons = CreateConVar("sm_cmenu_weapons", "1", "Add an option for giving the warden a list of weapons via the menu?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	cvRestFreeday = CreateConVar("sm_cmenu_restricted_freeday", "1", "Add an option for a restricted freeday in the menu?\nThis event uses the same configuration as a normal freeday.\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	cvEnablePlayerFreeday = CreateConVar("sm_cmenu_player_freeday", "1", "Add an option for giving a specific player a freeday in the menu?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	cvEnableDoors = CreateConVar("sm_cmenu_doors", "1", "Add an option for opening doors via the menu.\n0 = Disable.\n1 = Enable", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	cvEnableDoors = CreateConVar("sm_cmenu_doors", "1", "sm_warden_cellscmd needs to be set to 1 for this to work!\nAdd an option for opening doors via the menu.\n0 = Disable.\n1 = Enable", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	
-	noblock = FindConVar("mp_solid_teammates");
 	
-	RegAdminCmd("sm_abortgames", sm_abortgames, ADMFLAG_BAN);
+	RegAdminCmd("sm_abortgames", sm_abortgames, b);
 	RegConsoleCmd("sm_cmenu", sm_cmenu);
 	RegConsoleCmd("sm_wmenu", sm_cmenu);
-	RegConsoleCmd("sm_noblock", sm_noblock);
 	RegConsoleCmd("sm_days", sm_days);
 	
 	HookEvent("player_death", OnPlayerDeath);
 	HookEvent("round_start", OnRoundStart, EventHookMode_PostNoCopy);
 	
-	for(int i = 1; i <= MaxClients; i++) {
-		if(!IsClientInGame(i)) 
+	for(int client = 1; client <= MaxClients; client++) {
+		if(!IsClientInGame(client)) 
 			continue;
-		SDKHook(i, SDKHook_OnTakeDamageAlive, OnTakeDamageAlive);
+		SDKHook(client, SDKHook_OnTakeDamageAlive, OnTakeDamageAlive);
 	}
 	
 	// Forwards
@@ -206,11 +198,10 @@ public Action OnTakeDamageAlive(int victim, int &attacker, int &inflictor, float
 
 public void OnRoundStart(Event event, const char[] name, bool dontBroadcast) {
 	abortGames();
-	SetConVarInt(noblock, cvNoblockStandard.IntValue, true, true);
 	
 	aliveTs = 0;
-	for(int i = 1; i <= MaxClients; i++) {
-		if(IsClientInGame(i) && IsPlayerAlive(i) && GetClientTeam(i) == CS_TEAM_T) {
+	for(int client = 1; client <= MaxClients; client++) {
+		if(IsClientInGame(client) && IsPlayerAlive(client) && GetClientTeam(client) == CS_TEAM_T) {
 			aliveTs++;
 		}
 	}
@@ -265,27 +256,6 @@ public Action sm_abortgames(int client, int args) {
 	
 	CPrintToChatAll("%s %t", cmenuPrefix, "Admin Aborted", client);
 	abortGames();
-	
-	return Plugin_Handled;
-}
-
-public Action sm_noblock(int client, int args) {
-	if(!IsValidClient(client)) {
-		error(client, 1);
-		return Plugin_Handled;
-	}
-	
-	if(GetClientTeam(client) != CS_TEAM_CT) {
-		error(client, 2);
-		return Plugin_Handled;
-	}
-	
-	if(!IsClientWarden(client)) {
-		error(client, 0);
-		return Plugin_Handled;
-	}
-	
-	toggleNoblock();
 	
 	return Plugin_Handled;
 }
@@ -368,13 +338,13 @@ public int WardenMenuHandler(Menu menu, MenuAction action, int client, int param
 					openDaysMenu(client);
 				}
 				if(StrEqual(info, CHOICE3)) {
-					toggleNoblock();
+					FakeClientCommand(client, "sm_noblock");
 				}
 				if(StrEqual(info, CHOICE4)) {
 					playerFreeday(client);
 				}
 				if(StrEqual(info, CHOICE5)) {
-					SJD_ToggleDoors();
+					FakeClientCommand(client, "sm_open");
 				}
 				if(StrEqual(info, CHOICE8)) {
 					FakeClientCommand(client, "sm_uw");
@@ -895,9 +865,9 @@ public void abortGames() {
 		wardayActive = 0;
 		freedayActive = 0;
 		gravActive = 0;
-		for(new i = 1; i <= MaxClients; i++) {
-			if(IsValidClient(i)) {
-				SetEntityGravity(i, 1.0);
+		for(int client = 1; client <= MaxClients; client++) {
+			if(IsValidClient(client)) {
+				SetEntityGravity(client, 1.0);
 			}
 		}
 		
@@ -1044,18 +1014,18 @@ public void initGrav(int client) {
 		gravActive = 1;
 		IsGameActive = true;
 		
-		for(new i = 1; i <= MaxClients; i++) {
+		for(int usr = 1; usr <= MaxClients; usr++) {
 			if(cvGravTeam.IntValue == 0) {
-				if(IsValidClient(i)) {
-					SetEntityGravity(i, cvGravStrength.FloatValue);
+				if(IsValidClient(usr)) {
+					SetEntityGravity(client, cvGravStrength.FloatValue);
 				}
 			} else if(cvGravTeam.IntValue == 1) {
-				if(IsValidClient(i) && GetClientTeam(i) == CS_TEAM_CT) {
+				if(IsValidClient(usr) && GetClientTeam(usr) == CS_TEAM_CT) {
 					SetEntityGravity(i, cvGravStrength.FloatValue);
 				}
 			} else if(cvGravTeam.IntValue == 2) {
-				if(IsValidClient(i) && GetClientTeam(i) == CS_TEAM_T) {
-					SetEntityGravity(i, cvGravStrength.FloatValue);
+				if(IsValidClient(usr) && GetClientTeam(usr) == CS_TEAM_T) {
+					SetEntityGravity(usr, cvGravStrength.FloatValue);
 				}
 			}
 		}
@@ -1069,32 +1039,22 @@ public void initGrav(int client) {
 		gravActive = 1;
 		IsGameActive = true;
 		
-		for(new i = 1; i <= MaxClients; i++) {
+		for(int usr = 1; i <= MaxClients; usr++) {
 			if(cvGravTeam.IntValue == 0) {
-				if(IsValidClient(i)) {
-					SetEntityGravity(i, cvGravStrength.FloatValue);
+				if(IsValidClient(usr)) {
+					SetEntityGravity(usr, cvGravStrength.FloatValue);
 				}
 			} else if(cvGravTeam.IntValue == 1) {
-				if(IsValidClient(i) && GetClientTeam(i) == CS_TEAM_CT) {
+				if(IsValidClient(usr) && GetClientTeam(usr) == CS_TEAM_CT) {
 					SetEntityGravity(i, cvGravStrength.FloatValue);
 				}
 			} else if(cvGravTeam.IntValue == 2) {
-				if(IsValidClient(i) && GetClientTeam(i) == CS_TEAM_T) {
-					SetEntityGravity(i, cvGravStrength.FloatValue);
+				if(IsValidClient(usr) && GetClientTeam(usr) == CS_TEAM_T) {
+					SetEntityGravity(usr, cvGravStrength.FloatValue);
 				}
 			}
 		}
 		
-	}
-}
-
-public void toggleNoblock() {
-	if(noblock.IntValue == 1) {
-		CPrintToChatAll("%s %t", cmenuPrefix, "Noblock on");
-		SetConVarInt(noblock, 0, true, true);
-	} else if(noblock.IntValue == 0) {
-		CPrintToChatAll("%s %t", cmenuPrefix, "Noblock off");
-		SetConVarInt(noblock, 1, true, true);
 	}
 }
 

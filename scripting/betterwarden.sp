@@ -11,10 +11,13 @@
 
 #define VERSION "1.0"
 
+// Strings
 char prefix[] = "[{blue}Warden{default}] ";
 char curWardenStat[MAX_NAME_LENGTH];
 
+// Integers
 int curWarden = -1;
+int prevWarden = -1;
 int aliveCT;
 int totalCT;
 int aliveTerrorists;
@@ -26,6 +29,15 @@ Handle gF_OnWardenDisconnect = null;
 Handle gF_OnWardenRetire = null;
 Handle gF_OnAdminRemoveWarden = null;
 Handle gF_OnWardenCreated = null;
+
+// ConVars
+ConVar cv_version;
+ConVar cv_EnableNoblock;
+ConVar cv_noblock;
+//ConVar cv_NoblockStandard;
+ConVar cv_admFlag;
+ConVar cv_openCells;
+ConVar cv_wardenTwice;
 
 public Plugin myinfo = {
 	name = "[CS:GO] Better Warden",
@@ -55,13 +67,16 @@ public void OnPluginStart() {
 	RegConsoleCmd("sm_c", Command_Warden);
 	RegConsoleCmd("sm_rw", Command_Retire);
 	RegConsoleCmd("sm_retire", Command_Retire);
-	RegConsoleCmd("sm_open", Command_OpenCells);
+	if(cv_openCells.IntValue == 1)
+		RegConsoleCmd("sm_open", Command_OpenCells);
+	if(cv_EnableNoblock.IntValue == 1)
+		RegConsoleCmd("sm_noblock", Command_Noblock);
 	
 	// Admin Commands
-	RegAdminCmd("sm_uw", Command_Unwarden, ADMFLAG_GENERIC);
-	RegAdminCmd("sm_unwarden", Command_Unwarden, ADMFLAG_GENERIC);
-	RegAdminCmd("sm_sw", Command_SetWarden, ADMFLAG_GENERIC);
-	RegAdminCmd("sm_setwarden", Command_SetWarden, ADMFLAG_GENERIC);
+	RegAdminCmd("sm_uw", Command_Unwarden, b); /*	TODO: Set the configured flag here	*/
+	RegAdminCmd("sm_unwarden", Command_Unwarden, b);
+	RegAdminCmd("sm_sw", Command_SetWarden, b);
+	RegAdminCmd("sm_setwarden", Command_SetWarden, b);
 	
 	// Global forwards
 	gF_OnWardenDeath = CreateGlobalForward("OnWardenDeath", ET_Ignore, Param_Cell);
@@ -80,6 +95,18 @@ public void OnPluginStart() {
 	
 	// Timers
 	CreateTimer(0.1, JBToolTip, _, TIMER_REPEAT);
+	
+	// Fetch 3rd party CVars
+	cv_noblock = FindConVar("mp_solid_teammates");
+	
+	// CVars
+	AutoExecConfig(true, "warden", "sourcemod/warden");
+	cv_version = CreateConVar("sm_warden_version", VERSION, "Current version of this plugin. DO NOT CHANGE THIS!", FCVAR_DONTRECORD|FCVAR_NOTIFY);
+	cv_admFlag = CreateConVar("sm_warden_admin", "b", "The flag required to execute admin commands for this plugin.", FCVAR_NOTIFY);
+	//cv_NoblockStandard = CreateConVar("sm_warden_noblock_standard", "1", "You only need to set this if sm_warden_noblock is set to 1!\nWhat should the noblock rules be as default on start of each round?\nThis should have the same value as your mp_solid_teammates cvar in server.cfg.\n1 = Solid teammates.\n0 = No block.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	cv_EnableNoblock = CreateConVar("sm_warden_noblock", "1", "Give the warden the ability to toggle noblock via sm_noblock?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	cv_openCells = CreateConVar("sm_warden_cellscmd", "1", "Give the warden ability to toggle cell-doors via sm_open?\nCell doors on every map needs to be setup with SmartJailDoors for this to work!\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	cv_wardenTwice = CreateConVar("sm_warden_same_twice", "0", "Prevent the same warden from becoming warden next round instantly?\nThis should only be used on populated servers for obvious reasons.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 }
 
 /////////////////////////////
@@ -90,6 +117,8 @@ public void OnMapStart() {
 	totalCT = 0;
 	aliveTerrorists = 0;
 	totalTerrorists = 0;
+	
+	RemoveWarden();
 }
 
 public void OnJoinTeam(Event event, const char[] name, bool dontBroadcast) {
@@ -100,27 +129,23 @@ public void OnJoinTeam(Event event, const char[] name, bool dontBroadcast) {
 	if(IsClientInGame(client)) {
 		if(newTeam == CS_TEAM_T) {
 			totalTerrorists++;
-			if(IsPlayerAlive(client)) {
+			if(IsPlayerAlive(client))
 				aliveTerrorists++;
-			}
 		}
 		if(newTeam == CS_TEAM_CT) {
 			totalCT++;
-			if(IsPlayerAlive(client)) {
+			if(IsPlayerAlive(client))
 				aliveCT++;
-			}
 		}
 		if(oldTeam == CS_TEAM_T) {
 			totalTerrorists--;
-			if(IsPlayerAlive(client)) {
+			if(IsPlayerAlive(client))
 				aliveTerrorists--;
-			}
 		}
 		if(oldTeam == CS_TEAM_CT) {
 			totalCT--;
-			if(IsPlayerAlive(client)) {
+			if(IsPlayerAlive(client))
 				aliveCT--;
-			}
 		}
 	}
 	
@@ -152,23 +177,27 @@ public void OnRoundStart(Event event, const char[] name, bool dontBroadcast) {
 	aliveTerrorists = 0;
 	totalTerrorists = 0;
 	
+	//SetConVarInt(cv_noblock, cv_NoblockStandard.IntValue, true, true);
+	cv_noblock.RestoreDefault(true, false);
+	
 	if(WardenExists())
 		RemoveWarden();
 	
-	for(int i = 1; i <= MaxClients; i++) {
-		if(IsClientInGame(i) && !IsFakeClient(i)) {
-			if(IsPlayerAlive(i)) {
-				if(GetClientTeam(i) == CS_TEAM_CT)
-					aliveCT++;
-				if(GetClientTeam(i) == CS_TEAM_T)
-					aliveTerrorists++;
-			}
+	for(int client = 1; client <= MaxClients; client++) {
+		if(!IsClientInGame(client) && IsFakeClient(client))
+			continue;
 			
-			if(GetClientTeam(i) == CS_TEAM_CT)
-				totalCT++;
-			if(GetClientTeam(i) == CS_TEAM_T)
-				totalTerrorists++;
+		if(IsPlayerAlive(client)) {
+			if(GetClientTeam(client) == CS_TEAM_CT)
+				aliveCT++;
+			if(GetClientTeam(client) == CS_TEAM_T)
+				aliveTerrorists++;
 		}
+		
+		if(GetClientTeam(client) == CS_TEAM_CT)
+			totalCT++;
+		if(GetClientTeam(client) == CS_TEAM_T)
+			totalTerrorists++;
 	}
 	
 }
@@ -224,6 +253,13 @@ public Action Command_Warden(int client, int args) {
 		return Plugin_Handled;
 	}
 	
+	if(cv_wardenTwice.IntValue == 1) { // If enabled in config, the client is prevented to become warden since he was warden last round.
+		if(client == prevWarden) {
+			CPrintToChat(client, "%s %t", prefix, "Warden Twice");
+			return Plugin_Handled;
+		}
+	}
+	
 	SetWarden(client);
 	CPrintToChatAll("%s %t", prefix, "Warden Created", client);
 	
@@ -268,8 +304,8 @@ public Action Command_Unwarden(int client, int args) {
 	CPrintToChatAll("%s %t", prefix, "Warden Removed", warden);
 	
 	Call_StartForward(gF_OnAdminRemoveWarden);
-	Call_PushCell(client);
-	Call_PushCell(warden);
+	Call_PushCell(client); // The admin removing the warden
+	Call_PushCell(warden); // The client forced to retire
 	Call_Finish();
 	
 	return Plugin_Handled;
@@ -308,6 +344,27 @@ public Action Command_SetWarden(int client, int args) {
 	return Plugin_Handled;
 }
 
+public Action Command_Noblock(int client, int args) {
+	if(!IsValidClient(client)) {
+		CPrintToChat(client, "%s %t", prefix, "Invalid Client");
+		return Plugin_Handled;
+	}
+	if(!IsClientWarden(client)) {
+		CPrintToChat(client, "%s %t", prefix, "Not Warden");
+		return Plugin_Handled;
+	}
+	
+	if(cv_noblock.IntValue == 1) {
+		CPrintToChatAll("%s %t", prefix, "Noblock on");
+		SetConVarInt(cv_noblock, 0, true, false);
+	} else if(cv_noblock.IntValue == 0) {
+		CPrintToChatAll("%s %t", prefix, "Noblock off");
+		SetConVarInt(cv_noblock, 1, true, false);
+	}
+	
+	return Plugin_Handled;
+}
+
 public Action OnPlayerChat(int client, char[] command, int args) {
 	if(!IsValidClient(client)) // Make sure warden isn't glitched and is in fact alive etc.
 		return Plugin_Continue;
@@ -320,7 +377,7 @@ public Action OnPlayerChat(int client, char[] command, int args) {
 	if(message[0] == '/' || message[0] == '@' || IsChatTrigger())
 		return Plugin_Handled;
 	
-	CPrintToChatAll("{blue}[Warden] %N{default} : %s", client, message);
+	CPrintToChatAll("{bluegrey}[Warden] {team2}%N : %s", client, message);
 	return Plugin_Handled;
 	
 }
@@ -379,6 +436,9 @@ public int Native_SetWarden(Handle plugin, int numParams) {
 	return true;
 }
 public int Native_RemoveWarden(Handle plugin, int numParams) {
+	if(cv_wardenTwice.IntValue == 1) {
+		prevWarden = curWarden;
+	}
 	curWarden = -1;
 	curWardenStat = "None..";
 	return true;
