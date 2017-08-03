@@ -19,7 +19,7 @@
 #include <betterwarden>
 #undef REQUIRE_PLUGIN
 
-#define VERSION "1.2.6"
+#define VERSION "0.1"
 
 #define CHOICE1 "#choice1"
 #define CHOICE2 "#choice2"
