@@ -82,4 +82,22 @@
 		"en"	"There is no warden."
 		"sv"	"Det finns ingen warden."
 	}
+	
+	"Noblock off"
+	{
+		"en"	"The warden has disabled noblock."
+		"sv"	"Warden har stängt av noblock."
+	}
+	
+	"Noblock on"
+	{
+		"en"	"The warden has activated noblock."
+		"sv"	"Warden har aktiverat noblock."
+	}
+	
+	"Warden Twice"
+	{
+		"en"	"You cannot become warden twice in a row!"
+		"sv"	"Du kan inte vara warden två gånger i rad!"
+	}
 }

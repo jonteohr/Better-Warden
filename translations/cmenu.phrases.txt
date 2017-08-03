@@ -237,20 +237,6 @@
 		"fr"	"Essayé d'annuler le jeu en cours mais il n'y a pas de jeu en cours d'exécution."
 	}
 	
-	"Noblock off"
-	{
-		"en"	"The warden has disabled noblock."
-		"sv"	"Warden har stängt av noblock."
-		"fr"	"Le gardien a désactivé le noblock."
-	}
-	
-	"Noblock on"
-	{
-		"en"	"The warden has activated noblock."
-		"sv"	"Warden har aktiverat noblock."
-		"fr"	"Le directeur a activé le noblock."
-	}
-	
 	"Neither alive or ct"
 	{
 		"en"	"You must be alive, a CT and warden to do this."
