@@ -33,7 +33,7 @@
 #define CHOICE8 "#choice8"
 
 bool IsGameActive = false;
-char cmenuPrefix[] = "[{bluegrey}WardenMenu{default}]";
+char cmenuPrefix[] = "[{bluegrey}WardenMenu{default}] ";
 
 // Current game
 int hnsActive = 0;
@@ -186,8 +186,9 @@ public void OnPlayerDeath(Event event, const char[] name, bool dontBroadcast) {
 }
 
 public Action OnTakeDamageAlive(int victim, int &attacker, int &inflictor, float &damage, int &damagetype) {
-	if(hnsActive == 1 && GetClientTeam(victim) == CS_TEAM_CT && cvHnSGod.IntValue == 1) {
-		if(IsClientInGame(inflictor) && GetClientTeam(inflictor) == CS_TEAM_T) {
+	
+	if(hnsActive == 1 && cvHnSGod.IntValue == 1) {
+		if(IsValidClient(victim) && IsValidClient(inflictor) && GetClientTeam(victim) == CS_TEAM_CT && GetClientTeam(inflictor) == CS_TEAM_T) {
 			CPrintToChat(inflictor, "%s %t", cmenuPrefix, "No Rebel HnS");
 			return Plugin_Handled;
 		}

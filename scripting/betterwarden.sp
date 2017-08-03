@@ -1,4 +1,5 @@
 #include <sourcemod>
+#include <sdktools>
 #include <sdkhooks>
 #include <cstrike>
 #include <colorvariables>
@@ -9,7 +10,7 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#define VERSION "0.2"
+#define VERSION "0.3"
 
 // Strings
 char prefix[] = "[{blue}Warden{default}] ";
@@ -18,10 +19,10 @@ char curWardenStat[MAX_NAME_LENGTH];
 // Integers
 int curWarden = -1;
 int prevWarden = -1;
-int aliveCT;
-int totalCT;
-int aliveTerrorists;
-int totalTerrorists;
+int aliveCT = 0;
+int aliveTerrorists = 0;
+int totalCT = 0;
+int totalTerrorists = 0;
 
 // Forward handles
 Handle gF_OnWardenDeath = null;
@@ -96,8 +97,8 @@ public void OnPluginStart() {
 	gF_OnWardenCreated = CreateGlobalForward("OnWardenCreated", ET_Ignore, Param_Cell);
 	
 	// Event Hooks
-	HookEvent("player_death", OnPlayerDeath, EventHookMode_Pre);
-	HookEvent("round_start", OnRoundStart, EventHookMode_PostNoCopy);
+	HookEvent("player_death", OnPlayerDeath);
+	HookEvent("round_start", OnRoundStart);
 	HookEvent("player_team", OnJoinTeam);
 	
 	// Command listeners
@@ -119,6 +120,9 @@ public void OnMapStart() {
 	aliveTerrorists = 0;
 	totalTerrorists = 0;
 	
+	totalCT = GetTeamClientCount(CS_TEAM_CT);
+	totalTerrorists = GetTeamClientCount(CS_TEAM_T);
+	
 	RemoveWarden();
 }
 
@@ -127,28 +131,23 @@ public void OnJoinTeam(Event event, const char[] name, bool dontBroadcast) {
 	int newTeam = GetEventInt(event, "team");
 	int oldTeam = GetEventInt(event, "oldteam");
 	
-	if(IsClientInGame(client)) {
+	if(IsValidClient(client, false, true)) {
 		if(newTeam == CS_TEAM_T) {
-			totalTerrorists++;
-			if(IsPlayerAlive(client))
-				aliveTerrorists++;
-		}
-		if(newTeam == CS_TEAM_CT) {
-			totalCT++;
-			if(IsPlayerAlive(client))
-				aliveCT++;
+			aliveTerrorists++;
 		}
 		if(oldTeam == CS_TEAM_T) {
-			totalTerrorists--;
-			if(IsPlayerAlive(client))
-				aliveTerrorists--;
+			aliveTerrorists--;
+		}
+		if(newTeam == CS_TEAM_CT) {
+			aliveCT++;
 		}
 		if(oldTeam == CS_TEAM_CT) {
-			totalCT--;
-			if(IsPlayerAlive(client))
-				aliveCT--;
+			aliveCT--;
 		}
 	}
+	
+	totalCT = GetTeamClientCount(CS_TEAM_CT);
+	totalTerrorists = GetTeamClientCount(CS_TEAM_T);
 	
 }
 
@@ -174,36 +173,34 @@ public void OnPlayerDeath(Event event, const char[] name, bool dontBroadcast) {
 
 public void OnRoundStart(Event event, const char[] name, bool dontBroadcast) {
 	aliveCT = 0;
-	totalCT = 0;
 	aliveTerrorists = 0;
-	totalTerrorists = 0;
 	
-	//SetConVarInt(cv_noblock, cv_NoblockStandard.IntValue, true, true);
+	totalCT = GetTeamClientCount(CS_TEAM_CT);
+	totalTerrorists = GetTeamClientCount(CS_TEAM_T);
+	
 	cv_noblock.RestoreDefault(true, false);
 	
 	if(WardenExists())
 		RemoveWarden();
 	
 	for(int client = 1; client <= MaxClients; client++) {
-		if(!IsClientInGame(client) && IsFakeClient(client))
+		if(!IsValidClient(client, false, true))
 			continue;
-			
+		
 		if(IsPlayerAlive(client)) {
 			if(GetClientTeam(client) == CS_TEAM_CT)
 				aliveCT++;
 			if(GetClientTeam(client) == CS_TEAM_T)
 				aliveTerrorists++;
 		}
-		
-		if(GetClientTeam(client) == CS_TEAM_CT)
-			totalCT++;
-		if(GetClientTeam(client) == CS_TEAM_T)
-			totalTerrorists++;
 	}
-	
 }
 
 public void OnClientDisconnect(int client) {
+	
+	totalCT = GetTeamClientCount(CS_TEAM_CT);
+	totalTerrorists = GetTeamClientCount(CS_TEAM_T);
+	
 	if(IsClientWarden(client)) {
 		RemoveWarden();
 		CPrintToChatAll("%s %t", prefix, "Warden Died");
@@ -213,19 +210,13 @@ public void OnClientDisconnect(int client) {
 		Call_Finish();
 	}
 	
-	if(!IsFakeClient(client)) {
-		if(IsPlayerAlive(client)) {
-			if(GetClientTeam(client) == CS_TEAM_CT)
-				aliveCT--;
-			if(GetClientTeam(client) == CS_TEAM_T)
-				aliveTerrorists--;
-		}
+	if(IsValidClient(client, false, true)) {
 		if(GetClientTeam(client) == CS_TEAM_CT)
-			totalCT--;
+			aliveCT--;
 		if(GetClientTeam(client) == CS_TEAM_T)
-			totalTerrorists--;
-			
+			aliveTerrorists--;
 	}
+	
 }
 
 
@@ -234,7 +225,7 @@ public void OnClientDisconnect(int client) {
 /////////////////////////////
 public Action Command_Warden(int client, int args) {
 	
-	if(!IsValidClient(client, false, false)) { // Client is not valid. IE not ingame, alive etc.
+	if(!IsValidClient(client)) { // Client is not valid. IE not ingame, alive etc.
 		CPrintToChat(client, "%s %t", prefix, "Invalid Client");
 		return Plugin_Handled;
 	}
