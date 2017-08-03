@@ -1021,7 +1021,7 @@ public void initGrav(int client) {
 				}
 			} else if(cvGravTeam.IntValue == 1) {
 				if(IsValidClient(usr) && GetClientTeam(usr) == CS_TEAM_CT) {
-					SetEntityGravity(i, cvGravStrength.FloatValue);
+					SetEntityGravity(usr, cvGravStrength.FloatValue);
 				}
 			} else if(cvGravTeam.IntValue == 2) {
 				if(IsValidClient(usr) && GetClientTeam(usr) == CS_TEAM_T) {
@@ -1039,14 +1039,14 @@ public void initGrav(int client) {
 		gravActive = 1;
 		IsGameActive = true;
 		
-		for(int usr = 1; i <= MaxClients; usr++) {
+		for(int usr = 1; usr <= MaxClients; usr++) {
 			if(cvGravTeam.IntValue == 0) {
 				if(IsValidClient(usr)) {
 					SetEntityGravity(usr, cvGravStrength.FloatValue);
 				}
 			} else if(cvGravTeam.IntValue == 1) {
 				if(IsValidClient(usr) && GetClientTeam(usr) == CS_TEAM_CT) {
-					SetEntityGravity(i, cvGravStrength.FloatValue);
+					SetEntityGravity(usr, cvGravStrength.FloatValue);
 				}
 			} else if(cvGravTeam.IntValue == 2) {
 				if(IsValidClient(usr) && GetClientTeam(usr) == CS_TEAM_T) {
