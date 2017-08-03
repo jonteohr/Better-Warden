@@ -1,0 +1,85 @@
+"Phrases"
+{
+	"Warden Died"
+	{
+		"en"	"The warden has died. A new warden can now be appointed."
+		"sv"	"Direktören har dött. En ny direktör kan nu väljas."
+	}
+	
+	"Warden Created"
+	{
+		"#format"	"{1:N}"
+		"en"	"{1} has become the warden of this prison!"
+		"sv"	"{1} har blivit direktör för detta fängelse!"
+	}
+	
+	"Warden Retired"
+	{
+		"#format"	"{1:N}"
+		"en"	"{1} retired as warden."
+		"sv"	"{1} has pensionerats som direktör."
+	}
+	
+	"Warden Removed"
+	{
+		"#format"	"{1:N}"
+		"en"	"{1} was forced to retire as warden."
+		"sv"	"{1} has blivit tvingad till pension som direktör."
+	}
+	
+	"Current Warden Hint"
+	{
+		"#format"	"{1:s}"
+		"en"	"<font size='22'><font color='#4B69FF'>Warden:</font> {1}</font>"
+		"sv"	"<font size='22'><font color='#4B69FF'>Direktör:</font> {1}</font>"
+	}
+	
+	"Players Stat Hint"
+	{
+		"#format"	"{1:d},{2:d},{3:d},{4:d}"
+		"en"	"<font color='#5E98D8'>Guards:</font> {1}/{2}         <font color='#E4AD39'>Prisoners:</font> {3}/{4}"
+		"sv"	"<font color='#5E98D8'>Vakter:</font> {1}/{2}         <font color='#E4AD39'>Fångar:</font> {3}/{4}"
+	}
+	
+	"Doors Opened"
+	{
+		"en"	"You toggled the cell doors."
+		"sv"	"Du växlade celldörrarna."
+	}
+	
+	"Invalid Client"
+	{
+		"en"	"You must be in game and alive to perform this command."
+		"sv"	"Du måste vara in-game och levande för att utföra detta kommand."
+	}
+	
+	"Client Not CT"
+	{
+		"en"	"You must be a Counter-Terrorist."
+		"sv"	"Du måste vara en Counter-Terrorist."
+	}
+	
+	"Warden Exists"
+	{
+		"en"	"A warden already exists."
+		"sv"	"En warden finns redan."
+	}
+	
+	"Already Warden"
+	{
+		"en"	"You are already warden."
+		"sv"	"Du är redan warden."
+	}
+	
+	"Not Warden"
+	{
+		"en"	"You are not warden."
+		"sv"	"Du är inte warden."
+	}
+	
+	"No Warden Alive"
+	{
+		"en"	"There is no warden."
+		"sv"	"Det finns ingen warden."
+	}
+}

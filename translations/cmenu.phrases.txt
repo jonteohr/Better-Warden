@@ -1,0 +1,415 @@
+"Phrases"
+{
+	"Not Alive"
+	{
+		"en"	"You are not alive."
+		"sv"	"Du lever inte."
+		"fr"	"Tu es pas en vivant."
+	}
+	
+	"Not CT"
+	{
+		"en"	"You're not a CT."
+		"sv"	"Du är inte CT."
+		"fr"	"Tu es pas un CT."
+	}
+	
+	"Not Warden"
+	{
+		"en"	"You're not warden."
+		"sv"	"Du är inte warden."
+		"fr"	"Tu es pas le gardien."
+	}
+	
+	"Warden Died"
+	{
+		"en"	"Warden died, aborting all games."
+		"sv"	"Warden dog, avbryter samtliga spel."
+		"fr"	"Warden est décédé, tout les jeux sont annulé."
+	}
+	
+	"Days Menu Title"
+	{
+		"en"	"Days"
+		"sv"	"Dagar"
+		"fr"	"Jours"
+	}
+	
+	"Warden Menu Title"
+	{
+		"en"	"Warden Menu"
+		"sv"	"Warden Meny"
+		"fr"	"Menu du Gardien"
+	}
+	
+	"Days Entry"
+	{
+		"en"	"Event days"
+		"sv"	"Speciella dagar"
+		"fr"	"Jours d'événements"
+	}
+	
+	"Weapons Menu Entry"
+	{
+		"en"	"Weapons menu"
+		"sv"	"Vapen-meny"
+		"fr"	"Menu d'armes"
+	}
+	
+	"Weapons Menu Title"
+	{
+		"en"	"Weapons Menu"
+		"sv"	"Vapenmeny"
+		"fr"	"Menu d'armes"
+	}
+	
+	"Freeday Entry"
+	{
+		"en"	"Freeday"
+		"sv"	"Freeday"
+		"fr"	"Jour de liberté"
+	}
+	
+	
+	"HnS Entry"
+	{
+		"en"	"Hide n' Seek"
+		"sv"	"Hide n' Seek"
+		"fr"	"Cache-cache"
+	}
+	
+	"Warday Entry"
+	{
+		"en"	"Warday"
+		"sv"	"Warday"
+		"fr"	"Warday'
+	}
+	
+	"Gravity Freeday Entry"
+	{
+		"en"	"Gravity Freeday"
+		"sv"	"Gravity Freeday"
+		"fr"	"Jour de liberté avec la gravité"
+	}
+	
+	"Restricted FD Entry"
+	{
+		"en"	"Restricted Freeday"
+		"sv"	"Restricted Freeday"
+		"fr"	"Jour de liberté avec des restrictions"
+	}
+	
+	"Toggle Noblock Entry"
+	{
+		"en"	"Toggle noblock"
+		"sv"	"Noblock"
+		"fr"	"Basculer en noblock"
+	}
+	
+	"Leave Warden"
+	{
+		"en"	"Leave Warden"
+		"sv"	"Lämna som Warden"
+		"fr"	"Laisse de le gardien"
+	}
+	
+	"Abort Current Day"
+	{
+		"en"	"Abort game"
+		"sv"	"Avbryt nuvarande spel"
+		"fr"	"Abandonner le jeu"
+	}
+	
+	"Cannot Exec Game"
+	{
+		"en"	"Cannot select a new game since there's already a game running."
+		"se"	"Kan inte välja en ny lek eftersom det redan är en annan lek igång!"
+		"fr"	"Impossible de sélectionner un nouveau jeu car il y a déjà un jeu en cours d'exécution."
+	}
+	
+	"Admin Aborted"
+	{
+		"#format"	"{1:N}"
+		"en"	"{1} aborted the current command from warden!"
+		"sv"	"{1} avbröt det nuvarande kommandet från warden!"
+		"fr"	"{1} a annulé la commande actuelle du gardien!"
+	}
+	
+	"Admin Abort Denied"
+	{
+		"en"	"You cannot abort the current game because there's no game running at this time."
+		"se"	"Du kan inte avbryta det nuvarande spelet då inget spel har valts ännu."
+		"fr"	"Vous ne pouvez pas annuler le jeu en cours car il n'y a pas de jeu en ce moment."
+	}
+	
+	"HnS Begun"
+	{
+		"en"	"The warden has selected Hide and Seek for this round!"
+		"sv"	"Warden valde att leka Hide and Seek för denna runda!"
+		"fr"	"Le gardien a sélectionné le cache-cache pour cette manche!"
+	}
+	
+	"Freeday Begun"
+	{
+		"en"	"The warden has selected Freeday for this round!"
+		"sv"	"Warden valde att ha en Freeday för denna runda!"
+		"fr"	"Le gardien a sélectionné le jour de liberté pour cette manche!"
+	}
+	
+	"Warday Begun"
+	{
+		"en"	"The warden has selected Warday for this round!"
+		"sv"	"Warden valde att ha en Warday för denna runda!"
+		"fr"	"Le gardien a sélectionné Warday pour cette manche"
+	}
+	
+	"Warday Warning"
+	{
+		"en"	"All terrorists should go to the armory now."
+		"sv"	"Alla terrorister ska gå till armory nu."
+		"fr"	"Tous les terroristes devraient aller à l'armurerie maintenant."
+	}
+	
+	"Gravday Begun"
+	{
+		"en"	"The warden has selected Gravity Freeday for this round!"
+		"sv"	"Warden valde att ha en Gravity Freeday för denna runda!"
+		"fr"	"Le gardien a sélectionné Jour de liberté avec la gravité pour cette manche!"
+	}
+	
+	"Rest Freeday Begun"
+	{
+		"en"	"The warden has selected Restricted Freeday for this round!"
+		"sv"	"Warden valde att ha en Restricted Freeday för denna runda!"
+		"fr"	"Le gardien a sélectionné pour cette manche!"
+	}
+	
+	"Rest Freeday Warning"
+	{
+		"en"	"All terrorists with weapons will be killed on sight!"
+		"sv"	"Alla terrorister med vapen kommer bli beskjutna!"
+		"fr"	"Tous les terroristes avec des armes seront tués à vue!"
+	}
+	
+	"No Rebel HnS"
+	{
+		"en"	"{darkred}You cannot become a rebel during Hide and Seek!"
+		"sv"	"{darkred}Du kan inte rebella under Hide and Seek!"
+		"fr"	"{darkred}Vous ne pouvez pas devenir rebelle pendant le cache-cache!"
+	}
+	
+	"Too many hns"
+	{
+		"#format"	"{1:d},{2:d}"
+		"en"	"There's already been {1} rounds of HnS. There's only {2} rounds of HnS allowed per map!"
+		"sv"	"Det har redan varit {1} rundor av HnS. Det kan bara vara {2} rundor av HnS per map!"
+		"fr"	"Il y a déjà eu {1} rounds de cache-cache. Il n'y a que {2} rounds de cache-cache autorisées par carte!"
+	}
+	
+	"Too many freedays"
+	{
+		"#format"	"{1:d},{2:d}"
+		"en"	"There's already been {1} rounds of Freedays. There's only {2} rounds of Freedays allowed per map!"
+		"sv"	"Det har redan varit {1} rundor av Freedays. Det kan bara vara {2} rundor av Freedays per map!"
+		"fr"	"Il y a déjà eu {1} rounds de jour de liberté. Il n'y a que {2} rounds de jour de liberté autorisées par carte!"
+	}
+	
+	"Too many wardays"
+	{
+		"#format"	"{1:d},{2:d}"
+		"en"	"There's already been {1} rounds of Wardays. There's only {2} rounds of Wardays allowed per map!"
+		"sv"	"Det har redan varit {1} rundor av Wardays. Det kan bara vara {2} rundor av Wardays per map!"
+		"fr"	"Il y a déjà eu {1} rounds de Wardays. Il n'y a que {2} rounds de Wardays autorisées par carte!"
+	}
+	
+	"Too many gravdays"
+	{
+		"#format"	"{1:d},{2:d}"
+		"en"	"There's already been {1} rounds of Gravity Freedays. There's only {2} rounds of Gravity Freedays allowed per map!"
+		"sv"	"Det har redan varit {1} rundor av Gravity Freedays. Det kan bara vara {2} rundor av Gravity Freedays per map!"
+		"fr"	"Il y a déjà eu {1} rounds de jour de liberté avec de la gravité. Il n'y a que {2} rounds de jour de liberté avec de la gravité autorisées par carte!"
+	}
+	
+	"Failed to abort Server"
+	{
+		"en"	"Tried to abort current game but there's no game running."
+		"sv"	"Försökte avbryta nuvarande lek men det är ingen lek som körs!"
+		"fr"	"Essayé d'annuler le jeu en cours mais il n'y a pas de jeu en cours d'exécution."
+	}
+	
+	"Noblock off"
+	{
+		"en"	"The warden has disabled noblock."
+		"sv"	"Warden har stängt av noblock."
+		"fr"	"Le gardien a désactivé le noblock."
+	}
+	
+	"Noblock on"
+	{
+		"en"	"The warden has activated noblock."
+		"sv"	"Warden har aktiverat noblock."
+		"fr"	"Le directeur a activé le noblock."
+	}
+	
+	"Neither alive or ct"
+	{
+		"en"	"You must be alive, a CT and warden to do this."
+		"sv"	"Du måste leva, vara CT och warden för detta."
+		"fr"	"Vous devez être en vie, un CT et un gardien pour faire cela."
+	}
+	
+	"Available to open menu"
+	{
+		"en"	"You're now eligible to open the warden menu with {purple}!cmenu{default}!"
+		"sv"	"Du kan nu öppna Warden-menyn via {purple}!cmenu{default}!"
+		"fr"	"Vous êtes maintenant admissible à ouvrir le menu du gardien avec {purple}!cmenu{default}!"
+	}
+	
+	"Warden Aborted"
+	{
+		"en"	"Warden has cancelled the current event!"
+		"sv"	"Warden har avbrutit den senaste dagen!"
+		"fr"	"Warden a annulé l'événement actuel!"
+	}
+	
+	"Player Freeday Entry"
+	{
+		"en"	"Give player freeday"
+		"sv"	"Ge spelare freeday"
+		"fr"	"Donner un joueur en plein air"
+	}
+	
+	"Player Freeday Title"
+	{
+		"en"	"Give freeday:"
+		"sv"	"Ge freeday:"
+		"fr"	"Donner l'affranchissement:"
+	}
+	
+	"Player Freeday Announce"
+	{
+		"#format"	"{1:N}"
+		"en"	"The warden has awarded {1} with a freeday!"
+		"sv"	"Warden har gett {1} en freeday!"
+		"fr"	"Le gardien a décerné {1} avec une journée libre!"
+	}
+	
+	"Player Freeday Removed"
+	{
+		"#format"	"{1:N}"
+		"en"	"The warden has cancelled {1}'s freeday."
+		"sv"	"Warden har tagit bort {1}'s freeday."
+		"fr"	"Le gardien a annulé le jour libre de {1}."
+	}
+	
+	"HnS Config Title"
+	{
+		"en"	"HnS Configuration"
+		"sv"	"HnS Konfiguration"
+		"fr"	""
+	}
+	
+	"Choose no. Winners"
+	{
+		"en"	"Choose # of winners:"
+		"sv"	"Välj antal vinnare:"
+		"fr"	""
+	}
+	
+	"1 Winner Entry"
+	{
+		"en"	"1 Winner"
+		"sv"	"1 Vinnare"
+		"fr"	"1 Gagnant"
+	}
+	
+	"2 Winner Entry"
+	{
+		"en"	"2 Winners"
+		"sv"	"2 Vinnare"
+		"fr"	"2 Gagnants"
+	}
+	
+	"Start HnS"
+	{
+		"en"	"Start!"
+		"sv"	"Starta!"
+		"fr"	"Départ!"
+	}
+	
+	"No Winners Selected"
+	{
+		"en"	"Cannot start Hide n Seek since you haven't selected how many winners there's supposed to be!"
+		"sv"	"Kan inte starta HnS eftersom du inte valt hur många vinnare det kommer bli!"
+		"fr"	"Le cache-cache ne peut pas démarrer puisque vous n'avez pas sélectionné le nombre de gagnants qu'il doit avoir!"
+	}
+	
+	"Amount of Winners"
+	{
+		"#format"	"{1:d}"
+		"en"	"There will be {1} winner(s)!"
+		"sv"	"Det kommer bli {1} vinnare!"
+		"fr"	"Il y aura {1} gagnant(s)!"
+	}
+	
+	"Winners Selected"
+	{
+		"#format"	"{1:d}"
+		"en"	"You've selected {1} winner(s)."
+		"sv"	"Du har valt {1} vinnare."
+		"fr"	"Vous avez sélectionné {1} gagnant(s)!"
+	}
+	
+	"HnS Over"
+	{
+		"en"	"Hide n' Seek is over, we have our winners!"
+		"sv"	"HnS är över, vi har våra vinnare!"
+		"fr"	"Le cache-cache est terminé, nous avons nos gagnants"
+	}
+	
+	"HnS Players Left"
+	{
+		"#format"	"{1:d}"
+		"en"	"There are {1} players left in the competition."
+		"sv"	"Det är {1} spelare kvar i tävlingen!"
+		"fr"	"Il reste {1} joueurs dans la compétition"
+	}
+	
+	"Contesters Left"
+	{
+		"#format"	"{1:d}"
+		"en"	"<font color='#41A0F4'><i>Contesters left:</i></font> {1}"
+		"sv"	"<font color='#41A0F4'><i>Deltagare kvar:</i></font> {1}"
+		"fr"	"<font color='#41A0F4'><i>Les participants restants:</i></font> {1}"
+	}
+	
+	"HnS Winners Info"
+	{
+		"#format"	"{1:d}"
+		"en"	"<font color='#BA80F0'><b>{1} winners</b></font>"
+		"sv"	"<font color='#BA80F0'><b>{1} vinnare</b></font>"
+		"fr"	"<font color='#BA80F0'><b>{1} Gagnants</b></font>"
+	}
+	
+	"Small HNS Over"
+	{
+		"en"	"<font color='#42f456'><b>HnS is over!</b></font>"
+		"sv"	"<font color='#42f456'><b>HnS är över!</b></font>"
+		"fr"	"<font color='#42f456'><b>HnS est fini!</b></font>"
+	}
+	
+	"Warden Death Announce"
+	{
+		"en"	"The warden has died! A new warden can now be appointed!"
+		"sv"	"Warden har dött, en ny warden kan nu ta över!"
+		"fr"	"Le gardien est mort! Un nouveau gardien doit être nommé!"
+	}
+	
+	"Toggle doors"
+	{
+		"en"	"Toggle cell doors"
+		"sv"	"Öppna/Stäng cellar"
+		"fr"	"Basculer les portes des cellules"
+	}
+	
+}
