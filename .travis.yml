@@ -6,9 +6,9 @@ addons:
 
 env: 
   global:
-    - INCLUDE=scripting/include/
-    - SCRIPTING=scripting/
-    - PLUGINS=plugins/
+    - INCLUDE=addons/sourcemod/scripting/include/
+    - SCRIPTING=addons/sourcemod/scripting/
+    - PLUGINS=addons/sourcemod/plugins/
   matrix:
     - SOURCEMOD=1.8
 
