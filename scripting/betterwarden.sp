@@ -10,7 +10,7 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#define VERSION "0.3"
+#define VERSION "0.3.2"
 
 // Strings
 char prefix[] = "[{blue}Warden{default}] ";
@@ -54,13 +54,14 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	CreateNative("SetWarden", Native_SetWarden);
 	CreateNative("RemoveWarden", Native_RemoveWarden);
 	CreateNative("GetCurrentWarden", Native_GetCurrentWarden);
+	CreateNative("GetTeamAliveClientCount", Native_GetTeamAliveClientCount);
 	RegPluginLibrary("betterwarden");
 }
 
 public void OnPluginStart() {
 
 	// CVars
-	AutoExecConfig(true, "warden");
+	AutoExecConfig(true, "warden", "BetterWarden");
 	cv_version = CreateConVar("sm_warden_version", VERSION, "Current version of this plugin. DO NOT CHANGE THIS!", FCVAR_DONTRECORD|FCVAR_NOTIFY);
 	cv_admFlag = CreateConVar("sm_warden_admin", "b", "The flag required to execute admin commands for this plugin.", FCVAR_NOTIFY);
 	//cv_NoblockStandard = CreateConVar("sm_warden_noblock_standard", "1", "You only need to set this if sm_warden_noblock is set to 1!\nWhat should the noblock rules be as default on start of each round?\nThis should have the same value as your mp_solid_teammates cvar in server.cfg.\n1 = Solid teammates.\n0 = No block.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
@@ -128,31 +129,19 @@ public void OnMapStart() {
 
 public void OnJoinTeam(Event event, const char[] name, bool dontBroadcast) {
 	int client = GetClientOfUserId(GetEventInt(event, "userid"));
-	int newTeam = GetEventInt(event, "team");
-	int oldTeam = GetEventInt(event, "oldteam");
 	
 	if(IsValidClient(client, false, true)) {
-		if(newTeam == CS_TEAM_T) {
-			aliveTerrorists++;
-		}
-		if(oldTeam == CS_TEAM_T) {
-			aliveTerrorists--;
-		}
-		if(newTeam == CS_TEAM_CT) {
-			aliveCT++;
-		}
-		if(oldTeam == CS_TEAM_CT) {
-			aliveCT--;
-		}
+		totalCT = GetTeamClientCount(CS_TEAM_CT);
+		aliveCT = GetTeamAliveClientCount(CS_TEAM_CT);
+		totalTerrorists = GetTeamClientCount(CS_TEAM_T);
+		aliveTerrorists = GetTeamAliveClientCount(CS_TEAM_T);
 	}
-	
-	totalCT = GetTeamClientCount(CS_TEAM_CT);
-	totalTerrorists = GetTeamClientCount(CS_TEAM_T);
-	
 }
 
 public void OnPlayerDeath(Event event, const char[] name, bool dontBroadcast) {
 	int client = GetClientOfUserId(GetEventInt(event, "userid"));
+	aliveCT = GetTeamAliveClientCount(CS_TEAM_CT);
+	aliveTerrorists = GetTeamAliveClientCount(CS_TEAM_T);
 	
 	if(IsClientWarden(client)) {
 		RemoveWarden();
@@ -162,44 +151,30 @@ public void OnPlayerDeath(Event event, const char[] name, bool dontBroadcast) {
 		Call_PushCell(client);
 		Call_Finish();
 	}
-	
-	if(IsValidClient(client, false, true)) {
-		if(GetClientTeam(client) == CS_TEAM_CT)
-			aliveCT--;
-		if(GetClientTeam(client) == CS_TEAM_T)
-			aliveTerrorists--;
-	}
 }
 
 public void OnRoundStart(Event event, const char[] name, bool dontBroadcast) {
+	if(WardenExists())
+		RemoveWarden();
+		
 	aliveCT = 0;
 	aliveTerrorists = 0;
 	
 	totalCT = GetTeamClientCount(CS_TEAM_CT);
 	totalTerrorists = GetTeamClientCount(CS_TEAM_T);
+	aliveCT = GetTeamAliveClientCount(CS_TEAM_CT);
+	aliveTerrorists = GetTeamAliveClientCount(CS_TEAM_T);
 	
 	cv_noblock.RestoreDefault(true, false);
-	
-	if(WardenExists())
-		RemoveWarden();
-	
-	for(int client = 1; client <= MaxClients; client++) {
-		if(!IsValidClient(client, false, true))
-			continue;
-		
-		if(IsPlayerAlive(client)) {
-			if(GetClientTeam(client) == CS_TEAM_CT)
-				aliveCT++;
-			if(GetClientTeam(client) == CS_TEAM_T)
-				aliveTerrorists++;
-		}
-	}
 }
 
 public void OnClientDisconnect(int client) {
 	
 	totalCT = GetTeamClientCount(CS_TEAM_CT);
 	totalTerrorists = GetTeamClientCount(CS_TEAM_T);
+	aliveCT = GetTeamAliveClientCount(CS_TEAM_CT);
+	aliveTerrorists = GetTeamAliveClientCount(CS_TEAM_T);
+	
 	
 	if(IsClientWarden(client)) {
 		RemoveWarden();
@@ -208,13 +183,6 @@ public void OnClientDisconnect(int client) {
 		Call_StartForward(gF_OnWardenDisconnect);
 		Call_PushCell(client);
 		Call_Finish();
-	}
-	
-	if(IsValidClient(client, false, true)) {
-		if(GetClientTeam(client) == CS_TEAM_CT)
-			aliveCT--;
-		if(GetClientTeam(client) == CS_TEAM_T)
-			aliveTerrorists--;
 	}
 	
 }
@@ -401,6 +369,21 @@ public Action JBToolTip(Handle timer) {
 /////////////////////////////
 //			NATIVES		   //
 /////////////////////////////
+public int Native_GetTeamAliveClientCount(Handle plugin, int numParams) {
+	int team = GetNativeCell(1);
+	int count = 0;
+	
+	for(int client = 1; client <= MaxClients; client++) {
+		if(!IsValidClient(client, false, false))
+			continue;
+			
+		if(GetClientTeam(client) == team)
+			count++;
+	}
+	
+	return count;
+}
+
 public int Native_IsClientWarden(Handle plugin, int numParams) {
 	int client = GetNativeCell(1);
 	

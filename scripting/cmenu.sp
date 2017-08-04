@@ -19,7 +19,7 @@
 #include <betterwarden>
 #undef REQUIRE_PLUGIN
 
-#define VERSION "0.1"
+#define VERSION "0.2"
 
 #define CHOICE1 "#choice1"
 #define CHOICE2 "#choice2"
@@ -103,7 +103,7 @@ public OnPluginStart() {
 	LoadTranslations("cmenu.phrases.txt");
 	SetGlobalTransTarget(LANG_SERVER);
 	
-	AutoExecConfig(true, "cmenu");
+	AutoExecConfig(true, "cmenu", "BetterWarden");
 	
 	cvVersion = CreateConVar("sm_cmenu_version", VERSION, "Current version running. Debugging purposes only!\nDo NOT change this!", FCVAR_DONTRECORD|FCVAR_NOTIFY); // Not visible in config
 	cvHnS = CreateConVar("sm_cmenu_hns", "1", "Add an option for Hide and Seek in the menu?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
@@ -152,11 +152,7 @@ public void OnClientPutInServer(int client) {
 }
 public void OnClientDisconnect(int client) {
 	
-	if(IsPlayerAlive(client)) {
-		if(GetClientTeam(client) == CS_TEAM_T) {
-			aliveTs--;
-		}
-	}
+	aliveTs = GetTeamAliveClientCount(CS_TEAM_T);
 		
 }
 
@@ -167,9 +163,7 @@ public void OnPlayerDeath(Event event, const char[] name, bool dontBroadcast) {
 		abortGames();
 	}
 	
-	if(GetClientTeam(client) == CS_TEAM_T) {
-		aliveTs--;
-	}
+	aliveTs = GetTeamAliveClientCount(CS_TEAM_T);
 	
 	if(IsHnsActive()) {
 		// Check if HnS should end
@@ -201,11 +195,7 @@ public void OnRoundStart(Event event, const char[] name, bool dontBroadcast) {
 	abortGames();
 	
 	aliveTs = 0;
-	for(int client = 1; client <= MaxClients; client++) {
-		if(IsClientInGame(client) && IsPlayerAlive(client) && GetClientTeam(client) == CS_TEAM_T) {
-			aliveTs++;
-		}
-	}
+	aliveTs = GetTeamAliveClientCount(CS_TEAM_T);
 }
 
 public void OnMapStart() {

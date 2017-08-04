@@ -104,6 +104,14 @@ native bool RemoveWarden();
 native bool GetCurrentWarden();
 
 /**
+* Gets the amount of alive players in the specified team.
+*
+* @param team index
+* @return the alive count
+*/
+native bool GetTeamAliveClientCount(int teamIndex);
+
+/**
 * Checks several parameters to see if the specified client is a valid user.
 *
 * @param client index
