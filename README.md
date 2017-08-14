@@ -2,6 +2,12 @@
 An improved and more advanced warden plugin with a warden-menu for CS:GO jailbreak servers!  
 [~~AlliedModders~~](https://forums.alliedmods.net/)
 
+## Repository Index
+* [Installation](#installation)
+* [Dependencies](#dependencies)
+* [CVars](#cvars)
+* [API](#api)
+
 ## Installation
 1. [Download the plugin package](https://github.com/condolent/Better-Warden/releases)
 2. Drag and drop the containing _addons_ folder to your root folder. _By default, the root folder is named csgo._
