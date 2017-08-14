@@ -1,4 +1,4 @@
-# Better-Warden [![Build Status](https://travis-ci.org/condolent/Better-Warden.svg?branch=master)](https://travis-ci.org/condolent/Better-Warden)
+# Better-Warden [![Build Status](https://travis-ci.org/condolent/Better-Warden.svg?branch=master)](https://travis-ci.org/condolent/Better-Warden) [![Wiki](https://img.shields.io/badge/Plugin-Wiki-orange.svg?style=flat)](https://github.com/condolent/Better-Warden/wiki)
 An improved and more advanced warden plugin with a warden-menu for CS:GO jailbreak servers!  
 [~~AlliedModders~~](https://forums.alliedmods.net/)
 
