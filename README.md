@@ -44,3 +44,230 @@ An improved and more advanced warden plugin with a warden-menu for CS:GO jailbre
 |`sm_cmenu_restricted_freeday`|**1**|Add an option for a restricted freeday in the menu? This event uses the same configuration as a normal freeday. 0 = Disable. 1 = Enable.|
 |`sm_cmenu_player_freeday`|**1**|Add an option for giving a specific player a freeday in the menu? 0 = Disable. 1 = Enable.|
 |`sm_cmenu_doors`|**1**|sm_warden_cellscmd needs to be set to 1 for this to work! Add an option for opening doors via the menu. 0 = Disable. 1 = Enable|
+
+## API
+### Betterwarden
+```
+/*
+* 
+* INCLUDE FOR THE SOURCEMOD PLUGIN; BETTER WARDEN
+* https://github.com/condolent/Better-Warden
+* 
+*/
+#if defined bwardenincluded
+ #endinput
+#endif
+#define bwardenincluded
+
+#define a ADMFLAG_RESERVATION
+#define b ADMFLAG_GENERIC
+#define c ADMFLAG_KICK
+#define d ADMFLAG_BAN
+#define e ADMFLAG_UNBAN
+#define f ADMFLAG_SLAY
+#define g ADMFLAG_CHANGEMAP
+#define h ADMFLAG_CONVARS
+#define i ADMFLAG_CONFIG
+#define j ADMFLAG_CHAT
+#define k ADMFLAG_VOTE
+#define l ADMFLAG_PASSWORD
+#define m ADMFLAG_RCON
+#define n ADMFLAG_CHEATS
+#define z ADMFLAG_ROOT
+#define o ADMFLAG_CUSTOM1
+#define p ADMFLAG_CUSTOM2
+#define q ADMFLAG_CUSTOM3
+#define r ADMFLAG_CUSTOM4
+#define s ADMFLAG_CUSTOM5
+#define t ADMFLAG_CUSTOM6
+
+/**
+* Called when the current warden dies.
+*
+* @param client index
+*/
+forward void OnWardenDeath(int client);
+
+/**
+* Called when a player becomes warden.
+*
+* @param client index
+*/
+forward void OnWardenCreated(int client);
+
+/**
+* Called when the current warden disconnects.
+*
+* @param client index
+*/
+forward void OnWardenDisconnect(int client);
+
+/**
+* Called when the current warden retires by himself.
+*
+* @param client index
+*/
+forward void OnWardenRetire(int client);
+
+/**
+* Called when an admin removes the current warden.
+*
+* @param client index
+*/
+forward void OnAdminRemoveWarden(int admin, int warden);
+
+/**
+* Checks if the given client is currently warden.
+*
+* @param client index
+* @return true if yes
+*/
+native bool IsClientWarden(int client);
+
+/**
+* Checks is there currently is a warden.
+*
+* @return true if yes
+*/
+native bool WardenExists();
+
+/**
+* Makes the given client warden for the round.
+*
+* @param client index
+* @return true if successful
+*/
+native bool SetWarden(int client);
+
+/**
+* Remove the current warden.
+*
+* @return true if successful
+*/
+native bool RemoveWarden();
+
+/**
+* Fetch the current wardens' client index
+*
+* @return client index
+*/
+native bool GetCurrentWarden();
+
+/**
+* Gets the amount of alive players in the specified team.
+*
+* @param team index
+* @return the alive count
+*/
+native bool GetTeamAliveClientCount(int teamIndex);
+
+/**
+* Checks several parameters to see if the specified client is a valid user.
+*
+* @param client index
+* @param Allow bots?
+* @param Allow dead?
+* @return true if valid
+*/
+stock bool IsValidClient(int client, bool bAllowBots = false, bool bAllowDead = false)
+{
+	if(!(1 <= client <= MaxClients) || !IsClientInGame(client) || (IsFakeClient(client) && !bAllowBots) || IsClientSourceTV(client) || IsClientReplay(client) || (!bAllowDead && !IsPlayerAlive(client)))
+	{
+		return false;
+	}
+	return true;
+}
+```
+### CMenu
+```
+/*
+* https://github.com/condolent/Better-Warden
+*/
+
+#if defined cmenuincluded
+ #endinput
+#endif
+#define cmenuincluded
+
+/**
+* Called when a warden opens the warden menu. Also called when a player becomes a warden if sm_cmenu_auto_open is set to 1.
+*
+* @param client index of the one opening the menu
+*/
+forward void OnCMenuOpened(int client);
+
+/**
+* Called when an event day is created.
+*/
+forward void OnEventDayCreated();
+
+/**
+* Called when an event day is aborted.
+*/
+forward void OnEventDayAborted();
+
+/**
+* Called when Hide and Seek is won.
+*/
+forward void OnHnsOver();
+
+/**
+* Check if there is a event day currently active.
+* 
+* @return     true if yes
+*/
+native bool IsEventDayActive();
+
+/**
+* Check if a Hide and Seek game is running.
+*
+* @return     true if yes
+*/
+native bool IsHnsActive();
+
+/**
+* Check if a Gravity Freeday is running.
+*
+* @return     true if yes
+*/
+native bool IsGravFreedayActive();
+
+/**
+* Check if a warday is running.
+*
+* @return     true if yes
+*/
+native bool IsWarActive();
+
+/**
+* Check if a freeday is running.
+*
+* @return     true if yes
+*/
+native bool IsFreedayActive();
+
+/**
+* Check if the specified client already has a freeday.
+*
+* @param     client index
+* @return     true if yes
+*/
+native bool ClientHasFreeday(int client);
+
+/**
+* Give a client a freeday
+*
+* @param      client index
+* @return     true if successful
+*/
+native bool GiveClientFreeday(int client);
+
+/**
+* Remove a client's freeday
+*
+* @param      client index
+* @param      set a beacon
+* @return     true if successful
+*/
+native bool RemoveClientFreeday(int client, bool beacon);
+```
