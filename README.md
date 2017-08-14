@@ -7,6 +7,7 @@ An improved and more advanced warden plugin with a warden-menu for CS:GO jailbre
 * [Dependencies](#dependencies)
 * [CVars](#cvars)
 * [API](#api)
+* [Translations](#translations)
 
 ## Installation
 1. [Download the plugin package](https://github.com/condolent/Better-Warden/releases)
@@ -277,3 +278,9 @@ native bool GiveClientFreeday(int client);
 */
 native bool RemoveClientFreeday(int client, bool beacon);
 ```
+
+## Translations
+* English ✓
+* Swedish ✓
+* French × _(Some are done)_
+* Russian ×
