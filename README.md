@@ -5,6 +5,7 @@ An improved and more advanced warden plugin with a warden-menu for CS:GO jailbre
 ## Repository Index
 * [Installation](#installation)
 * [Dependencies](#dependencies)
+* [Features](#features)
 * [CVars](#cvars)
 * [API](#api)
 * [Translations](#translations)
@@ -19,6 +20,19 @@ An improved and more advanced warden plugin with a warden-menu for CS:GO jailbre
 
 ## Dependencies
 * [SmartJailDoors](https://forums.alliedmods.net/showthread.php?t=264100) _by Kailo_
+
+## Features
+The major function this plugin offers is that the warden can choose special event days to play out for the round. Each day has some special server rules & features that applies in order to make it much more fun for the players!  
+1. Hide and Seek
+2. Freeday
+3. Warday
+4. Gravity Freeday
+
+There's also some other functions in the menu that the warden can take advantage of in order to make the game more comfortable.  
+Some of the other entries in the menu include:  
+1. Toggle noblock
+2. Weapons menu, allowing the warden to spawn in the selected weapon to himself
+3. Give a specific player(s) freeday, marked with beacons
 
 ## CVars
 ### BetterWarden
