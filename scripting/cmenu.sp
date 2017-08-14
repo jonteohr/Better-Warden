@@ -19,7 +19,7 @@
 #include <betterwarden>
 #undef REQUIRE_PLUGIN
 
-#define VERSION "0.2"
+#define VERSION "0.2.1"
 
 #define CHOICE1 "#choice1"
 #define CHOICE2 "#choice2"
@@ -441,7 +441,7 @@ public int playerFreedayHandler(Menu menu, MenuAction action, int client, int pa
 						GiveClientFreeday(target);
 						CPrintToChatAll("%s %t", cmenuPrefix, "Player Freeday Announce", target);
 					} else {
-						RemoveClientFreeday(target, true);
+						RemoveClientFreeday(target);
 						CPrintToChatAll("%s %t", cmenuPrefix, "Player Freeday Removed", target);
 					}
 					
@@ -1139,13 +1139,10 @@ public int Native_GiveClientFreeday(Handle plugin, int numParams) {
 
 public int Native_RemoveClientFreeday(Handle plugin, int numParams) {
 	int client = GetNativeCell(1);
-	bool beacon = GetNativeCell(2);
 	
 	if(IsValidClient(client)) {
 		clientFreeday[client] = 0;
-		if(beacon) {
-			ServerCommand("sm_beacon %N", client);
-		}
+			
 		return true;
 	}
 	

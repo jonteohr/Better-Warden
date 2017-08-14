@@ -87,4 +87,19 @@ native bool GiveClientFreeday(int client);
 * @param      set a beacon
 * @return     true if successful
 */
-native bool RemoveClientFreeday(int client, bool beacon);
+native bool RemoveClientFreeday(int client);
+
+/**
+* Sets a beacon on a client. Just like the one in the SM Admin Menu.
+*
+* @param client index
+* @param state of the beacon.
+* @return true if successful
+*/
+stock bool SetClientBeacon(int client, bool beaconState) {
+	if(IsValidClient(client)) {
+		// Beacon code to be implemented here
+		return true;
+	}
+	return false;
+}
