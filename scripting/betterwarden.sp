@@ -10,7 +10,7 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#define VERSION "0.3.2"
+#define VERSION "0.3.3"
 
 // Strings
 char prefix[] = "[{blue}Warden{default}] ";
@@ -39,6 +39,7 @@ ConVar cv_noblock;
 ConVar cv_admFlag;
 ConVar cv_openCells;
 ConVar cv_wardenTwice;
+ConVar cv_StatsHint;
 
 public Plugin myinfo = {
 	name = "[CS:GO] Better Warden",
@@ -68,6 +69,7 @@ public void OnPluginStart() {
 	cv_EnableNoblock = CreateConVar("sm_warden_noblock", "1", "Give the warden the ability to toggle noblock via sm_noblock?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	cv_openCells = CreateConVar("sm_warden_cellscmd", "1", "Give the warden ability to toggle cell-doors via sm_open?\nCell doors on every map needs to be setup with SmartJailDoors for this to work!\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	cv_wardenTwice = CreateConVar("sm_warden_same_twice", "0", "Prevent the same warden from becoming warden next round instantly?\nThis should only be used on populated servers for obvious reasons.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	cv_StatsHint = CreateConVar("sm_warden_stats", "1", "Have a hint message up during the round with information about who's warden, how many players there are etc.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	
 	// Translation stuff
 	LoadTranslations("betterwarden.phrases.txt");
@@ -106,7 +108,8 @@ public void OnPluginStart() {
 	AddCommandListener(OnPlayerChat, "say");
 	
 	// Timers
-	CreateTimer(0.1, JBToolTip, _, TIMER_REPEAT);
+	if(cv_StatsHint.IntValue == 1)
+		CreateTimer(0.1, JBToolTip, _, TIMER_REPEAT);
 	
 	// Fetch 3rd party CVars
 	cv_noblock = FindConVar("mp_solid_teammates");
