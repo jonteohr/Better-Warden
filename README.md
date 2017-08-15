@@ -18,7 +18,7 @@
 	</a>
 </p>
 <p align="center">
-	<sup><strong>An improved and more advanced warden plugin with a warden-menu for CS:GO jailbreak servers!</strong></sup>
+	<sup><strong>An improved and more advanced warden plugin with a custom menu for CS:GO jailbreak servers!</strong></sup>
 <p>
 
 ## Repository Index
