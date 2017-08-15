@@ -68,7 +68,7 @@ Some of the other entries in the menu include:
 
 ## API
 ### Betterwarden
-```
+```sourcepawn
 /*
 * 
 * INCLUDE FOR THE SOURCEMOD PLUGIN; BETTER WARDEN
@@ -200,7 +200,7 @@ stock bool IsValidClient(int client, bool bAllowBots = false, bool bAllowDead = 
 }
 ```
 ### CMenu
-```
+```sourcepawn
 /*
 * https://github.com/condolent/Better-Warden
 */
