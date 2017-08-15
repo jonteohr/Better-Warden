@@ -1,4 +1,4 @@
-<h1 align="center">Better-Warden</h1>
+<h1 align="center">Better Warden</h1>
 
 <p align="center">
 	<a href="https://travis-ci.org/condolent/Better-Warden">
