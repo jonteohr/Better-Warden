@@ -4,6 +4,9 @@
 	<a href="https://travis-ci.org/condolent/Better-Warden">
 		<img src="https://travis-ci.org/condolent/Better-Warden.svg?branch=master">
 	</a>
+	<a href="https://github.com/condolent/Better-Warden/releases">
+		<img src="https://img.shields.io/badge/Version-0.2-blue.svg?style=flat">
+	</a>
 	<a href="https://github.com/condolent/Better-Warden/wiki">
 		<img src="https://img.shields.io/badge/Plugin-Wiki-orange.svg?style=flat">
 	</a>
