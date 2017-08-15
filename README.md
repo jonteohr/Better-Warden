@@ -9,7 +9,7 @@
 		<img src="https://img.shields.io/badge/Plugin-Wiki-orange.svg?style=flat">
 	</a>
 	<a href="https://github.com/condolent/Better-Warden/releases">
-		<img src="https://img.shields.io/badge/Version-0.2-blue.svg?style=flat">
+		<img src="https://img.shields.io/badge/Version-0.3.3-blue.svg?style=flat">
 	</a>
 	<a href="//forums.alliedmods.net">
 		<img src="https://img.shields.io/badge/SM-Thread-lightgrey.svg?style=flat">
@@ -63,6 +63,7 @@ Some of the other entries in the menu include:
 |`sm_warden_noblock`|**1**|Give the warden the ability to toggle noblock via sm_noblock? 1 = Enable. 0 = Disable.|
 |`sm_warden_cellscmd`|**1**|Give the warden ability to toggle cell-doors via sm_open? Cell doors on every map needs to be setup with SmartJailDoors for this to work! 1 = Enable. 0 = Disable.|
 |`sm_warden_same_twice`|**0**|Prevent the same warden from becoming warden next round instantly? This should only be used on populated servers for obvious reasons. 1 = Enable. 0 = Disable.|
+|`sm_warden_stats`|**1**|Have a hint message up during the round with information about who's warden, how many players there are etc. 1 = Enable. 0 = Disable.|
 
 ### CMenu
 | ConVar      | Default | Description   |
@@ -310,7 +311,22 @@ native bool GiveClientFreeday(int client);
 * @param      set a beacon
 * @return     true if successful
 */
-native bool RemoveClientFreeday(int client, bool beacon);
+native bool RemoveClientFreeday(int client);
+
+/**
+* Sets a beacon on a client. Just like the one in the SM Admin Menu.
+*
+* @param client index
+* @param state of the beacon.
+* @return true if successful
+*/
+stock bool SetClientBeacon(int client, bool beaconState) {
+	if(IsValidClient(client)) {
+		// Beacon code to be implemented here
+		return true;
+	}
+	return false;
+}
 ```
 
 ## Translations
