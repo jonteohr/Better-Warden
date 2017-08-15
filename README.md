@@ -1,6 +1,7 @@
 <h1 align="center">Better Warden</h1>
 
 <p align="center">
+	<img src="http://i.imgur.com/WXfuF5Y.png" width="572px"><br/>
 	<a href="https://travis-ci.org/condolent/Better-Warden">
 		<img src="https://travis-ci.org/condolent/Better-Warden.svg?branch=master">
 	</a>
