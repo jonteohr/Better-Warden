@@ -1,6 +1,22 @@
-# Better-Warden [![Build Status](https://travis-ci.org/condolent/Better-Warden.svg?branch=master)](https://travis-ci.org/condolent/Better-Warden) [![Wiki](https://img.shields.io/badge/Plugin-Wiki-orange.svg?style=flat)](https://github.com/condolent/Better-Warden/wiki)
-An improved and more advanced warden plugin with a warden-menu for CS:GO jailbreak servers!  
-[~~AlliedModders~~](https://forums.alliedmods.net/)
+<h1 align="center">Better-Warden</h1>
+
+<p align="center">
+	<a href="https://travis-ci.org/condolent/Better-Warden">
+		<img src="https://travis-ci.org/condolent/Better-Warden.svg?branch=master">
+	</a>
+	<a href="https://github.com/condolent/Better-Warden/wiki">
+		<img src="https://img.shields.io/badge/Plugin-Wiki-orange.svg?style=flat">
+	</a>
+	<a href="//forums.alliedmods.net">
+		<img src="https://img.shields.io/badge/SM-Thread-lightgrey.svg?style=flat">
+	</a>
+	<a href="https://github.com/condolent/Better-Warden/blob/master/LICENSE">
+		<img src="https://img.shields.io/badge/License-GPL3-red.svg?style=flat">
+	</a>
+</p>
+<p align="center">
+	<sup><strong>An improved and more advanced warden plugin with a warden-menu for CS:GO jailbreak servers!</strong></sup>
+<p>
 
 ## Repository Index
 * [Installation](#installation)
