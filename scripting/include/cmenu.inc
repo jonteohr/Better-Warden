@@ -96,10 +96,4 @@ native bool RemoveClientFreeday(int client);
 * @param state of the beacon.
 * @return true if successful
 */
-stock bool SetClientBeacon(int client, bool beaconState) {
-	if(IsValidClient(client)) {
-		// Beacon code to be implemented here
-		return true;
-	}
-	return false;
-}
+native bool SetClientBeacon(int client, bool beaconState);

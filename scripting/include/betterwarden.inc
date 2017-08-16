@@ -123,8 +123,8 @@ native bool IsClientWardenAdmin(int client);
 * Checks several parameters to see if the specified client is a valid user.
 *
 * @param client index
-* @param Allow bots?
-* @param Allow dead?
+* @param Allow bots? (False)
+* @param Allow dead? (False)
 * @return true if valid
 */
 stock bool IsValidClient(int client, bool bAllowBots = false, bool bAllowDead = false)

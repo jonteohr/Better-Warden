@@ -19,7 +19,7 @@
 #include <betterwarden>
 #undef REQUIRE_PLUGIN
 
-#define VERSION "0.3"
+#define VERSION "0.3.1"
 
 #define CHOICE1 "#choice1"
 #define CHOICE2 "#choice2"
@@ -34,6 +34,7 @@
 
 bool IsGameActive = false;
 char cmenuPrefix[] = "[{bluegrey}WardenMenu{default}] ";
+char g_BlipSound[PLATFORM_MAX_PATH];
 
 // Current game
 int hnsActive = 0;
@@ -51,6 +52,9 @@ int gravTimes = 0;
 int clientFreeday[MAXPLAYERS +1];
 int hnsWinners;
 int aliveTs;
+int g_BeamSprite = -1;
+int g_HaloSprite = -1;
+int playerBeacon[MAXPLAYERS + 1];
 
 // ## CVars ##
 ConVar cvVersion;
@@ -95,6 +99,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	CreateNative("ClientHasFreeday", Native_ClientHasFreeday);
 	CreateNative("GiveClientFreeday", Native_GiveClientFreeday);
 	CreateNative("RemoveClientFreeday", Native_RemoveClientFreeday);
+	CreateNative("SetClientBeacon", Native_SetClientBeacon);
 	RegPluginLibrary("cmenu");
 }
 
@@ -206,6 +211,31 @@ public void OnMapStart() {
 	freedayTimes = 0;
 	warTimes = 0;
 	gravTimes = 0;
+	
+	// Beacon stuff
+	Handle gameConfig = LoadGameConfigFile("funcommands.games");
+	if (gameConfig == null)
+	{
+		SetFailState("Unable to load game config funcommands.games");
+		return;
+	}
+	
+	if (GameConfGetKeyValue(gameConfig, "SoundBlip", g_BlipSound, sizeof(g_BlipSound)) && g_BlipSound[0])
+	{
+		PrecacheSound(g_BlipSound, true);
+	}
+	
+	char buffer[PLATFORM_MAX_PATH];
+	if (GameConfGetKeyValue(gameConfig, "SpriteBeam", buffer, sizeof(buffer)) && buffer[0])
+	{
+		g_BeamSprite = PrecacheModel(buffer);
+	}
+	if (GameConfGetKeyValue(gameConfig, "SpriteHalo", buffer, sizeof(buffer)) && buffer[0])
+	{
+		g_HaloSprite = PrecacheModel(buffer);
+	}
+	
+	delete gameConfig;
 }
 
 public void OnWardenCreated(int client) {
@@ -1134,7 +1164,7 @@ public int Native_GiveClientFreeday(Handle plugin, int numParams) {
 	
 	if(IsValidClient(client)) {
 		clientFreeday[client] = 1;
-		ServerCommand("sm_beacon %N", client);
+		SetClientBeacon(client, true);
 		return true;
 	}
 	
@@ -1146,9 +1176,61 @@ public int Native_RemoveClientFreeday(Handle plugin, int numParams) {
 	
 	if(IsValidClient(client)) {
 		clientFreeday[client] = 0;
-			
+		SetClientBeacon(client, false);
 		return true;
 	}
 	
 	return false;
+}
+
+public int Native_SetClientBeacon(Handle plugin, int numParams) {
+	int client = GetNativeCell(1);
+	bool beaconState = GetNativeCell(2);
+	
+	if(IsValidClient(client)) {
+		if(beaconState == true) {
+			CreateTimer(1.0, BeaconTimer, client, TIMER_REPEAT);
+			playerBeacon[client] = 1;
+			
+			return true;
+		} else {
+			playerBeacon[client] = 0;
+			
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+public Action BeaconTimer(Handle timer, any client) {
+
+	if(!IsValidClient(client))
+		return Plugin_Stop;
+		
+	if(playerBeacon[client] == 0)
+		return Plugin_Stop;
+	
+	int redColor[4] = {
+		255,
+		75,
+		75,
+		255
+	};
+	float vec[3];
+	GetClientAbsOrigin(client, vec);
+	vec[2] += 10;
+	
+	if(g_BeamSprite > -1 && g_HaloSprite > -1) {
+		
+		TE_SetupBeamRingPoint(vec, 10.0, 375.0, g_BeamSprite, g_HaloSprite, 0, 10, 0.6, 10.0, 0.5, redColor, 10, 0);
+		TE_SendToAll();
+		
+	}
+	if(g_BlipSound[0]) {
+		GetClientEyePosition(client, vec);
+		EmitAmbientSound(g_BlipSound, vec, client, SNDLEVEL_RAIDSIREN);
+	}
+	
+	return Plugin_Continue;
 }
