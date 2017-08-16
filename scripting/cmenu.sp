@@ -19,7 +19,7 @@
 #include <betterwarden>
 #undef REQUIRE_PLUGIN
 
-#define VERSION "0.2.1"
+#define VERSION "0.3"
 
 #define CHOICE1 "#choice1"
 #define CHOICE2 "#choice2"
@@ -101,6 +101,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 public OnPluginStart() {
 	
 	LoadTranslations("cmenu.phrases.txt");
+	LoadTranslations("betterwarden.phrases.txt");
 	SetGlobalTransTarget(LANG_SERVER);
 	
 	AutoExecConfig(true, "cmenu", "BetterWarden");
@@ -125,7 +126,7 @@ public OnPluginStart() {
 	cvEnableDoors = CreateConVar("sm_cmenu_doors", "1", "sm_warden_cellscmd needs to be set to 1 for this to work!\nAdd an option for opening doors via the menu.\n0 = Disable.\n1 = Enable", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	
 	
-	RegAdminCmd("sm_abortgames", sm_abortgames, b);
+	RegConsoleCmd("sm_abortgames", sm_abortgames);
 	RegConsoleCmd("sm_cmenu", sm_cmenu);
 	RegConsoleCmd("sm_wmenu", sm_cmenu);
 	RegConsoleCmd("sm_days", sm_days);
@@ -239,7 +240,10 @@ public Action sm_cmenu(int client, int args) {
 }
 
 public Action sm_abortgames(int client, int args) {
-	
+	if(!IsClientWardenAdmin(client)) {
+		CPrintToChat(client, "%s {red}%t", cmenuPrefix, "Not Admin");
+		return Plugin_Handled;
+	}
 	if(!IsGameActive) {
 		CPrintToChat(client, "%s %t", cmenuPrefix, "Admin Abort Denied");
 		return Plugin_Handled;
@@ -1057,7 +1061,7 @@ public void error(int client, int errorCode) {
 		CPrintToChat(client, "%s %t", cmenuPrefix, "Not Alive");
 	}
 	if(errorCode == 2) {
-		CPrintToChat(client, "%s %t", cmenuPrefix, "Not CT");
+		CPrintToChat(client, "%s %t", cmenuPrefix, "Client Not CT");
 	}
 }
 

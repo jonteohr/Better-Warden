@@ -100,4 +100,17 @@
 		"en"	"You cannot become warden twice in a row!"
 		"sv"	"Du kan inte vara warden två gånger i rad!"
 	}
+	
+	"Not Admin"
+	{
+		"en"	"You are not an admin!"
+		"sv"	"Du är inte admin!"
+	}
+	
+	"Warden Set"
+	{
+		"#format"	"{1:N}"
+		"en"	"You have made {1} the warden for this round!"
+		"sv"	"Du har satt {1} som warden för denna runda!"
+	}
 }

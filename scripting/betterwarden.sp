@@ -10,7 +10,7 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#define VERSION "0.3.3"
+#define VERSION "0.3.4"
 
 // Strings
 char prefix[] = "[{blue}Warden{default}] ";
@@ -40,6 +40,9 @@ ConVar cv_admFlag;
 ConVar cv_openCells;
 ConVar cv_wardenTwice;
 ConVar cv_StatsHint;
+ConVar cv_colorR;
+ConVar cv_colorG;
+ConVar cv_colorB;
 
 public Plugin myinfo = {
 	name = "[CS:GO] Better Warden",
@@ -56,6 +59,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	CreateNative("RemoveWarden", Native_RemoveWarden);
 	CreateNative("GetCurrentWarden", Native_GetCurrentWarden);
 	CreateNative("GetTeamAliveClientCount", Native_GetTeamAliveClientCount);
+	CreateNative("IsClientWardenAdmin", Native_IsClientWardenAdmin);
 	RegPluginLibrary("betterwarden");
 }
 
@@ -65,11 +69,13 @@ public void OnPluginStart() {
 	AutoExecConfig(true, "warden", "BetterWarden");
 	cv_version = CreateConVar("sm_warden_version", VERSION, "Current version of this plugin. DO NOT CHANGE THIS!", FCVAR_DONTRECORD|FCVAR_NOTIFY);
 	cv_admFlag = CreateConVar("sm_warden_admin", "b", "The flag required to execute admin commands for this plugin.", FCVAR_NOTIFY);
-	//cv_NoblockStandard = CreateConVar("sm_warden_noblock_standard", "1", "You only need to set this if sm_warden_noblock is set to 1!\nWhat should the noblock rules be as default on start of each round?\nThis should have the same value as your mp_solid_teammates cvar in server.cfg.\n1 = Solid teammates.\n0 = No block.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	cv_EnableNoblock = CreateConVar("sm_warden_noblock", "1", "Give the warden the ability to toggle noblock via sm_noblock?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	cv_openCells = CreateConVar("sm_warden_cellscmd", "1", "Give the warden ability to toggle cell-doors via sm_open?\nCell doors on every map needs to be setup with SmartJailDoors for this to work!\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	cv_wardenTwice = CreateConVar("sm_warden_same_twice", "0", "Prevent the same warden from becoming warden next round instantly?\nThis should only be used on populated servers for obvious reasons.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	cv_StatsHint = CreateConVar("sm_warden_stats", "1", "Have a hint message up during the round with information about who's warden, how many players there are etc.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	cv_colorR = CreateConVar("sm_warden_color_R", "33", "The Red value of the color the warden gets.", FCVAR_NOTIFY, true, 0.0, true, 255.0);
+	cv_colorG = CreateConVar("sm_warden_color_G", "114", "The Green value of the color the warden gets.", FCVAR_NOTIFY, true, 0.0, true, 255.0);
+	cv_colorB = CreateConVar("sm_warden_color_B", "255", "The Blue value of the color the warden gets.", FCVAR_NOTIFY, true, 0.0, true, 255.0);
 	
 	// Translation stuff
 	LoadTranslations("betterwarden.phrases.txt");
@@ -87,10 +93,10 @@ public void OnPluginStart() {
 		RegConsoleCmd("sm_noblock", Command_Noblock);
 	
 	// Admin Commands
-	RegAdminCmd("sm_uw", Command_Unwarden, b); /*	TODO: Set the configured flag here	*/
-	RegAdminCmd("sm_unwarden", Command_Unwarden, b);
-	RegAdminCmd("sm_sw", Command_SetWarden, b);
-	RegAdminCmd("sm_setwarden", Command_SetWarden, b);
+	RegConsoleCmd("sm_uw", Command_Unwarden);
+	RegConsoleCmd("sm_unwarden", Command_Unwarden);
+	RegConsoleCmd("sm_sw", Command_SetWarden);
+	RegConsoleCmd("sm_setwarden", Command_SetWarden);
 	
 	// Global forwards
 	gF_OnWardenDeath = CreateGlobalForward("OnWardenDeath", ET_Ignore, Param_Cell);
@@ -256,6 +262,10 @@ public Action Command_Retire(int client, int args) {
 }
 
 public Action Command_Unwarden(int client, int args) {
+	if(!IsClientWardenAdmin(client)) {
+		CPrintToChat(client, "%s {red}%t", prefix, "Not Admin");
+		return Plugin_Handled;
+	}
 	if(!WardenExists()) {
 		CPrintToChat(client, "%s %t", prefix, "No Warden Alive");
 		return Plugin_Handled;
@@ -291,6 +301,10 @@ public Action Command_OpenCells(int client, int args) {
 }
 
 public Action Command_SetWarden(int client, int args) {
+	if(!IsClientWardenAdmin(client)) {
+		CPrintToChat(client, "%s {red}%t", prefix, "Not Admin");
+		return Plugin_Handled;
+	}
 	if(!IsValidClient(client, false, true)) {
 		CPrintToChat(client, "%s %t", prefix, "Invalid Client");
 		return Plugin_Handled;
@@ -299,10 +313,28 @@ public Action Command_SetWarden(int client, int args) {
 		CPrintToChat(client, "%s %t", prefix, "Warden Exists");
 		return Plugin_Handled;
 	}
+	if(args < 1) {
+		ReplyToCommand(client, "[SM] Usage: sm_ip <#userid|name>");
+		return Plugin_Handled;
+	}
 	
-	char arg[MAX_NAME_LENGTH];
-	GetCmdArgString(arg, sizeof(arg));
+	char arg[64];
+	GetCmdArg(1, arg, sizeof(arg));
 	
+	char target_name[MAX_TARGET_LENGTH];
+	int target_list[MAXPLAYERS], target_count;
+	bool tn_is_ml;
+	
+	if((target_count = ProcessTargetString(arg, client, target_list, sizeof(target_list), COMMAND_FILTER_NO_BOTS, target_name, sizeof(target_name), tn_is_ml)) <= 0) {
+		ReplyToTargetError(client, target_count);
+		return Plugin_Handled;
+	}
+	
+	for(int usr = 0; usr < target_count; usr++) {
+		SetWarden(target_list[usr]);
+		ReplyToCommand(client, "%s %t", prefix, "Warden Set", target_list[usr]);
+		return Plugin_Handled;
+	}
 	
 	return Plugin_Handled;
 }
@@ -355,7 +387,7 @@ public Action RenderColor(Handle timer, int client) {
 		return Plugin_Stop;
 	}
 	
-	SetEntityRenderColor(client, 33, 114, 255);
+	SetEntityRenderColor(client, cv_colorR.IntValue, cv_colorG.IntValue, cv_colorB.IntValue);
 	
 	return Plugin_Continue;
 }
@@ -423,4 +455,16 @@ public int Native_RemoveWarden(Handle plugin, int numParams) {
 }
 public int Native_GetCurrentWarden(Handle plugin, int numParams) {
 	return curWarden;
+}
+public int Native_IsClientWardenAdmin(Handle plugin, int numParams) {
+	int client = GetNativeCell(1);
+	char admflag[32];
+	GetConVarString(cv_admFlag, admflag, sizeof(admflag));
+	
+	if(IsValidClient(client)) {
+		if(GetUserFlagBits(client) & ReadFlagString(admflag) == ReadFlagString(admflag))
+			return true;
+	}
+	
+	return false;
 }

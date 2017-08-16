@@ -112,6 +112,14 @@ native bool GetCurrentWarden();
 native bool GetTeamAliveClientCount(int teamIndex);
 
 /**
+* Checks if the client is a Better Warden admin.
+*
+* @param client index
+* @return true if yes
+*/
+native bool IsClientWardenAdmin(int client);
+
+/**
 * Checks several parameters to see if the specified client is a valid user.
 *
 * @param client index

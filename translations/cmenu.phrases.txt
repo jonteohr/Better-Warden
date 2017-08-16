@@ -7,20 +7,6 @@
 		"fr"	"Tu es pas en vivant."
 	}
 	
-	"Not CT"
-	{
-		"en"	"You're not a CT."
-		"sv"	"Du är inte CT."
-		"fr"	"Tu es pas un CT."
-	}
-	
-	"Not Warden"
-	{
-		"en"	"You're not warden."
-		"sv"	"Du är inte warden."
-		"fr"	"Tu es pas le gardien."
-	}
-	
 	"Warden Died"
 	{
 		"en"	"Warden died, aborting all games."
