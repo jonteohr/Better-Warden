@@ -27,6 +27,7 @@
 * [Dependencies](#dependencies)
 * [Features](#features)
 * [CVars](#cvars)
+* [Commands](https://github.com/condolent/Better-Warden/wiki/Commands)
 * [API](#api)
 * [Translations](#translations)
 
