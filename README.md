@@ -9,7 +9,13 @@
 		<img src="https://img.shields.io/badge/Plugin-Wiki-orange.svg?style=flat">
 	</a>
 	<a href="https://github.com/condolent/Better-Warden/releases">
-		<img src="https://img.shields.io/badge/Version-0.3.4-blue.svg?style=flat">
+		<img src="https://img.shields.io/github/release/condolent/better-warden.svg">
+	</a>
+	<a href="https://github.com/condolent/Better-Warden/releases">
+		<img src="https://img.shields.io/github/downloads/condolent/better-warden/total.svg">
+	</a>
+	<a href="https://github.com/condolent/Better-Warden/issues">
+		<img src="https://img.shields.io/github/issues-raw/condolent/better-warden.svg">
 	</a>
 	<a href="//forums.alliedmods.net">
 		<img src="https://img.shields.io/badge/SM-Thread-lightgrey.svg?style=flat">
