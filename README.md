@@ -17,7 +17,7 @@
 	<a href="https://github.com/condolent/Better-Warden/issues">
 		<img src="https://img.shields.io/github/issues-raw/condolent/better-warden.svg">
 	</a>
-	<a href="//forums.alliedmods.net">
+	<a href="https://forums.alliedmods.net/showthread.php?p=2541919#post2541919">
 		<img src="https://img.shields.io/badge/SM-Thread-lightgrey.svg?style=flat">
 	</a>
 	<a href="https://github.com/condolent/Better-Warden/blob/master/LICENSE">
