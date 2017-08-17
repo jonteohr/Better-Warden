@@ -8,6 +8,7 @@
  #endinput
 #endif
 #define bwardenincluded
+#define VERSION "0.3.5"
 
 #define a ADMFLAG_RESERVATION
 #define b ADMFLAG_GENERIC
@@ -44,6 +45,14 @@ forward void OnWardenDeath(int client);
 * @param client index
 */
 forward void OnWardenCreated(int client);
+
+/**
+* Called when an admin sets a warden.
+*
+* @param admin client index
+* @param client index
+*/
+forward void OnWardenCreatedByAdmin(int admin, int client);
 
 /**
 * Called when the current warden disconnects.

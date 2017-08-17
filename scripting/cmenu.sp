@@ -19,8 +19,6 @@
 #include <betterwarden>
 #undef REQUIRE_PLUGIN
 
-#define VERSION "0.3.1"
-
 #define CHOICE1 "#choice1"
 #define CHOICE2 "#choice2"
 #define CHOICE3 "#choice3"
@@ -76,6 +74,7 @@ ConVar cvNoblock;
 ConVar cvEnableWeapons;
 ConVar cvEnablePlayerFreeday;
 ConVar cvEnableDoors;
+ConVar cvBeaconRadius;
 
 Handle gF_OnCMenuOpened = null;
 Handle gF_OnEventDayCreated = null;
@@ -129,7 +128,7 @@ public OnPluginStart() {
 	cvRestFreeday = CreateConVar("sm_cmenu_restricted_freeday", "1", "Add an option for a restricted freeday in the menu?\nThis event uses the same configuration as a normal freeday.\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	cvEnablePlayerFreeday = CreateConVar("sm_cmenu_player_freeday", "1", "Add an option for giving a specific player a freeday in the menu?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	cvEnableDoors = CreateConVar("sm_cmenu_doors", "1", "sm_warden_cellscmd needs to be set to 1 for this to work!\nAdd an option for opening doors via the menu.\n0 = Disable.\n1 = Enable", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	
+	cvBeaconRadius = FindConVar("sm_beacon_radius");
 	
 	RegConsoleCmd("sm_abortgames", sm_abortgames);
 	RegConsoleCmd("sm_cmenu", sm_cmenu);
@@ -1211,10 +1210,10 @@ public Action BeaconTimer(Handle timer, any client) {
 	if(playerBeacon[client] == 0)
 		return Plugin_Stop;
 	
-	int redColor[4] = {
+	int beamColor[4] = {
+		74,
 		255,
-		75,
-		75,
+		111,
 		255
 	};
 	float vec[3];
@@ -1223,7 +1222,7 @@ public Action BeaconTimer(Handle timer, any client) {
 	
 	if(g_BeamSprite > -1 && g_HaloSprite > -1) {
 		
-		TE_SetupBeamRingPoint(vec, 10.0, 375.0, g_BeamSprite, g_HaloSprite, 0, 10, 0.6, 10.0, 0.5, redColor, 10, 0);
+		TE_SetupBeamRingPoint(vec, 10.0, cvBeaconRadius.FloatValue, g_BeamSprite, g_HaloSprite, 0, 10, 0.6, 10.0, 0.5, beamColor, 10, 0);
 		TE_SendToAll();
 		
 	}

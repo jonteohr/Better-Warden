@@ -10,8 +10,6 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#define VERSION "0.3.4"
-
 // Strings
 char prefix[] = "[{blue}Warden{default}] ";
 char curWardenStat[MAX_NAME_LENGTH];
@@ -30,6 +28,7 @@ Handle gF_OnWardenDisconnect = null;
 Handle gF_OnWardenRetire = null;
 Handle gF_OnAdminRemoveWarden = null;
 Handle gF_OnWardenCreated = null;
+Handle gF_OnWardenCreatedByAdmin = null;
 
 // ConVars
 ConVar cv_version;
@@ -104,6 +103,7 @@ public void OnPluginStart() {
 	gF_OnWardenRetire = CreateGlobalForward("OnWardenRetire", ET_Ignore, Param_Cell);
 	gF_OnAdminRemoveWarden = CreateGlobalForward("OnAdminRemoveWarden", ET_Ignore, Param_Cell, Param_Cell);
 	gF_OnWardenCreated = CreateGlobalForward("OnWardenCreated", ET_Ignore, Param_Cell);
+	gF_OnWardenCreatedByAdmin = CreateGlobalForward("OnWardenCreatedByAdmin", ET_Ignore, Param_Cell, Param_Cell);
 	
 	// Event Hooks
 	HookEvent("player_death", OnPlayerDeath);
@@ -333,6 +333,12 @@ public Action Command_SetWarden(int client, int args) {
 	for(int usr = 0; usr < target_count; usr++) {
 		SetWarden(target_list[usr]);
 		ReplyToCommand(client, "%s %t", prefix, "Warden Set", target_list[usr]);
+		
+		Call_StartForward(gF_OnWardenCreatedByAdmin);
+		Call_PushCell(client);
+		Call_PushCell(target_list[usr]);
+		Call_Finish();
+		
 		return Plugin_Handled;
 	}
 	
