@@ -1222,7 +1222,7 @@ public Action BeaconTimer(Handle timer, any client) {
 	
 	if(g_BeamSprite > -1 && g_HaloSprite > -1) {
 		
-		TE_SetupBeamRingPoint(vec, 10.0, cvBeaconRadius.FloatValue, g_BeamSprite, g_HaloSprite, 0, 10, 0.6, 10.0, 0.5, beamColor, 10, 0);
+		TE_SetupBeamRingPoint(vec, 10.0, 375.0, g_BeamSprite, g_HaloSprite, 0, 10, 0.6, 10.0, 0.5, beamColor, 10, 0);
 		TE_SendToAll();
 		
 	}
