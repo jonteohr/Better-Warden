@@ -128,7 +128,6 @@ public OnPluginStart() {
 	cvRestFreeday = CreateConVar("sm_cmenu_restricted_freeday", "1", "Add an option for a restricted freeday in the menu?\nThis event uses the same configuration as a normal freeday.\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	cvEnablePlayerFreeday = CreateConVar("sm_cmenu_player_freeday", "1", "Add an option for giving a specific player a freeday in the menu?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	cvEnableDoors = CreateConVar("sm_cmenu_doors", "1", "sm_warden_cellscmd needs to be set to 1 for this to work!\nAdd an option for opening doors via the menu.\n0 = Disable.\n1 = Enable", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	cvBeaconRadius = FindConVar("sm_beacon_radius");
 	
 	RegConsoleCmd("sm_abortgames", sm_abortgames);
 	RegConsoleCmd("sm_cmenu", sm_cmenu);
@@ -150,6 +149,10 @@ public OnPluginStart() {
 	gF_OnEventDayAborted = CreateGlobalForward("OnEventDayAborted", ET_Ignore);
 	gF_OnHnsOver = CreateGlobalForward("OnHnsOver", ET_Ignore);
 	
+}
+
+public void OnAllPluginsLoaded() {
+	cvBeaconRadius = FindConVar("sm_beacon_radius");
 }
 
 public void OnClientPutInServer(int client) {
@@ -201,6 +204,13 @@ public void OnRoundStart(Event event, const char[] name, bool dontBroadcast) {
 	
 	aliveTs = 0;
 	aliveTs = GetTeamAliveClientCount(CS_TEAM_T);
+	for(int client = 1; client <= MaxClients; client++) {
+		if(IsValidClient(client)) {
+			if(ClientHasFreeday(client)) {
+				RemoveClientFreeday(client);
+			}
+		}
+	}
 }
 
 public void OnMapStart() {
@@ -1222,7 +1232,7 @@ public Action BeaconTimer(Handle timer, any client) {
 	
 	if(g_BeamSprite > -1 && g_HaloSprite > -1) {
 		
-		TE_SetupBeamRingPoint(vec, 10.0, 375.0, g_BeamSprite, g_HaloSprite, 0, 10, 0.6, 10.0, 0.5, beamColor, 10, 0);
+		TE_SetupBeamRingPoint(vec, 10.0, cvBeaconRadius.FloatValue, g_BeamSprite, g_HaloSprite, 0, 10, 0.6, 10.0, 0.5, beamColor, 10, 0);
 		TE_SendToAll();
 		
 	}
