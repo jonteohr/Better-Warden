@@ -39,11 +39,12 @@
 
 ## Installation
 1. [Download the plugin package](https://github.com/condolent/Better-Warden/releases)
-2. Drag and drop the containing _addons_ folder to your root folder. _By default, the root folder is named csgo._
-3. Restart your server or change map for the plugin to load with its translations etc.
-4. Make desired changes in the configs located in _root/cfg/BetterWarden_.
-5. Type in server console _sm plugins reload betterwarden_ & _sm plugins reload cmenu_.
-6. Done!
+2. In the `SERVER FILES` folder, drag all of its' content to your servers root folder (`csgo`)
+3. Everything in the `FASTDL` folder should be uploaded to your FastDL webserver
+4. Restart your server or change map
+5. Make your desired changes in the two configs located in `csgo/cfg/BetterWarden` folder
+6. Change map, restart server or reload both `betterwarden.smx` and `cmenu.smx` for changes to apply
+7. Done!
 
 ## Dependencies
 * [SmartJailDoors](https://forums.alliedmods.net/showthread.php?t=264100) _by Kailo_
