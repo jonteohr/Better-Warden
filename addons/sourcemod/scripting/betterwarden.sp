@@ -13,6 +13,7 @@
 // Strings
 char prefix[] = "[{blue}Warden{default}] ";
 char curWardenStat[MAX_NAME_LENGTH];
+char WardenIconPath[256];
 
 // Integers
 int curWarden = -1;
@@ -21,6 +22,7 @@ int aliveCT = 0;
 int aliveTerrorists = 0;
 int totalCT = 0;
 int totalTerrorists = 0;
+int iIcon[MAXPLAYERS +1] = {-1, ...};
 
 // Forward handles
 Handle gF_OnWardenDeath = null;
@@ -34,7 +36,6 @@ Handle gF_OnWardenCreatedByAdmin = null;
 ConVar cv_version;
 ConVar cv_EnableNoblock;
 ConVar cv_noblock;
-//ConVar cv_NoblockStandard;
 ConVar cv_admFlag;
 ConVar cv_openCells;
 ConVar cv_wardenTwice;
@@ -42,6 +43,8 @@ ConVar cv_StatsHint;
 ConVar cv_colorR;
 ConVar cv_colorG;
 ConVar cv_colorB;
+ConVar cv_wardenIcon;
+ConVar cv_wardenIconPath;
 
 public Plugin myinfo = {
 	name = "[CS:GO] Better Warden",
@@ -75,6 +78,8 @@ public void OnPluginStart() {
 	cv_colorR = CreateConVar("sm_warden_color_R", "33", "The Red value of the color the warden gets.", FCVAR_NOTIFY, true, 0.0, true, 255.0);
 	cv_colorG = CreateConVar("sm_warden_color_G", "114", "The Green value of the color the warden gets.", FCVAR_NOTIFY, true, 0.0, true, 255.0);
 	cv_colorB = CreateConVar("sm_warden_color_B", "255", "The Blue value of the color the warden gets.", FCVAR_NOTIFY, true, 0.0, true, 255.0);
+	cv_wardenIcon = CreateConVar("sm_warden_icon", "1", "Have an icon above the wardens' head?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	cv_wardenIconPath = CreateConVar("sm_warden_icon_path", "decals/BetterWarden/warden", "The path to the icon. Do not include file extensions!", FCVAR_NOTIFY);
 	
 	// Translation stuff
 	LoadTranslations("betterwarden.phrases.txt");
@@ -117,8 +122,10 @@ public void OnPluginStart() {
 	if(cv_StatsHint.IntValue == 1)
 		CreateTimer(0.1, JBToolTip, _, TIMER_REPEAT);
 	
-	// Fetch 3rd party CVars
+	// Fetch CVars
 	cv_noblock = FindConVar("mp_solid_teammates");
+	cv_wardenIconPath.GetString(WardenIconPath, sizeof(WardenIconPath));
+	
 }
 
 /////////////////////////////
@@ -134,6 +141,10 @@ public void OnMapStart() {
 	totalTerrorists = GetTeamClientCount(CS_TEAM_T);
 	
 	RemoveWarden();
+	
+	if(cv_wardenIcon.IntValue == 1) {
+		PrecacheModelAnyDownload(WardenIconPath);
+	}
 }
 
 public void OnJoinTeam(Event event, const char[] name, bool dontBroadcast) {
@@ -194,6 +205,54 @@ public void OnClientDisconnect(int client) {
 		Call_Finish();
 	}
 	
+}
+
+public void CreateIcon(int client) {
+	if(!IsValidClient(client) || !IsClientWarden(client))
+		return;
+	
+	if(cv_wardenIcon.IntValue != 1)
+		return;
+	
+	RemoveIcon(client);
+	
+	char iTarget[16];
+	Format(iTarget, 16, "client%d", client);
+	DispatchKeyValue(client, "targetname", iTarget);
+	
+	iIcon[client] = CreateEntityByName("env_sprite");
+	
+	if (!iIcon[client]) 
+		return;
+	
+	char iconbuffer[256];
+	
+	Format(iconbuffer, sizeof(iconbuffer), "materials/%s.vmt", WardenIconPath);
+	
+	DispatchKeyValue(iIcon[client], "model", iconbuffer);
+	DispatchKeyValue(iIcon[client], "classname", "env_sprite");
+	DispatchKeyValue(iIcon[client], "spawnflags", "1");
+	DispatchKeyValue(iIcon[client], "scale", "0.3");
+	DispatchKeyValue(iIcon[client], "rendermode", "1");
+	DispatchKeyValue(iIcon[client], "rendercolor", "255 255 255");
+	DispatchSpawn(iIcon[client]);
+	
+	float origin[3];
+	GetClientAbsOrigin(client, origin);
+	origin[2] = origin[2] + 90.0;
+	
+	TeleportEntity(iIcon[client], origin, NULL_VECTOR, NULL_VECTOR);
+	SetVariantString(iTarget);
+	AcceptEntityInput(iIcon[client], "SetParent", iIcon[client], iIcon[client], 0);
+	
+	SDKHook(iIcon[client], SDKHook_SetTransmit, Should_TransmitW);
+}
+
+public void RemoveIcon(int client) {
+	if(iIcon[client] > 0 && IsValidEdict(iIcon[client])) {
+		AcceptEntityInput(iIcon[client], "Kill");
+		iIcon[client] = -1;
+	}
 }
 
 
@@ -263,11 +322,11 @@ public Action Command_Retire(int client, int args) {
 
 public Action Command_Unwarden(int client, int args) {
 	if(!IsClientWardenAdmin(client)) {
-		CPrintToChat(client, "%s {red}%t", prefix, "Not Admin");
+		CReplyToCommand(client, "%s {red}%t", prefix, "Not Admin");
 		return Plugin_Handled;
 	}
 	if(!WardenExists()) {
-		CPrintToChat(client, "%s %t", prefix, "No Warden Alive");
+		CReplyToCommand(client, "%s %t", prefix, "No Warden Alive");
 		return Plugin_Handled;
 	}
 	
@@ -302,19 +361,19 @@ public Action Command_OpenCells(int client, int args) {
 
 public Action Command_SetWarden(int client, int args) {
 	if(!IsClientWardenAdmin(client)) {
-		CPrintToChat(client, "%s {red}%t", prefix, "Not Admin");
+		CReplyToCommand(client, "%s {red}%t", prefix, "Not Admin");
 		return Plugin_Handled;
 	}
 	if(!IsValidClient(client, false, true)) {
-		CPrintToChat(client, "%s %t", prefix, "Invalid Client");
+		CReplyToCommand(client, "%s %t", prefix, "Invalid Client");
 		return Plugin_Handled;
 	}
 	if(WardenExists()) {
-		CPrintToChat(client, "%s %t", prefix, "Warden Exists");
+		CReplyToCommand(client, "%s %t", prefix, "Warden Exists");
 		return Plugin_Handled;
 	}
 	if(args < 1) {
-		ReplyToCommand(client, "[SM] Usage: sm_ip <#userid|name>");
+		CReplyToCommand(client, "[SM] Usage: sm_ip <#userid|name>");
 		return Plugin_Handled;
 	}
 	
@@ -331,15 +390,17 @@ public Action Command_SetWarden(int client, int args) {
 	}
 	
 	for(int usr = 0; usr < target_count; usr++) {
+		if(GetClientTeam(target_list[usr]) != CS_TEAM_CT) {
+			CReplyToCommand(client, "%s %t", prefix, "Client must be CT");
+			break;
+		}
 		SetWarden(target_list[usr]);
-		ReplyToCommand(client, "%s %t", prefix, "Warden Set", target_list[usr]);
+		CReplyToCommand(client, "%s %t", prefix, "Warden Set", target_list[usr]);
 		
 		Call_StartForward(gF_OnWardenCreatedByAdmin);
 		Call_PushCell(client);
 		Call_PushCell(target_list[usr]);
 		Call_Finish();
-		
-		return Plugin_Handled;
 	}
 	
 	return Plugin_Handled;
@@ -378,9 +439,25 @@ public Action OnPlayerChat(int client, char[] command, int args) {
 	if(message[0] == '/' || message[0] == '@' || IsChatTrigger())
 		return Plugin_Handled;
 	
-	CPrintToChatAll("{bluegrey}[Warden] {team2}%N : %s", client, message);
+	CPrintToChatAll("{bluegrey}[Warden] {team2}%N :{default} %s", client, message);
 	return Plugin_Handled;
 	
+}
+
+public Action Should_TransmitW(int entity, int client) {
+	char m_ModelName[PLATFORM_MAX_PATH];
+	char iconbuffer[256];
+
+	Format(iconbuffer, sizeof(iconbuffer), "materials/%s.vmt", WardenIconPath);
+
+	GetEntPropString(entity, Prop_Data, "m_ModelName", m_ModelName, sizeof(m_ModelName));
+
+	if (StrEqual(iconbuffer, m_ModelName))
+	{
+		return Plugin_Continue;
+	}
+
+	return Plugin_Handled;
 }
 
 
@@ -449,14 +526,23 @@ public int Native_SetWarden(Handle plugin, int numParams) {
 	curWardenStat = name;
 	CreateTimer(1.0, RenderColor, client, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
 	
+	CreateIcon(client);
+	
 	return true;
 }
 public int Native_RemoveWarden(Handle plugin, int numParams) {
+	if(!WardenExists())
+		return false;
+	
 	if(cv_wardenTwice.IntValue == 1) {
 		prevWarden = curWarden;
 	}
+	
+	RemoveIcon(GetCurrentWarden());
+	
 	curWarden = -1;
 	curWardenStat = "None..";
+	
 	return true;
 }
 public int Native_GetCurrentWarden(Handle plugin, int numParams) {
@@ -467,8 +553,8 @@ public int Native_IsClientWardenAdmin(Handle plugin, int numParams) {
 	char admflag[32];
 	GetConVarString(cv_admFlag, admflag, sizeof(admflag));
 	
-	if(IsValidClient(client)) {
-		if(GetUserFlagBits(client) & ReadFlagString(admflag) == ReadFlagString(admflag))
+	if(IsValidClient(client, false, true)) {
+		if((GetUserFlagBits(client) & ReadFlagString(admflag) == ReadFlagString(admflag)) || GetUserFlagBits(client) & ADMFLAG_ROOT)
 			return true;
 	}
 	

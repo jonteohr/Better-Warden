@@ -8,7 +8,7 @@
  #endinput
 #endif
 #define bwardenincluded
-#define VERSION "0.3.5c"
+#define VERSION "0.4"
 
 #define a ADMFLAG_RESERVATION
 #define b ADMFLAG_GENERIC
@@ -143,4 +143,20 @@ stock bool IsValidClient(int client, bool bAllowBots = false, bool bAllowDead = 
 		return false;
 	}
 	return true;
+}
+
+/**
+* Precaches and prepares models for download. Used for icons!
+*
+* @param path to model
+*/
+stock void PrecacheModelAnyDownload(char[] sModel)
+{
+	char sBuffer[256];
+	Format(sBuffer, sizeof(sBuffer), "materials/%s.vmt", sModel);
+	AddFileToDownloadsTable(sBuffer);
+	PrecacheModel(sBuffer, true);
+	Format(sBuffer, sizeof(sBuffer), "materials/%s.vtf", sModel);
+	AddFileToDownloadsTable(sBuffer);
+	PrecacheModel(sBuffer, true);
 }

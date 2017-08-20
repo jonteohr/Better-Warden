@@ -1,0 +1,5 @@
+"UnlitGeneric"
+{
+	"$basetexture" "decals/BetterWarden/warden"
+	"$translucent" 1
+}

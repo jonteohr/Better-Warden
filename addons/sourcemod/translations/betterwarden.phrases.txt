@@ -113,4 +113,10 @@
 		"en"	"You have made {1} the warden for this round!"
 		"sv"	"Du har satt {1} som warden för denna runda!"
 	}
+	
+	"Client must be CT"
+	{
+		"en"	"Client is not a Counter-Terrorist."
+		"sv"	"Användaren är inte en Counter-Terrorist."
+	}
 }
