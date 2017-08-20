@@ -74,6 +74,8 @@ Some of the other entries in the menu include:
 |`sm_warden_colorR`|**33**|The Red value of the color the warden gets.|
 |`sm_warden_colorG`|**114**|The Green value of the color the warden gets.|
 |`sm_warden_colorB`|**255**|The Blue value of the color the warden gets.|
+|`sm_warden_icon`|**1**|Have an icon above the wardens' head? 1 = Enable. 0 = Disable.|
+|`sm_warden_icon_path`|**decals/BetterWarden/warden**|The path to the icon. Do not include file extensions!|
 
 ### CMenu
 | ConVar      | Default | Description   |
@@ -110,6 +112,7 @@ Some of the other entries in the menu include:
  #endinput
 #endif
 #define bwardenincluded
+#define VERSION "0.4"
 
 #define a ADMFLAG_RESERVATION
 #define b ADMFLAG_GENERIC
@@ -146,6 +149,14 @@ forward void OnWardenDeath(int client);
 * @param client index
 */
 forward void OnWardenCreated(int client);
+
+/**
+* Called when an admin sets a warden.
+*
+* @param admin client index
+* @param client index
+*/
+forward void OnWardenCreatedByAdmin(int admin, int client);
 
 /**
 * Called when the current warden disconnects.
@@ -225,8 +236,8 @@ native bool IsClientWardenAdmin(int client);
 * Checks several parameters to see if the specified client is a valid user.
 *
 * @param client index
-* @param Allow bots?
-* @param Allow dead?
+* @param Allow bots? (False)
+* @param Allow dead? (False)
 * @return true if valid
 */
 stock bool IsValidClient(int client, bool bAllowBots = false, bool bAllowDead = false)
@@ -236,6 +247,22 @@ stock bool IsValidClient(int client, bool bAllowBots = false, bool bAllowDead = 
 		return false;
 	}
 	return true;
+}
+
+/**
+* Precaches and prepares models for download. Used for icons!
+*
+* @param path to model
+*/
+stock void PrecacheModelAnyDownload(char[] sModel)
+{
+	char sBuffer[256];
+	Format(sBuffer, sizeof(sBuffer), "materials/%s.vmt", sModel);
+	AddFileToDownloadsTable(sBuffer);
+	PrecacheModel(sBuffer, true);
+	Format(sBuffer, sizeof(sBuffer), "materials/%s.vtf", sModel);
+	AddFileToDownloadsTable(sBuffer);
+	PrecacheModel(sBuffer, true);
 }
 ```
 ### CMenu
@@ -326,7 +353,6 @@ native bool GiveClientFreeday(int client);
 * Remove a client's freeday
 *
 * @param      client index
-* @param      set a beacon
 * @return     true if successful
 */
 native bool RemoveClientFreeday(int client);
@@ -338,13 +364,7 @@ native bool RemoveClientFreeday(int client);
 * @param state of the beacon.
 * @return true if successful
 */
-stock bool SetClientBeacon(int client, bool beaconState) {
-	if(IsValidClient(client)) {
-		// Beacon code to be implemented here
-		return true;
-	}
-	return false;
-}
+native bool SetClientBeacon(int client, bool beaconState);
 ```
 
 ## Translations
