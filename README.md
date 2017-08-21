@@ -371,5 +371,5 @@ native bool SetClientBeacon(int client, bool beaconState);
 ## Translations
 * English ✓
 * Swedish ✓
-* French × _(Some are done)_
+* French ✓
 * Russian ×
