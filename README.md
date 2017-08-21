@@ -81,7 +81,6 @@ Some of the other entries in the menu include:
 ### CMenu
 | ConVar      | Default | Description   |
 |:----------- |:-------:|:------------- |
-|`sm_cmenu_version`|**0.2**|Current version running. Debugging purposes only! Do NOT change this!|
 |`sm_cmenu_hns`|**1**|Add an option for Hide and Seek in the menu? 0 = Disable. 1 = Enable.|
 |`sm_cmenu_hns_godmode`|**1**|Makes CT's invulnerable against attacks from T's during HnS to prevent rebels. 0 = Disable. 1 = Enable.|
 |`sm_cmenu_hns_rounds`|**2**|How many times is HnS allowed per map? Set to 0 for unlimited.|
@@ -113,7 +112,7 @@ Some of the other entries in the menu include:
  #endinput
 #endif
 #define bwardenincluded
-#define VERSION "0.4"
+#define VERSION "0.4.2"
 
 #define a ADMFLAG_RESERVATION
 #define b ADMFLAG_GENERIC
