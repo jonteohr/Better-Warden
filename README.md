@@ -76,7 +76,7 @@ Some of the other entries in the menu include:
 |`sm_warden_colorG`|**114**|The Green value of the color the warden gets.|
 |`sm_warden_colorB`|**255**|The Blue value of the color the warden gets.|
 |`sm_warden_icon`|**1**|Have an icon above the wardens' head? 1 = Enable. 0 = Disable.|
-|`sm_warden_icon_path`|**decals/BetterWarden/warden**|The path to the icon. Do not include file extensions!|
+|`sm_warden_icon_path`|**decals/BetterWarden/warden**|The path to the icon. Do not include file extensions! The path here should be from whithin the materials/ folder.|
 
 ### CMenu
 | ConVar      | Default | Description   |
