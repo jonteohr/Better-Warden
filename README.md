@@ -43,7 +43,7 @@
 3. Everything in the `FASTDL` folder should be uploaded to your FastDL webserver
 4. Restart your server or change map
 5. Make your desired changes in the two configs located in `csgo/cfg/BetterWarden` folder
-6. Change map, restart server or reload both `betterwarden.smx` and `cmenu.smx` for changes to apply
+6. Change map, restart server or reload both `betterwarden.smx` and `wardenmenu.smx` for changes to apply
 7. Done!
 
 ## Dependencies
@@ -78,7 +78,7 @@ Some of the other entries in the menu include:
 |`sm_warden_icon`|**1**|Have an icon above the wardens' head? 1 = Enable. 0 = Disable.|
 |`sm_warden_icon_path`|**decals/BetterWarden/warden**|The path to the icon. Do not include file extensions! The path here should be from whithin the materials/ folder.|
 
-### CMenu
+### WardenMenu
 | ConVar      | Default | Description   |
 |:----------- |:-------:|:------------- |
 |`sm_cmenu_hns`|**1**|Add an option for Hide and Seek in the menu? 0 = Disable. 1 = Enable.|
@@ -265,7 +265,7 @@ stock void PrecacheModelAnyDownload(char[] sModel)
 	PrecacheModel(sBuffer, true);
 }
 ```
-### CMenu
+### WardenMenu
 ```sourcepawn
 /*
 * https://github.com/condolent/Better-Warden
