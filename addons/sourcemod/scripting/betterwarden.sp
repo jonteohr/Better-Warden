@@ -4,7 +4,7 @@
 #include <cstrike>
 #include <colorvariables>
 #include <betterwarden>
-#include <cmenu>
+#include <wardenmenu>
 #include <smartjaildoors>
 
 #pragma semicolon 1

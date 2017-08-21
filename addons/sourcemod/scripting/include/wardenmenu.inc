@@ -2,10 +2,10 @@
 * https://github.com/condolent/Better-Warden
 */
 
-#if defined cmenuincluded
+#if defined wardenmenuincluded
  #endinput
 #endif
-#define cmenuincluded
+#define wardenmenuincluded
 
 /**
 * Called when a warden opens the warden menu. Also called when a player becomes a warden if sm_cmenu_auto_open is set to 1.

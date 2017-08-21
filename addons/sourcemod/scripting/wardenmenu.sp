@@ -14,7 +14,7 @@
 #include <cstrike>
 #include <sdktools>
 #include <sdkhooks>
-#include <cmenu>
+#include <wardenmenu>
 #include <adminmenu>
 #define REQUIRE_PLUGIN
 #include <betterwarden>
