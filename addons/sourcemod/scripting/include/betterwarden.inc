@@ -8,7 +8,7 @@
  #endinput
 #endif
 #define bwardenincluded
-#define VERSION "0.4"
+#define VERSION "0.4.2"
 
 #define a ADMFLAG_RESERVATION
 #define b ADMFLAG_GENERIC

@@ -46,6 +46,11 @@ ConVar cv_colorB;
 ConVar cv_wardenIcon;
 ConVar cv_wardenIconPath;
 
+// Modules
+#include "BetterWarden/commands.sp"
+#include "BetterWarden/actions.sp"
+#include "BetterWarden/events.sp"
+
 public Plugin myinfo = {
 	name = "[CS:GO] Better Warden",
 	author = "Hypr",
@@ -55,6 +60,11 @@ public Plugin myinfo = {
 };
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) {
+	if (GetEngineVersion() != Engine_CSGO)
+	{
+		SetFailState("Game is not supported. CS:GO ONLY");
+	}
+	
 	CreateNative("IsClientWarden", Native_IsClientWarden);
 	CreateNative("WardenExists", Native_WardenExists);
 	CreateNative("SetWarden", Native_SetWarden);
@@ -63,10 +73,20 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	CreateNative("GetTeamAliveClientCount", Native_GetTeamAliveClientCount);
 	CreateNative("IsClientWardenAdmin", Native_IsClientWardenAdmin);
 	RegPluginLibrary("betterwarden");
+	
+	// Global forwards
+	gF_OnWardenDeath = CreateGlobalForward("OnWardenDeath", ET_Ignore, Param_Cell);
+	gF_OnWardenDisconnect = CreateGlobalForward("OnWardenDisconnect", ET_Ignore, Param_Cell);
+	gF_OnWardenRetire = CreateGlobalForward("OnWardenRetire", ET_Ignore, Param_Cell);
+	gF_OnAdminRemoveWarden = CreateGlobalForward("OnAdminRemoveWarden", ET_Ignore, Param_Cell, Param_Cell);
+	gF_OnWardenCreated = CreateGlobalForward("OnWardenCreated", ET_Ignore, Param_Cell);
+	gF_OnWardenCreatedByAdmin = CreateGlobalForward("OnWardenCreatedByAdmin", ET_Ignore, Param_Cell, Param_Cell);
+	
+	return APLRes_Success;
 }
 
 public void OnPluginStart() {
-
+	
 	// CVars
 	AutoExecConfig(true, "warden", "BetterWarden");
 	cv_version = CreateConVar("sm_warden_version", VERSION, "Current version of this plugin. DO NOT CHANGE THIS!", FCVAR_DONTRECORD|FCVAR_NOTIFY);
@@ -79,10 +99,10 @@ public void OnPluginStart() {
 	cv_colorG = CreateConVar("sm_warden_color_G", "114", "The Green value of the color the warden gets.", FCVAR_NOTIFY, true, 0.0, true, 255.0);
 	cv_colorB = CreateConVar("sm_warden_color_B", "255", "The Blue value of the color the warden gets.", FCVAR_NOTIFY, true, 0.0, true, 255.0);
 	cv_wardenIcon = CreateConVar("sm_warden_icon", "1", "Have an icon above the wardens' head?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	cv_wardenIconPath = CreateConVar("sm_warden_icon_path", "decals/BetterWarden/warden", "The path to the icon. Do not include file extensions!", FCVAR_NOTIFY);
+	cv_wardenIconPath = CreateConVar("sm_warden_icon_path", "decals/BetterWarden/warden", "The path to the icon. Do not include file extensions!\nThe path here should be from whithin the materials/ folder.", FCVAR_NOTIFY);
 	
 	// Translation stuff
-	LoadTranslations("betterwarden.phrases.txt");
+	LoadTranslations("BetterWarden.phrases");
 	SetGlobalTransTarget(LANG_SERVER);
 	
 	// Regular Commands
@@ -101,14 +121,6 @@ public void OnPluginStart() {
 	RegConsoleCmd("sm_unwarden", Command_Unwarden);
 	RegConsoleCmd("sm_sw", Command_SetWarden);
 	RegConsoleCmd("sm_setwarden", Command_SetWarden);
-	
-	// Global forwards
-	gF_OnWardenDeath = CreateGlobalForward("OnWardenDeath", ET_Ignore, Param_Cell);
-	gF_OnWardenDisconnect = CreateGlobalForward("OnWardenDisconnect", ET_Ignore, Param_Cell);
-	gF_OnWardenRetire = CreateGlobalForward("OnWardenRetire", ET_Ignore, Param_Cell);
-	gF_OnAdminRemoveWarden = CreateGlobalForward("OnAdminRemoveWarden", ET_Ignore, Param_Cell, Param_Cell);
-	gF_OnWardenCreated = CreateGlobalForward("OnWardenCreated", ET_Ignore, Param_Cell);
-	gF_OnWardenCreatedByAdmin = CreateGlobalForward("OnWardenCreatedByAdmin", ET_Ignore, Param_Cell, Param_Cell);
 	
 	// Event Hooks
 	HookEvent("player_death", OnPlayerDeath);
@@ -131,81 +143,6 @@ public void OnPluginStart() {
 /////////////////////////////
 //		   FORWARDS		   //
 /////////////////////////////
-public void OnMapStart() {
-	aliveCT = 0;
-	totalCT = 0;
-	aliveTerrorists = 0;
-	totalTerrorists = 0;
-	
-	totalCT = GetTeamClientCount(CS_TEAM_CT);
-	totalTerrorists = GetTeamClientCount(CS_TEAM_T);
-	
-	RemoveWarden();
-	
-	if(cv_wardenIcon.IntValue == 1) {
-		PrecacheModelAnyDownload(WardenIconPath);
-	}
-}
-
-public void OnJoinTeam(Event event, const char[] name, bool dontBroadcast) {
-	int client = GetClientOfUserId(GetEventInt(event, "userid"));
-	
-	if(IsValidClient(client, false, true)) {
-		totalCT = GetTeamClientCount(CS_TEAM_CT);
-		aliveCT = GetTeamAliveClientCount(CS_TEAM_CT);
-		totalTerrorists = GetTeamClientCount(CS_TEAM_T);
-		aliveTerrorists = GetTeamAliveClientCount(CS_TEAM_T);
-	}
-}
-
-public void OnPlayerDeath(Event event, const char[] name, bool dontBroadcast) {
-	int client = GetClientOfUserId(GetEventInt(event, "userid"));
-	aliveCT = GetTeamAliveClientCount(CS_TEAM_CT);
-	aliveTerrorists = GetTeamAliveClientCount(CS_TEAM_T);
-	
-	if(IsClientWarden(client)) {
-		RemoveWarden();
-		CPrintToChatAll("%s %t", prefix, "Warden Died");
-		
-		Call_StartForward(gF_OnWardenDeath);
-		Call_PushCell(client);
-		Call_Finish();
-	}
-}
-
-public void OnRoundStart(Event event, const char[] name, bool dontBroadcast) {
-	if(WardenExists())
-		RemoveWarden();
-		
-	aliveCT = 0;
-	aliveTerrorists = 0;
-	
-	totalCT = GetTeamClientCount(CS_TEAM_CT);
-	totalTerrorists = GetTeamClientCount(CS_TEAM_T);
-	aliveCT = GetTeamAliveClientCount(CS_TEAM_CT);
-	aliveTerrorists = GetTeamAliveClientCount(CS_TEAM_T);
-	
-	cv_noblock.RestoreDefault(true, false);
-}
-
-public void OnClientDisconnect(int client) {
-	
-	totalCT = GetTeamClientCount(CS_TEAM_CT);
-	totalTerrorists = GetTeamClientCount(CS_TEAM_T);
-	aliveCT = GetTeamAliveClientCount(CS_TEAM_CT);
-	aliveTerrorists = GetTeamAliveClientCount(CS_TEAM_T);
-	
-	
-	if(IsClientWarden(client)) {
-		RemoveWarden();
-		CPrintToChatAll("%s %t", prefix, "Warden Died");
-		
-		Call_StartForward(gF_OnWardenDisconnect);
-		Call_PushCell(client);
-		Call_Finish();
-	}
-	
-}
 
 public void CreateIcon(int client) {
 	if(!IsValidClient(client) || !IsClientWarden(client))
@@ -256,233 +193,7 @@ public void RemoveIcon(int client) {
 }
 
 
-/////////////////////////////
-//		   ACTIONS		   //
-/////////////////////////////
-public Action Command_Warden(int client, int args) {
-	
-	if(!IsValidClient(client)) { // Client is not valid. IE not ingame, alive etc.
-		CPrintToChat(client, "%s %t", prefix, "Invalid Client");
-		return Plugin_Handled;
-	}
-	
-	if(GetClientTeam(client) != CS_TEAM_CT) { // Client is not CT.
-		CPrintToChat(client, "%s %t", prefix, "Client Not CT");
-		return Plugin_Handled;
-	}
-	
-	if(WardenExists()) { // Someone is already warden.
-		CPrintToChat(client, "%s %t", prefix, "Warden Exists");
-		return Plugin_Handled;
-	}
-	
-	if(IsClientWarden(client)) { // Client is already warden.
-		CPrintToChat(client, "%s %t", prefix, "Already Warden");
-		return Plugin_Handled;
-	}
-	
-	if(cv_wardenTwice.IntValue == 1) { // If enabled in config, the client is prevented to become warden since he was warden last round.
-		if(client == prevWarden) {
-			CPrintToChat(client, "%s %t", prefix, "Warden Twice");
-			return Plugin_Handled;
-		}
-	}
-	
-	SetWarden(client);
-	CPrintToChatAll("%s %t", prefix, "Warden Created", client);
-	
-	Call_StartForward(gF_OnWardenCreated);
-	Call_PushCell(client);
-	Call_Finish();
-	
-	return Plugin_Handled;
-	
-}
 
-public Action Command_Retire(int client, int args) {
-	if(!IsValidClient(client, false, false)) {
-		CPrintToChat(client, "%s %t", prefix, "Invalid Client");
-		return Plugin_Handled;
-	}
-	
-	if(!IsClientWarden(client)) {
-		CPrintToChat(client, "%s %t", prefix, "Not Warden");
-		return Plugin_Handled;
-	}
-	
-	RemoveWarden();
-	CPrintToChatAll("%s %t", prefix, "Warden Retired", client);
-	
-	Call_StartForward(gF_OnWardenRetire);
-	Call_PushCell(client);
-	Call_Finish();
-	
-	return Plugin_Handled;
-}
-
-public Action Command_Unwarden(int client, int args) {
-	if(!IsClientWardenAdmin(client)) {
-		CReplyToCommand(client, "%s {red}%t", prefix, "Not Admin");
-		return Plugin_Handled;
-	}
-	if(!WardenExists()) {
-		CReplyToCommand(client, "%s %t", prefix, "No Warden Alive");
-		return Plugin_Handled;
-	}
-	
-	int warden = GetCurrentWarden();
-	
-	RemoveWarden();
-	CPrintToChatAll("%s %t", prefix, "Warden Removed", warden);
-	
-	Call_StartForward(gF_OnAdminRemoveWarden);
-	Call_PushCell(client); // The admin removing the warden
-	Call_PushCell(warden); // The client forced to retire
-	Call_Finish();
-	
-	return Plugin_Handled;
-}
-
-public Action Command_OpenCells(int client, int args) {
-	if(!IsValidClient(client, false, false)) {
-		CPrintToChat(client, "%s %t", prefix, "Invalid Client");
-		return Plugin_Handled;
-	}
-	if(!IsClientWarden(client)) {
-		CPrintToChat(client, "%s %t", prefix, "Not Warden");
-		return Plugin_Handled;
-	}
-	
-	SJD_ToggleDoors();
-	CPrintToChat(client, "%s %t", prefix, "Doors Opened");
-	
-	return Plugin_Handled;
-}
-
-public Action Command_SetWarden(int client, int args) {
-	if(!IsClientWardenAdmin(client)) {
-		CReplyToCommand(client, "%s {red}%t", prefix, "Not Admin");
-		return Plugin_Handled;
-	}
-	if(!IsValidClient(client, false, true)) {
-		CReplyToCommand(client, "%s %t", prefix, "Invalid Client");
-		return Plugin_Handled;
-	}
-	if(WardenExists()) {
-		CReplyToCommand(client, "%s %t", prefix, "Warden Exists");
-		return Plugin_Handled;
-	}
-	if(args < 1) {
-		CReplyToCommand(client, "[SM] Usage: sm_ip <#userid|name>");
-		return Plugin_Handled;
-	}
-	
-	char arg[64];
-	GetCmdArg(1, arg, sizeof(arg));
-	
-	char target_name[MAX_TARGET_LENGTH];
-	int target_list[MAXPLAYERS], target_count;
-	bool tn_is_ml;
-	
-	if((target_count = ProcessTargetString(arg, client, target_list, sizeof(target_list), COMMAND_FILTER_NO_BOTS, target_name, sizeof(target_name), tn_is_ml)) <= 0) {
-		ReplyToTargetError(client, target_count);
-		return Plugin_Handled;
-	}
-	
-	for(int usr = 0; usr < target_count; usr++) {
-		if(GetClientTeam(target_list[usr]) != CS_TEAM_CT) {
-			CReplyToCommand(client, "%s %t", prefix, "Client must be CT");
-			break;
-		}
-		SetWarden(target_list[usr]);
-		CReplyToCommand(client, "%s %t", prefix, "Warden Set", target_list[usr]);
-		
-		Call_StartForward(gF_OnWardenCreatedByAdmin);
-		Call_PushCell(client);
-		Call_PushCell(target_list[usr]);
-		Call_Finish();
-	}
-	
-	return Plugin_Handled;
-}
-
-public Action Command_Noblock(int client, int args) {
-	if(!IsValidClient(client)) {
-		CPrintToChat(client, "%s %t", prefix, "Invalid Client");
-		return Plugin_Handled;
-	}
-	if(!IsClientWarden(client)) {
-		CPrintToChat(client, "%s %t", prefix, "Not Warden");
-		return Plugin_Handled;
-	}
-	
-	if(cv_noblock.IntValue == 1) {
-		CPrintToChatAll("%s %t", prefix, "Noblock on");
-		SetConVarInt(cv_noblock, 0, true, false);
-	} else if(cv_noblock.IntValue == 0) {
-		CPrintToChatAll("%s %t", prefix, "Noblock off");
-		SetConVarInt(cv_noblock, 1, true, false);
-	}
-	
-	return Plugin_Handled;
-}
-
-public Action OnPlayerChat(int client, char[] command, int args) {
-	if(!IsValidClient(client)) // Make sure warden isn't glitched and is in fact alive etc.
-		return Plugin_Continue;
-	if(!IsClientWarden(client)) // Client is warden; let's make the message cool!
-		return Plugin_Continue;
-	
-	char message[255];
-	GetCmdArg(1, message, sizeof(message));
-	
-	if(message[0] == '/' || message[0] == '@' || IsChatTrigger())
-		return Plugin_Handled;
-	
-	CPrintToChatAll("{bluegrey}[Warden] {team2}%N :{default} %s", client, message);
-	return Plugin_Handled;
-	
-}
-
-public Action Should_TransmitW(int entity, int client) {
-	char m_ModelName[PLATFORM_MAX_PATH];
-	char iconbuffer[256];
-
-	Format(iconbuffer, sizeof(iconbuffer), "materials/%s.vmt", WardenIconPath);
-
-	GetEntPropString(entity, Prop_Data, "m_ModelName", m_ModelName, sizeof(m_ModelName));
-
-	if (StrEqual(iconbuffer, m_ModelName))
-	{
-		return Plugin_Continue;
-	}
-
-	return Plugin_Handled;
-}
-
-
-/////////////////////////////
-//		   TIMERS		   //
-/////////////////////////////
-public Action RenderColor(Handle timer, int client) {
-	if(!IsClientWarden(client)) {
-		SetEntityRenderColor(client);
-		return Plugin_Stop;
-	}
-	
-	SetEntityRenderColor(client, cv_colorR.IntValue, cv_colorG.IntValue, cv_colorB.IntValue);
-	
-	return Plugin_Continue;
-}
-
-public Action JBToolTip(Handle timer) {
-	if(IsHnsActive())
-		return Plugin_Handled;
-	
-	PrintHintTextToAll("%t\n%t", "Current Warden Hint", curWardenStat, "Players Stat Hint", aliveCT, totalCT, aliveTerrorists, totalTerrorists);
-	
-	return Plugin_Continue;
-}
 
 /////////////////////////////
 //			NATIVES		   //

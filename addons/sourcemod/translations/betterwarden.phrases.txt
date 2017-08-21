@@ -4,6 +4,7 @@
 	{
 		"en"	"The warden has died. A new warden can now be appointed."
 		"sv"	"Direktören har dött. En ny direktör kan nu väljas."
+		"fr"	"Le gardien est mort. Un nouveau Gardien peut maintenant être nommé."
 	}
 	
 	"Warden Created"
@@ -11,6 +12,7 @@
 		"#format"	"{1:N}"
 		"en"	"{1} has become the warden of this prison!"
 		"sv"	"{1} har blivit direktör för detta fängelse!"
+		"fr"	"{1} est devenu le gardien de cette prison!"
 	}
 	
 	"Warden Retired"
@@ -18,6 +20,7 @@
 		"#format"	"{1:N}"
 		"en"	"{1} retired as warden."
 		"sv"	"{1} has pensionerats som direktör."
+		"fr"	"{1} est parti du poste de Gardien."
 	}
 	
 	"Warden Removed"
@@ -25,6 +28,7 @@
 		"#format"	"{1:N}"
 		"en"	"{1} was forced to retire as warden."
 		"sv"	"{1} has blivit tvingad till pension som direktör."
+		"fr"	"{1} a force a parti du poste de Gardien."
 	}
 	
 	"Current Warden Hint"
@@ -32,6 +36,7 @@
 		"#format"	"{1:s}"
 		"en"	"<font size='22'><font color='#4B69FF'>Warden:</font> {1}</font>"
 		"sv"	"<font size='22'><font color='#4B69FF'>Direktör:</font> {1}</font>"
+		"fr"	"<font size='22'><font color='#4B69FF'>Gardien:</font> {1}</font>"
 	}
 	
 	"Players Stat Hint"
@@ -39,72 +44,84 @@
 		"#format"	"{1:d},{2:d},{3:d},{4:d}"
 		"en"	"<font color='#5E98D8'>Guards:</font> {1}/{2}         <font color='#E4AD39'>Prisoners:</font> {3}/{4}"
 		"sv"	"<font color='#5E98D8'>Vakter:</font> {1}/{2}         <font color='#E4AD39'>Fångar:</font> {3}/{4}"
+		"fr"	"<font color='#5E98D8'>Gardes:</font> {1}/{2}         <font color='#E4AD39'>Prisonniers:</font> {3}/{4}"
 	}
 	
 	"Doors Opened"
 	{
 		"en"	"You toggled the cell doors."
 		"sv"	"Du växlade celldörrarna."
+		"fr"	"Tu as basculé les portes des cellules."
 	}
 	
 	"Invalid Client"
 	{
 		"en"	"You must be in game and alive to perform this command."
 		"sv"	"Du måste vara in-game och levande för att utföra detta kommand."
+		"fr"	"Tu dois être en jeu et en vie pour exécuter cette commande."
 	}
 	
 	"Client Not CT"
 	{
 		"en"	"You must be a Counter-Terrorist."
 		"sv"	"Du måste vara en Counter-Terrorist."
+		"fr"	"Tu dois etre un Counter-Terrorist."
 	}
 	
 	"Warden Exists"
 	{
 		"en"	"A warden already exists."
 		"sv"	"En warden finns redan."
+		"fr"	"Un gardien existe déjà."
 	}
 	
 	"Already Warden"
 	{
 		"en"	"You are already warden."
 		"sv"	"Du är redan warden."
+		"fr"	"Tu es déjà un gardien."
 	}
 	
 	"Not Warden"
 	{
 		"en"	"You are not warden."
 		"sv"	"Du är inte warden."
+		"fr"	"Tu n'es pas le gardien."
 	}
 	
 	"No Warden Alive"
 	{
 		"en"	"There is no warden."
 		"sv"	"Det finns ingen warden."
+		"fr"	"Il n'y a pas de gardien."
 	}
 	
 	"Noblock off"
 	{
 		"en"	"The warden has disabled noblock."
 		"sv"	"Warden har stängt av noblock."
+		"fr"	"Le Gardien a désactivé le noblock."
 	}
 	
 	"Noblock on"
 	{
 		"en"	"The warden has activated noblock."
 		"sv"	"Warden har aktiverat noblock."
+		"fr"	"Le Gardien a activé le noblock."
 	}
 	
 	"Warden Twice"
 	{
 		"en"	"You cannot become warden twice in a row!"
 		"sv"	"Du kan inte vara warden två gånger i rad!"
+		"fr"	"Tu ne peux pas devenir Gardien deux fois de suite!"
 	}
 	
 	"Not Admin"
 	{
 		"en"	"You are not an admin!"
 		"sv"	"Du är inte admin!"
+		"fr"	"Tu es pas un administrateur!"
 	}
 	
 	"Warden Set"
@@ -112,11 +129,13 @@
 		"#format"	"{1:N}"
 		"en"	"You have made {1} the warden for this round!"
 		"sv"	"Du har satt {1} som warden för denna runda!"
+		"fr"	"Tu as designé {1} Gardien pour cette manche! "
 	}
 	
 	"Client must be CT"
 	{
 		"en"	"Client is not a Counter-Terrorist."
 		"sv"	"Användaren är inte en Counter-Terrorist."
+		"fr"	"Le joueur est pas un Counter-Terrorist."
 	}
 }
