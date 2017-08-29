@@ -66,7 +66,7 @@ Some of the other entries in the menu include:
 ### BetterWarden
 | ConVar      | Default | Description   |
 |:----------- |:-------:|:------------- |
-|`sm_warden_version`|**0.3**|Current version running. Debugging purposes only! Do NOT change this!|
+|`sm_warden_version`|**_Plugin Version_**|Current version running. Debugging purposes only! Do NOT change this!|
 |`sm_warden_admin`|**b**|The flag used for admin commands.|
 |`sm_warden_noblock`|**1**|Give the warden the ability to toggle noblock via sm_noblock? 1 = Enable. 0 = Disable.|
 |`sm_warden_cellscmd`|**1**|Give the warden ability to toggle cell-doors via sm_open? Cell doors on every map needs to be setup with SmartJailDoors for this to work! 1 = Enable. 0 = Disable.|
