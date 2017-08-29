@@ -43,7 +43,7 @@
 3. Everything in the `FASTDL` folder should be uploaded to your FastDL webserver
 4. Restart your server or change map
 5. Make your desired changes in the two configs located in `csgo/cfg/BetterWarden` folder
-6. Change map, restart server or reload both `betterwarden.smx` and `wardenmenu.smx` for changes to apply
+6. Change map or restart the server
 7. Done!
 
 ## Dependencies
@@ -77,6 +77,8 @@ Some of the other entries in the menu include:
 |`sm_warden_colorB`|**255**|The Blue value of the color the warden gets.|
 |`sm_warden_icon`|**1**|Have an icon above the wardens' head? 1 = Enable. 0 = Disable.|
 |`sm_warden_icon_path`|**decals/BetterWarden/warden**|The path to the icon. Do not include file extensions! The path here should be from whithin the materials/ folder.|
+|`sm_warden_deathsound`|**1**|Play a sound telling everyone the warden has died? 1 = Enable. 0 = Disable.|
+|`sm_warden_createsound`|**1**|Play a sound to everyone when someone becomes warden 1 = Enable. 0 = Disable.|
 
 ### WardenMenu
 | ConVar      | Default | Description   |
@@ -112,29 +114,7 @@ Some of the other entries in the menu include:
  #endinput
 #endif
 #define bwardenincluded
-#define VERSION "0.4.2"
-
-#define a ADMFLAG_RESERVATION
-#define b ADMFLAG_GENERIC
-#define c ADMFLAG_KICK
-#define d ADMFLAG_BAN
-#define e ADMFLAG_UNBAN
-#define f ADMFLAG_SLAY
-#define g ADMFLAG_CHANGEMAP
-#define h ADMFLAG_CONVARS
-#define i ADMFLAG_CONFIG
-#define j ADMFLAG_CHAT
-#define k ADMFLAG_VOTE
-#define l ADMFLAG_PASSWORD
-#define m ADMFLAG_RCON
-#define n ADMFLAG_CHEATS
-#define z ADMFLAG_ROOT
-#define o ADMFLAG_CUSTOM1
-#define p ADMFLAG_CUSTOM2
-#define q ADMFLAG_CUSTOM3
-#define r ADMFLAG_CUSTOM4
-#define s ADMFLAG_CUSTOM5
-#define t ADMFLAG_CUSTOM6
+#define VERSION "0.4.3"
 
 /**
 * Called when the current warden dies.
