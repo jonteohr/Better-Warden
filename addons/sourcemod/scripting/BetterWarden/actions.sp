@@ -36,6 +36,9 @@ public Action Should_TransmitW(int entity, int client) {
 //		   TIMERS		   //
 /////////////////////////////
 public Action RenderColor(Handle timer, int client) {
+	if(!IsValidClient(client))
+		return Plugin_Stop;
+		
 	if(!IsClientWarden(client)) {
 		SetEntityRenderColor(client);
 		return Plugin_Stop;

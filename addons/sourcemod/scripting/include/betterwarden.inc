@@ -8,29 +8,7 @@
  #endinput
 #endif
 #define bwardenincluded
-#define VERSION "0.4.2"
-
-#define a ADMFLAG_RESERVATION
-#define b ADMFLAG_GENERIC
-#define c ADMFLAG_KICK
-#define d ADMFLAG_BAN
-#define e ADMFLAG_UNBAN
-#define f ADMFLAG_SLAY
-#define g ADMFLAG_CHANGEMAP
-#define h ADMFLAG_CONVARS
-#define i ADMFLAG_CONFIG
-#define j ADMFLAG_CHAT
-#define k ADMFLAG_VOTE
-#define l ADMFLAG_PASSWORD
-#define m ADMFLAG_RCON
-#define n ADMFLAG_CHEATS
-#define z ADMFLAG_ROOT
-#define o ADMFLAG_CUSTOM1
-#define p ADMFLAG_CUSTOM2
-#define q ADMFLAG_CUSTOM3
-#define r ADMFLAG_CUSTOM4
-#define s ADMFLAG_CUSTOM5
-#define t ADMFLAG_CUSTOM6
+#define VERSION "0.4.3"
 
 /**
 * Called when the current warden dies.

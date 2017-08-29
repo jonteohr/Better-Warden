@@ -28,8 +28,19 @@ public void OnMapStart() {
 	
 	RemoveWarden();
 	
+	AddFileToDownloadsTable("sound/betterwarden/newwarden.mp3");
+	AddFileToDownloadsTable("sound/betterwarden/wardendead.mp3");
+	
 	if(cv_wardenIcon.IntValue == 1) {
 		PrecacheModelAnyDownload(WardenIconPath);
+	}
+	
+	if(cv_WardenDeathSound.IntValue == 1) {
+		PrecacheSoundAny("betterwarden/wardendead.mp3");
+	}
+	
+	if(cv_WardenCreatedSound.IntValue == 1) {
+		PrecacheSoundAny("betterwarden/newwarden.mp3");
 	}
 }
 
@@ -50,6 +61,10 @@ public void OnPlayerDeath(Event event, const char[] name, bool dontBroadcast) {
 	aliveTerrorists = GetTeamAliveClientCount(CS_TEAM_T);
 	
 	if(IsClientWarden(client)) {
+		if(cv_WardenDeathSound.IntValue == 1)
+			EmitSoundToAllAny("betterwarden/wardendead.mp3");
+		
+		
 		RemoveWarden();
 		CPrintToChatAll("%s %t", prefix, "Warden Died");
 		

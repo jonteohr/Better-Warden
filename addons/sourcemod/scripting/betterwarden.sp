@@ -6,6 +6,7 @@
 #include <betterwarden>
 #include <wardenmenu>
 #include <smartjaildoors>
+#include <emitsoundany>
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -45,6 +46,8 @@ ConVar cv_colorG;
 ConVar cv_colorB;
 ConVar cv_wardenIcon;
 ConVar cv_wardenIconPath;
+ConVar cv_WardenDeathSound;
+ConVar cv_WardenCreatedSound;
 
 // Modules
 #include "BetterWarden/commands.sp"
@@ -100,6 +103,8 @@ public void OnPluginStart() {
 	cv_colorB = CreateConVar("sm_warden_color_B", "255", "The Blue value of the color the warden gets.", FCVAR_NOTIFY, true, 0.0, true, 255.0);
 	cv_wardenIcon = CreateConVar("sm_warden_icon", "1", "Have an icon above the wardens' head?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	cv_wardenIconPath = CreateConVar("sm_warden_icon_path", "decals/BetterWarden/warden", "The path to the icon. Do not include file extensions!\nThe path here should be from whithin the materials/ folder.", FCVAR_NOTIFY);
+	cv_WardenDeathSound = CreateConVar("sm_warden_deathsound", "1", "Play a sound telling everyone the warden has died?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	cv_WardenCreatedSound = CreateConVar("sm_warden_createsound", "1", "Play a sound to everyone when someone becomes warden\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	
 	// Translation stuff
 	LoadTranslations("BetterWarden.phrases");
@@ -238,6 +243,9 @@ public int Native_SetWarden(Handle plugin, int numParams) {
 	CreateTimer(1.0, RenderColor, client, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
 	
 	CreateIcon(client);
+	
+	if(cv_WardenCreatedSound.IntValue == 1)
+		EmitSoundToAllAny("betterwarden/newwarden.mp3");
 	
 	return true;
 }
