@@ -1,10 +1,16 @@
-/*************************************************************
-*															 *
-*						Warden Menu							 *
-*						Author: Hypr						 *
-*				  Module for BetterWarden					 *
-*															 *
-*************************************************************/
+/*
+ * Warden Menu
+ * By: Hypr
+ * https://github.com/condolent/BetterWarden/
+ * 
+ * Copyright (C) 2017 Jonathan Öhrström (Hypr/Condolent)
+ *
+ * This file is part of the BetterWarden SourceMod Plugin.
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, version 3.0, as published by the
+ * Free Software Foundation.
+ */
 
 #pragma semicolon 1
 
@@ -31,7 +37,10 @@
 #define SEP "#sep"
 #define CHOICE8 "#choice8"
 
-bool IsGameActive = false;
+// Add-On checks
+bool catchLoaded = false;
+bool wwLoaded = false;
+
 char cmenuPrefix[] = "[{bluegrey}WardenMenu{default}] ";
 char g_BlipSound[PLATFORM_MAX_PATH];
 
@@ -104,7 +113,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	CreateNative("GiveClientFreeday", Native_GiveClientFreeday);
 	CreateNative("RemoveClientFreeday", Native_RemoveClientFreeday);
 	CreateNative("SetClientBeacon", Native_SetClientBeacon);
-	RegPluginLibrary("cmenu");
+	RegPluginLibrary("wardenmenu");
 	
 	return APLRes_Success;
 }
@@ -112,7 +121,9 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 public OnPluginStart() {
 	
 	LoadTranslations("BetterWarden.Menu.phrases");
-	LoadTranslations("betterwarden.phrases.txt");
+	LoadTranslations("BetterWarden.phrases.txt");
+	LoadTranslations("BetterWarden.Catch.phrases.txt");
+	LoadTranslations("BetterWarden.WildWest.phrases.txt");
 	SetGlobalTransTarget(LANG_SERVER);
 	
 	AutoExecConfig(true, "menu", "BetterWarden");
@@ -144,7 +155,7 @@ public OnPluginStart() {
 	HookEvent("round_start", OnRoundStart, EventHookMode_PostNoCopy);
 	
 	for(int client = 1; client <= MaxClients; client++) {
-		if(!IsClientInGame(client)) 
+		if(!IsValidClient(client, false, true)) 
 			continue;
 		SDKHook(client, SDKHook_OnTakeDamageAlive, OnTakeDamageAlive);
 	}
@@ -159,6 +170,10 @@ public OnPluginStart() {
 
 public void OnAllPluginsLoaded() {
 	cvBeaconRadius = FindConVar("sm_beacon_radius");
+	if(FindPluginByFile("BetterWarden/Add-Ons/catch.smx") != null)
+		catchLoaded = true;
+	if(FindPluginByFile("BetterWarden/Add-Ons/catch.smx") != null)
+		wwLoaded = true;
 }
 
 public void abortGames() {

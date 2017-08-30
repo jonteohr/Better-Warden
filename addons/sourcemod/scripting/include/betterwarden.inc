@@ -8,7 +8,9 @@
  #endinput
 #endif
 #define bwardenincluded
-#define VERSION "0.4.3"
+#define VERSION "0.5"
+
+stock char prefix[] = "[{blue}Warden{default}] ";
 
 /**
 * Called when the current warden dies.

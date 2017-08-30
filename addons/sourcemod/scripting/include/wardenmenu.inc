@@ -7,6 +7,8 @@
 #endif
 #define wardenmenuincluded
 
+stock bool IsGameActive = false;
+
 /**
 * Called when a warden opens the warden menu. Also called when a player becomes a warden if sm_cmenu_auto_open is set to 1.
 *
@@ -96,3 +98,17 @@ native bool RemoveClientFreeday(int client);
 * @return true if successful
 */
 native bool SetClientBeacon(int client, bool beaconState);
+
+/**
+* Initiates a Catch event day.
+* 
+* @return true if successful
+*/
+native bool initCatch();
+
+/**
+* Initiates a Wild West event day.
+*
+* @return true if successful
+*/
+native bool initWW();

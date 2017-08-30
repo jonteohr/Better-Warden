@@ -1,3 +1,17 @@
+/*
+ * Better Warden
+ * By: Hypr
+ * https://github.com/condolent/BetterWarden/
+ * 
+ * Copyright (C) 2017 Jonathan Öhrström (Hypr/Condolent)
+ *
+ * This file is part of the BetterWarden SourceMod Plugin.
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, version 3.0, as published by the
+ * Free Software Foundation.
+ */
+
 #include <sourcemod>
 #include <sdktools>
 #include <sdkhooks>
@@ -12,7 +26,6 @@
 #pragma newdecls required
 
 // Strings
-char prefix[] = "[{blue}Warden{default}] ";
 char curWardenStat[MAX_NAME_LENGTH];
 char WardenIconPath[256];
 
@@ -33,8 +46,9 @@ Handle gF_OnAdminRemoveWarden = null;
 Handle gF_OnWardenCreated = null;
 Handle gF_OnWardenCreatedByAdmin = null;
 
-// ConVars
-ConVar cv_version;
+// Stock ConVars
+stock ConVar cv_version;
+// Regular ConVars
 ConVar cv_EnableNoblock;
 ConVar cv_noblock;
 ConVar cv_admFlag;

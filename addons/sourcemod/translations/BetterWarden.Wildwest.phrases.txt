@@ -1,0 +1,21 @@
+"Phrases"
+{
+	"Wild West Entry"
+	{
+		"en"	"Wild West"
+		"sv"	"Vilda Västern"
+	}
+	
+	"Countdown"
+	{
+		"#format"	"{1:d}"
+		"en"	"Wild West shootout starts in {1} seconds!"
+		"sv"	"Vilda Västern börjar om {1} sekunder!"
+	}
+	
+	"Wild West Begun"
+	{
+		"en"	""
+		"sv"	""
+	}
+}

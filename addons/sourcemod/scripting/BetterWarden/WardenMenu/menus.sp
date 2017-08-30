@@ -232,21 +232,27 @@ public void openDaysMenu(int client) {
 	Format(title, sizeof(title), "%t", "Days Menu Title");
 	
 	menu.SetTitle(title);
-	if(cvFreeday.IntValue == 1) {
+	if(cvFreeday.IntValue == 1)
 		menu.AddItem(CHOICE1, "Choice 1");
-	}
-	if(cvRestFreeday.IntValue == 1) {
+	
+	if(cvRestFreeday.IntValue == 1)
 		menu.AddItem(CHOICE2, "Choice 2");
-	}
-	if(cvHnS.IntValue == 1) {
+	
+	if(cvHnS.IntValue == 1)
 		menu.AddItem(CHOICE3, "Choice 3");
-	}
-	if(cvWarday.IntValue == 1) {
+	
+	if(cvWarday.IntValue == 1)
 		menu.AddItem(CHOICE4, "Choice 4");
-	}
-	if(cvGrav.IntValue == 1) {
+	
+	if(catchLoaded == true)
+		menu.AddItem(CHOICE6, "Choice 6"); // Catch
+	
+	if(wwLoaded == true)
+		menu.AddItem(CHOICE7, "Choice 7"); // Wild West
+		
+	if(cvGrav.IntValue == 1)
 		menu.AddItem(CHOICE5, "Choice 5");
-	}
+	
 	menu.AddItem(SPACER, "Spacer");
 	menu.AddItem(CHOICE8, "Choice 8");
 	menu.ExitBackButton = true;
@@ -273,23 +279,29 @@ public int DaysMenuHandler(Menu menu, MenuAction action, int client, int param2)
 			menu.GetItem(param2, info, sizeof(info));
 			if(IsClientWarden(client)) {
 				if(!IsGameActive) {
-					if(StrEqual(info, CHOICE1)) {
+					if(StrEqual(info, CHOICE1))
 						initFreeday(client);
-					}
-					if(StrEqual(info, CHOICE2)) {
+					
+					if(StrEqual(info, CHOICE2))
 						initRestFreeday(client);
-					}
-					if(StrEqual(info, CHOICE3)) {
+					
+					if(StrEqual(info, CHOICE3))
 						hnsConfig(client);
-					}
-					if(StrEqual(info, CHOICE4)) {
+					
+					if(StrEqual(info, CHOICE4))
 						initWarday(client);
-					}
-					if(StrEqual(info, CHOICE5)) {
+					
+					if(StrEqual(info, CHOICE5))
 						initGrav(client);
-						Call_StartForward(gF_OnEventDayCreated);
-						Call_Finish();
-					}
+					
+					if(StrEqual(info, CHOICE6))
+						initCatch();
+						
+					if(StrEqual(info, CHOICE7))
+						initWW();
+					
+					Call_StartForward(gF_OnEventDayCreated);
+					Call_Finish();
 				} else {
 					if(StrEqual(info, CHOICE8)) {
 						abortGames();
@@ -328,6 +340,10 @@ public int DaysMenuHandler(Menu menu, MenuAction action, int client, int param2)
 				} else if(StrEqual(info, CHOICE4)) {
 					return ITEMDRAW_DISABLED;
 				} else if(StrEqual(info, CHOICE5)) {
+					return ITEMDRAW_DISABLED;
+				} else if(StrEqual(info, CHOICE6)) {
+					return ITEMDRAW_DISABLED;
+				} else if(StrEqual(info, CHOICE7)) {
 					return ITEMDRAW_DISABLED;
 				} else if(StrEqual(info, CHOICE8)) {
 					return ITEMDRAW_DEFAULT;
@@ -371,6 +387,14 @@ public int DaysMenuHandler(Menu menu, MenuAction action, int client, int param2)
 			}
 			if(StrEqual(info, CHOICE5)) {
 				Format(display, sizeof(display), "%t", "Gravity Freeday Entry");
+				return RedrawMenuItem(display);
+			}
+			if(StrEqual(info, CHOICE6)) {
+				Format(display, sizeof(display), "%t", "Catch Entry");
+				return RedrawMenuItem(display);
+			}
+			if(StrEqual(info, CHOICE7)) {
+				Format(display, sizeof(display), "%t", "Wild West Entry");
 				return RedrawMenuItem(display);
 			}
 			if(StrEqual(info, CHOICE8)) {

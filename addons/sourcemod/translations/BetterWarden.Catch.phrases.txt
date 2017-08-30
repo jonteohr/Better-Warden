@@ -1,0 +1,40 @@
+"Phrases"
+{
+	"Player Caught T"
+	{
+		"#format"	"{1:N},{2:N}"
+		"en"	"{1} caught {2}!"
+		"sv"	"{1} fångade {2}!"
+	}
+	
+	"Catch Entry"
+	{
+		"en"	"Play Catch"
+		"sv"	"Kull"
+	}
+	
+	"No Shooting in Catch"
+	{
+		"en"	"You're not allowed to hurt players in any other way than touching them in Catch!"
+		"sv"	"Du får inte skada spelare på annat sätt än att nudda dom i kull!"
+	}
+	
+	"Catch initiated"
+	{
+		"en"	"The warden has chosen to play Catch for this round!"
+		"sv"	"Warden valde att leka kull för denna runda!"
+	}
+	
+	"Info CT"
+	{
+		"en"	"Catch as many Terrorists as you can. Touch them to eliminate them!"
+		"sv"	"Fånga så många Terrorister som du kan. Nudda dom för att eliminera dom!"
+	}
+	
+	"Catch Over"
+	{
+		"#format"	"{1:N}"
+		"en"	"Catch is over! {1} is the winner!"
+		"sv"	"Kull är över! {1} vann!"
+	}
+}
