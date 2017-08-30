@@ -20,7 +20,7 @@
 #include <colorvariables>
 #include <smlib>
 
-bool IsWWActive = false;
+bool IsWWActive;
 int WeaponOwner[2048];
 ConVar infAmmo;
 
@@ -47,7 +47,8 @@ public void OnPluginStart() {
 	LoadTranslations("BetterWarden.Wildwest.phrases.txt");
 	SetGlobalTransTarget(LANG_SERVER);
 	
-	HookEvent("round_end", OnRoundEnd);
+	HookEvent("round_end", OnRoundEnd, EventHookMode_Pre);
+	HookEvent("item_pickup", OnItemPickup, EventHookMode_Pre);
 	
 	infAmmo = FindConVar("sv_infinite_ammo");
 }
@@ -60,7 +61,7 @@ public void OnRoundEnd(Event event, const char[] name, bool dontBroadcast) {
 	}
 }
 
-// Start the event
+// Start the actual event
 public void StartWW() {
 	for(int i = 1; i <= MaxClients; i++) {
 		if(!IsValidClient(i))
@@ -72,9 +73,9 @@ public void StartWW() {
 
 // Timer for the countdown til the event starts
 public Action FiveSecTimer(Handle timer) {
-	int sec = 5;
+	static int sec = 6;
 	
-	if(sec == 0) {
+	if(sec == 1) {
 		CPrintToChatAll("%s %t", prefix, "Wild West Begun");
 		StartWW();
 		return Plugin_Stop;
@@ -95,7 +96,10 @@ public void WeaponDropPost(int client, int weapon) {
 		WeaponOwner[weapon] = client;
 }
 
-public Action WeaponCanUse(int client, int weapon) {
+public Action OnItemPickup(Event event, const char[] name, bool dontBroadcast) {
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
+	int weapon = GetEventInt(event, "item");
+	
 	if(IsWWActive == true) {
 		if(WeaponOwner[weapon] == client)
 			return Plugin_Continue;
@@ -111,15 +115,14 @@ public Action WeaponCanUse(int client, int weapon) {
 ****************/
 public int Native_initWW(Handle plugin, int numParams) {
 	if(IsWWActive == false) {
-		CreateTimer(5.0, FiveSecTimer, _, TIMER_REPEAT);
 		IsGameActive = true;
+		CreateTimer(1.0, FiveSecTimer, _, TIMER_REPEAT);
 		
 		for(int i = 1; i <= MaxClients; i++) {
 			if(!IsValidClient(i))
 				continue;
 			Client_RemoveAllWeapons(i);
 			SDKHook(i, SDKHook_WeaponDropPost, WeaponDropPost);
-			SDKHook(i, SDKHook_WeaponCanUse, WeaponCanUse);
 		}
 		
 		return true;

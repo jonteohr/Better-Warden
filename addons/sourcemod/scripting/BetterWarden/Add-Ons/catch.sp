@@ -24,10 +24,9 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-bool IsCatchActive = false;
+bool IsCatchActive;
 
-public Plugin myinfo = 
-{
+public Plugin myinfo = {
 	name = "[BetterWarden] Catch",
 	author = "Hypr",
 	description = "An Add-On for Better Warden.",
