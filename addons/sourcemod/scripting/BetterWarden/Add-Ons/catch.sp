@@ -76,19 +76,12 @@ public Action OnClientTouch(int client, int other) {
 }
 
 public Action OnTakeDamageAlive(int victim, int &attacker, int &inflictor, float &damage, int &damagetype) {
-	int infTeam = GetClientTeam(inflictor);
-	int vicTeam = GetClientTeam(victim);
 	
 	if(IsCatchActive == false)
 		return Plugin_Continue;
 	
 	if(!IsValidClient(inflictor) || !IsValidClient(victim))
 		return Plugin_Continue;
-	
-/*
-	if(vicTeam != CS_TEAM_T && infTeam != CS_TEAM_CT)
-		return Plugin_Continue;
-*/
 	
 	CPrintToChat(inflictor, "%s {red}%t", prefix, "No Shooting in Catch");
 	return Plugin_Handled;

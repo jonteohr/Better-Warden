@@ -67,6 +67,7 @@ public void StartWW() {
 			continue;
 		GivePlayerItem(i, "weapon_revolver");
 	}
+	IsWWActive = true;
 	SetConVarInt(infAmmo, 2);
 }
 
@@ -112,7 +113,6 @@ public Action WeaponCanUse(int client, int weapon) {
 public int Native_initWW(Handle plugin, int numParams) {
 	if(IsWWActive == false) {
 		IsGameActive = true;
-		IsWWActive = true;
 		CreateTimer(1.0, FiveSecTimer, _, TIMER_REPEAT);
 		
 		for(int i = 1; i <= MaxClients; i++) {
