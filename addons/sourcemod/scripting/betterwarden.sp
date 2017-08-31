@@ -121,7 +121,7 @@ public void OnPluginStart() {
 	cv_WardenCreatedSound = CreateConVar("sm_warden_createsound", "1", "Play a sound to everyone when someone becomes warden\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	
 	// Translation stuff
-	LoadTranslations("BetterWarden.phrases");
+	LoadTranslations("BetterWarden.phrases.txt");
 	SetGlobalTransTarget(LANG_SERVER);
 	
 	// Regular Commands

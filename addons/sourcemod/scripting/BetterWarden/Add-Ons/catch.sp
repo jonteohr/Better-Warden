@@ -49,6 +49,12 @@ public void OnPluginStart() {
 	AutoExecConfig(true, "Catch", "BetterWarden");
 	
 	HookEvent("player_death", OnPlayerDeath);
+	HookEvent("round_start", OnRoundStart);
+}
+
+public void OnRoundStart(Event event, const char[] name, bool dontBroadcast) {
+	if(IsCatchActive == true)
+		IsCatchActive = false;
 }
 
 public void OnPlayerDeath(Event event, const char[] name, bool dontBroadcast) {

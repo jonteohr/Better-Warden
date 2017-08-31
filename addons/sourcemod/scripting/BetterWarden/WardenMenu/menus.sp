@@ -85,7 +85,7 @@ public int WardenMenuHandler(Menu menu, MenuAction action, int client, int param
 					FakeClientCommand(client, "sm_open");
 				}
 				if(StrEqual(info, CHOICE8)) {
-					FakeClientCommand(client, "sm_uw");
+					FakeClientCommand(client, "sm_rw");
 				}
 			}
 		}

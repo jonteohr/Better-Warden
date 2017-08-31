@@ -44,7 +44,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 }
 
 public void OnPluginStart() {
-	LoadTranslations("BetterWarden.Wildwest.phrases.txt");
+	LoadTranslations("BetterWarden.WildWest.phrases.txt");
 	SetGlobalTransTarget(LANG_SERVER);
 	
 	HookEvent("round_end", OnRoundEnd, EventHookMode_Pre);
