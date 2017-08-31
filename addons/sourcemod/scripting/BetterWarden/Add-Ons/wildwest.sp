@@ -48,7 +48,6 @@ public void OnPluginStart() {
 	SetGlobalTransTarget(LANG_SERVER);
 	
 	HookEvent("round_end", OnRoundEnd, EventHookMode_Pre);
-	HookEvent("item_pickup", OnItemPickup, EventHookMode_Pre);
 	
 	infAmmo = FindConVar("sv_infinite_ammo");
 }
@@ -78,6 +77,7 @@ public Action FiveSecTimer(Handle timer) {
 	if(sec == 1) {
 		CPrintToChatAll("%s %t", prefix, "Wild West Begun");
 		StartWW();
+		sec = 6; // Reset for possible next rounds
 		return Plugin_Stop;
 	}
 	
@@ -96,18 +96,14 @@ public void WeaponDropPost(int client, int weapon) {
 		WeaponOwner[weapon] = client;
 }
 
-public Action OnItemPickup(Event event, const char[] name, bool dontBroadcast) {
-	int client = GetClientOfUserId(GetEventInt(event, "userid"));
-	int weapon = GetEventInt(event, "item");
+public Action WeaponCanUse(int client, int weapon) {
+	if(IsWWActive == false)
+		return Plugin_Continue;
 	
-	if(IsWWActive == true) {
-		if(WeaponOwner[weapon] == client)
-			return Plugin_Continue;
+	if(WeaponOwner[weapon] == client)
+		return Plugin_Continue;
 		
-		return Plugin_Handled;
-	}
-	
-	return Plugin_Continue;
+	return Plugin_Handled;
 }
 
 /****************
@@ -116,6 +112,7 @@ public Action OnItemPickup(Event event, const char[] name, bool dontBroadcast) {
 public int Native_initWW(Handle plugin, int numParams) {
 	if(IsWWActive == false) {
 		IsGameActive = true;
+		IsWWActive = true;
 		CreateTimer(1.0, FiveSecTimer, _, TIMER_REPEAT);
 		
 		for(int i = 1; i <= MaxClients; i++) {
@@ -123,6 +120,7 @@ public int Native_initWW(Handle plugin, int numParams) {
 				continue;
 			Client_RemoveAllWeapons(i);
 			SDKHook(i, SDKHook_WeaponDropPost, WeaponDropPost);
+			SDKHook(i, SDKHook_WeaponCanUse, WeaponCanUse);
 		}
 		
 		return true;
