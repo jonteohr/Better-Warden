@@ -72,7 +72,7 @@ public void OnRoundEnd(Event event, const char[] name, bool dontBroadcast) { // 
 
 public void StartWW() { // Start the actual event
 	char buff[128];
-	Format(buff, sizeof(buff), "%s", g_weaponUsed);
+	GetConVarString(g_weaponUsed, buff, sizeof(buff));
 	for(int i = 1; i <= MaxClients; i++) {
 		if(!IsValidClient(i))
 			continue;

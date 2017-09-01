@@ -1,0 +1,15 @@
+vertexlitgeneric
+{
+	"$basetexture" 		"models\player\kuristaja\jailbreak\guard1\hair01_ao_d"
+	"$bumpmap" 		"models\player\kuristaja\jailbreak\guard1\hair01_ao_normal"
+
+	$nocull 1
+
+	$phong 1
+	$phongexponent 30
+	$phongboost .005
+	$phongfresnelranges "[5 6 8]"
+
+	$translucent 1
+	//$alphatest 1
+}
