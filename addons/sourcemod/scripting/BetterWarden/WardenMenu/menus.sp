@@ -296,7 +296,7 @@ public int DaysMenuHandler(Menu menu, MenuAction action, int client, int param2)
 					
 					if(StrEqual(info, CHOICE6))
 						initCatch();
-						
+					
 					if(StrEqual(info, CHOICE7))
 						initWW();
 					

@@ -20,6 +20,7 @@
 #include <wardenmenu>
 #include <colorvariables>
 #include <smlib>
+#include <BetterWarden/catch>
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -36,8 +37,7 @@ public Plugin myinfo = {
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) {
 	CreateNative("initCatch", Native_initCatch);
-	
-	RegPluginLibrary("catch");
+	RegPluginLibrary("catch"); // Register library so main plugin can check if this is loaded
 	
 	return APLRes_Success;
 }
@@ -49,30 +49,30 @@ public void OnPluginStart() {
 	AutoExecConfig(true, "Catch", "BetterWarden");
 	
 	HookEvent("player_death", OnPlayerDeath);
-	HookEvent("round_start", OnRoundStart);
+	HookEvent("round_start", OnRoundStart, EventHookMode_Pre);
 }
 
 public void OnRoundStart(Event event, const char[] name, bool dontBroadcast) {
-	if(IsCatchActive == true)
+	if(IsCatchActive == true) // If catch is still active for some reason
 		IsCatchActive = false;
 }
 
 public void OnPlayerDeath(Event event, const char[] name, bool dontBroadcast) {
-	if(IsCatchActive == true) {
+	if(IsCatchActive == true) { // If catch is active
 		int aliveT = GetTeamAliveClientCount(CS_TEAM_T);
 		
-		if(aliveT == 1)
+		if(aliveT == 1) // If we have a winner
 			EndCatch();
 	}
 }
 
 public Action OnClientTouch(int client, int other) {
-	if(IsCatchActive == false)
+	if(IsCatchActive == false) // Don't do anything if Catch ain't active
 		return Plugin_Continue;
-	if(!IsValidClient(client) || !IsValidClient(other))
+	if(!IsValidClient(client) || !IsValidClient(other)) // Make sure client !bot & alive
 		return Plugin_Continue;
 	
-	if(GetClientTeam(client) != CS_TEAM_CT || GetClientTeam(other) != CS_TEAM_T)
+	if(GetClientTeam(client) != CS_TEAM_CT || GetClientTeam(other) != CS_TEAM_T) // No teamkilling and no CT's being killed
 		return Plugin_Continue;
 		
 	ForcePlayerSuicide(other);
@@ -83,7 +83,7 @@ public Action OnClientTouch(int client, int other) {
 
 public Action OnTakeDamageAlive(int victim, int &attacker, int &inflictor, float &damage, int &damagetype) {
 	
-	if(IsCatchActive == false)
+	if(IsCatchActive == false) // Don't do anything if Catch ain't active
 		return Plugin_Continue;
 	
 	if(!IsValidClient(inflictor) || !IsValidClient(victim))
@@ -93,21 +93,13 @@ public Action OnTakeDamageAlive(int victim, int &attacker, int &inflictor, float
 	return Plugin_Handled;
 }
 
-public void EndCatch() {
+public void EndCatch() { // End the whole game and choose a winner
 	if(IsCatchActive == true) {
 		int winner;
 		
 		IsCatchActive = false;
 		IsGameActive = false;
 		
-		for(int i = 1; i <= MaxClients; i++) {
-			if(!IsValidClient(i))
-				continue;
-			if(GetClientTeam(i) != CS_TEAM_T)
-				continue;
-			winner = i;
-			break;
-		}
 		for(int i = 1; i <= MaxClients; i++) {
 			if(!IsValidClient(i))
 				continue;
@@ -118,6 +110,11 @@ public void EndCatch() {
 				GivePlayerItem(i, "weapon_fiveseven");
 				GivePlayerItem(i, "weapon_m4a1");
 			}
+			
+			if(GetClientTeam(i) != CS_TEAM_T)
+				continue;
+			winner = i;
+			break;
 		}
 		
 		CPrintToChatAll("%s %t", prefix, "Catch Over", winner);
@@ -125,17 +122,31 @@ public void EndCatch() {
 	}
 }
 
+public Action OnClientCommand(int client, int args) { // If a client starts a Last Request during catch, deny it!
+	char cmd[64];
+	GetCmdArg(0, cmd, sizeof(cmd));
+	
+	if(IsCatchActive == false)
+		return Plugin_Continue;
+	
+	if((StrEqual(cmd, "sm_lr", false) != true) || (StrEqual(cmd, "sm_lastrequest", false) != true))
+		return Plugin_Continue;
+	
+	CPrintToChat(client, "%s %t", prefix, "No LR During Catch");
+	return Plugin_Handled;
+}
+
 /****************
 *    NATIVES
 ****************/
-public int Native_initCatch(Handle plugin, int numParams) {
+public int Native_initCatch(Handle plugin, int numParams) { // Called to start the game
 	if(IsCatchActive == true) {
 		return false;
 	}
 	
 	IsCatchActive = true;
-	CPrintToChatAll("%s %t", prefix, "Catch initiated");
 	IsGameActive = true;
+	CPrintToChatAll("%s %t", prefix, "Catch initiated");
 	CPrintToChatTeam(CS_TEAM_CT, "%s %t", prefix, "Info CT");
 	
 	for(int i = 1; i <= MaxClients; i++) {

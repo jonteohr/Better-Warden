@@ -22,9 +22,13 @@
 #include <sdkhooks>
 #include <wardenmenu>
 #include <adminmenu>
-#define REQUIRE_PLUGIN
 #include <betterwarden>
+
+// Optional plugins
 #undef REQUIRE_PLUGIN
+#include <BetterWarden/catch>
+#include <BetterWarden/wildwest>
+#define REQUIRE_PLUGIN
 
 #define CHOICE1 "#choice1"
 #define CHOICE2 "#choice2"
@@ -33,9 +37,9 @@
 #define CHOICE5 "#choice5"
 #define CHOICE6 "#choice6"
 #define CHOICE7 "#choice7"
+#define CHOICE8 "#choice8"
 #define SPACER "#spacer"
 #define SEP "#sep"
-#define CHOICE8 "#choice8"
 
 // Add-On checks
 bool catchLoaded;
@@ -113,6 +117,9 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	CreateNative("GiveClientFreeday", Native_GiveClientFreeday);
 	CreateNative("RemoveClientFreeday", Native_RemoveClientFreeday);
 	CreateNative("SetClientBeacon", Native_SetClientBeacon);
+	
+	MarkNativeAsOptional("initCatch");
+	MarkNativeAsOptional("initWW");
 	RegPluginLibrary("wardenmenu");
 	
 	return APLRes_Success;
@@ -171,14 +178,21 @@ public OnPluginStart() {
 public OnAllPluginsLoaded() {
 	cvBeaconRadius = FindConVar("sm_beacon_radius");
 	
+/*		Maybe bad way to check..?	
 	Handle PCatch = FindPluginByFile("BetterWarden/Add-Ons/catch.smx");
 	Handle PWest = FindPluginByFile("BetterWarden/Add-Ons/wildwest.smx");
 	
+
 	if(GetPluginStatus(PCatch) == Plugin_Running)
 		catchLoaded = true;
 		
 	if(GetPluginStatus(PWest) == Plugin_Running)
 		wwLoaded = true;
+*/
+	
+	catchLoaded = LibraryExists("catch");
+	wwLoaded = LibraryExists("wildwest");
+	
 }
 
 public void abortGames() {
