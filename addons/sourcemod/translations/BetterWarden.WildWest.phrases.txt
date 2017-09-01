@@ -15,7 +15,7 @@
 	
 	"Wild West Begun"
 	{
-		"en"	""
-		"sv"	""
+		"en"	"Wild West Shootout has started!"
+		"sv"	"Vilda Västern har börjat!"
 	}
 }

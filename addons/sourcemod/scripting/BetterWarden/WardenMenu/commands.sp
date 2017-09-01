@@ -38,11 +38,11 @@ public Action sm_cmenu(int client, int args) {
 // sm_abortgames
 public Action sm_abortgames(int client, int args) {
 	if(!IsClientWardenAdmin(client)) {
-		CPrintToChat(client, "%s {red}%t", cmenuPrefix, "Not Admin");
+		CReplyToCommand(client, "%s {red}%t", cmenuPrefix, "Not Admin");
 		return Plugin_Handled;
 	}
 	if(!IsGameActive) {
-		CPrintToChat(client, "%s %t", cmenuPrefix, "Admin Abort Denied");
+		CReplyToCommand(client, "%s %t", cmenuPrefix, "Admin Abort Denied");
 		return Plugin_Handled;
 	}
 	
