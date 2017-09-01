@@ -98,17 +98,3 @@ native bool RemoveClientFreeday(int client);
 * @return true if successful
 */
 native bool SetClientBeacon(int client, bool beaconState);
-
-/**
-* Initiates a Catch event day.
-* 
-* @return true if successful
-*/
-native bool initCatch();
-
-/**
-* Initiates a Wild West event day.
-*
-* @return true if successful
-*/
-native bool initWW();
