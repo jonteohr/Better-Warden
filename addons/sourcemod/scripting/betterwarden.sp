@@ -45,6 +45,7 @@ Handle gF_OnWardenRetire = null;
 Handle gF_OnAdminRemoveWarden = null;
 Handle gF_OnWardenCreated = null;
 Handle gF_OnWardenCreatedByAdmin = null;
+Handle gF_OnWardenRemoved = null;
 
 // Stock ConVars
 stock ConVar cv_version;
@@ -98,6 +99,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	gF_OnAdminRemoveWarden = CreateGlobalForward("OnAdminRemoveWarden", ET_Ignore, Param_Cell, Param_Cell);
 	gF_OnWardenCreated = CreateGlobalForward("OnWardenCreated", ET_Ignore, Param_Cell);
 	gF_OnWardenCreatedByAdmin = CreateGlobalForward("OnWardenCreatedByAdmin", ET_Ignore, Param_Cell, Param_Cell);
+	gF_OnWardenRemoved = CreateGlobalForward("OnWardenRemoved", ET_Ignore, Param_Cell);
 	
 	return APLRes_Success;
 }
@@ -266,6 +268,10 @@ public int Native_SetWarden(Handle plugin, int numParams) {
 public int Native_RemoveWarden(Handle plugin, int numParams) {
 	if(!WardenExists())
 		return false;
+	
+	Call_StartForward(gF_OnWardenRemoved);
+	Call_PushCell(curWarden);
+	Call_Finish();
 	
 	if(cv_wardenTwice.IntValue == 1) {
 		prevWarden = curWarden;

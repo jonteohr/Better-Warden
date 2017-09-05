@@ -56,6 +56,13 @@ forward void OnWardenRetire(int client);
 forward void OnAdminRemoveWarden(int admin, int warden);
 
 /**
+* Called when a warden is removed in any way.
+*
+* @param the warden client index
+*/
+forward void OnWardenRemoved(int client);
+
+/**
 * Checks if the given client is currently warden.
 *
 * @param client index

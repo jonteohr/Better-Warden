@@ -17,45 +17,13 @@
 #include <betterwarden>
 #include <cstrike>
 
+// Compiler options
 #pragma semicolon 1
 #pragma newdecls required
 
-char wardenMaterials[] = {
-	"materials/models/player/kuristaja/jailbreak/shared/brown_eye01_an_d.vmt",
-	"materials/models/player/kuristaja/jailbreak/shared/police_body_d.vmt",
-	"materials/models/player/kuristaja/jailbreak/shared/prisoner1_body.vmt",
-	"materials/models/player/kuristaja/jailbreak/shared/tex_0086_0.vmt",
-	"materials/models/player/kuristaja/jailbreak/shared/brown_eye_normal.vtf",
-	"materials/models/player/kuristaja/jailbreak/shared/brown_eye01_an_d.vtf",
-	"materials/models/player/kuristaja/jailbreak/shared/police_body_d.vtf",
-	"materials/models/player/kuristaja/jailbreak/shared/police_body_normal.vtf",
-	"materials/models/player/kuristaja/jailbreak/shared/prisoner1_body.vtf",
-	"materials/models/player/kuristaja/jailbreak/shared/prisoner1_body_normal.vtf",
-	"materials/models/player/kuristaja/jailbreak/shared/tex_0086_0.vtf",
-	"materials/models/player/kuristaja/jailbreak/shared/tex_0086_1.vtf",
-	"materials/models/player/kuristaja/jailbreak/guard1/hair01_ao_d.vmt",
-	"materials/models/player/kuristaja/jailbreak/guard1/hair01_ao_d2.vmt",
-	"materials/models/player/kuristaja/jailbreak/guard1/sewell01_head01_au_d.vmt",
-	"materials/models/player/kuristaja/jailbreak/guard1/hair01_ao_d.vtf",
-	"materials/models/player/kuristaja/jailbreak/guard1/hair01_ao_normal.vtf",
-	"materials/models/player/kuristaja/jailbreak/guard1/sewell01_head01_au_d.vtf",
-	"materials/models/player/kuristaja/jailbreak/guard1/sewell01_head01_au_normal.vtf"
-};
+ConVar g_WardenModel;
 
-char wardenModels[] = {
-	"models/player/custom_player/kuristaja/jailbreak/guard1/guard1.dx90.vtx",
-	"models/player/custom_player/kuristaja/jailbreak/guard1/guard1.mdl",
-	"models/player/custom_player/kuristaja/jailbreak/guard1/guard1.phy",
-	"models/player/custom_player/kuristaja/jailbreak/guard1/guard1.vvd",
-	"models/player/custom_player/kuristaja/jailbreak/guard1/guard1_arms.dx90.vtx",
-	"models/player/custom_player/kuristaja/jailbreak/guard1/guard1_arms.mdl",
-	"models/player/custom_player/kuristaja/jailbreak/guard1/guard1_arms.vvd"
-};
-
-char wardenModelFile[] = "models/player/custom_player/kuristaja/jailbreak/guard1/guard1.mdl";
-char wardenArmFile[] = "models/player/custom_player/kuristaja/jailbreak/guard1/guard1_arms.mdl";
-
-ConVar g_wardenModel;
+char previousModel[256];
 
 public Plugin myinfo = {
 	name = "[BetterWarden] Player Models",
@@ -68,24 +36,57 @@ public Plugin myinfo = {
 public void OnPluginStart() {
 	AutoExecConfig(true, "models", "BetterWarden/Add-Ons");
 	
-	g_wardenModel = CreateConVar("sm_warden_model", "1", "Enable or disable the warden getting a player model.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_WardenModel = CreateConVar("sm_warden_model", "1", "Enable or disable the warden getting a player model.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 }
 
 public void OnMapStart() {
-	if(g_wardenModel.IntValue == 1) {
-		for(int i = 0; i < sizeof(wardenMaterials); i++) // Make sure to add every material to downloads-table!
-			AddFileToDownloadsTable(wardenMaterials[i]);
-		for(int i = 0; i < sizeof(wardenModels); i++) // Model files to download
-			AddFileToDownloadsTable(wardenModels[i]);
+	if(g_WardenModel.IntValue == 1) { // Only need to download the files if the model is enabled in config!
+		// Material files
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/shared/brown_eye01_an_d.vmt");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/shared/police_body_d.vmt");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/shared/prisoner1_body.vmt");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/shared/tex_0086_0.vmt");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/shared/brown_eye_normal.vtf");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/shared/brown_eye01_an_d.vtf");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/shared/police_body_d.vtf");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/shared/police_body_normal.vtf");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/shared/prisoner1_body.vtf");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/shared/prisoner1_body_normal.vtf");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/shared/tex_0086_0.vtf");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/shared/tex_0086_1.vtf");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/guard1/hair01_ao_d.vmt");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/guard1/hair01_ao_d2.vmt");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/guard1/sewell01_head01_au_d.vmt");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/guard1/hair01_ao_d.vtf");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/guard1/hair01_ao_normal.vtf");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/guard1/sewell01_head01_au_d.vtf");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/guard1/sewell01_head01_au_normal.vtf");
+		// Model Files
+		AddFileToDownloadsTable("models/player/custom_player/kuristaja/jailbreak/guard1/guard1.dx90.vtx");
+		AddFileToDownloadsTable("models/player/custom_player/kuristaja/jailbreak/guard1/guard1.mdl");
+		AddFileToDownloadsTable("models/player/custom_player/kuristaja/jailbreak/guard1/guard1.phy");
+		AddFileToDownloadsTable("models/player/custom_player/kuristaja/jailbreak/guard1/guard1.vvd");
+		AddFileToDownloadsTable("models/player/custom_player/kuristaja/jailbreak/guard1/guard1_arms.dx90.vtx");
+		AddFileToDownloadsTable("models/player/custom_player/kuristaja/jailbreak/guard1/guard1_arms.mdl");
+		AddFileToDownloadsTable("models/player/custom_player/kuristaja/jailbreak/guard1/guard1_arms.vvd");
 		
-		PrecacheModel(wardenModelFile); // Only need to precache the .mdl files
-		PrecacheModel(wardenArmFile);
+		// Precache models
+		PrecacheModel("models/player/custom_player/kuristaja/jailbreak/guard1/guard1.mdl"); // Only need to precache the .mdl files
+		PrecacheModel("models/player/custom_player/kuristaja/jailbreak/guard1/guard1_arms.mdl");
 	}
 }
 
-public void OnWardenCreated(int client) {
-	if(IsValidClient(client) && g_wardenModel.IntValue == 1) {
-		SetEntityModel(client, wardenModelFile); // Set the warden .mdl model file
-		SetEntPropString(client, Prop_Send, "m_szArmsModel", wardenArmFile); // Sets the warden arms model
+public void OnWardenCreated(int client) { // When warden is created, set the models!
+	if(IsValidClient(client) && g_WardenModel.IntValue == 1) {
+		GetEntPropString(client, Prop_Data, "m_ModelName", previousModel, sizeof(previousModel)); // Get the "standard" model that CTs use
+		
+		SetEntityModel(client, "models/player/custom_player/kuristaja/jailbreak/guard1/guard1.mdl"); // Set the warden .mdl model file
+		SetEntPropString(client, Prop_Send, "m_szArmsModel", "models/player/custom_player/kuristaja/jailbreak/guard1/guard1_arms.mdl"); // Sets the warden arms model
+	}
+}
+
+public void OnWardenRemoved(int client) {
+	if(g_WardenModel.IntValue == 1) {
+		SetEntityModel(client, previousModel); // Reset the model
 	}
 }
