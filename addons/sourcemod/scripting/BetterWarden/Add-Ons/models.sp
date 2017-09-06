@@ -24,6 +24,7 @@
 ConVar g_WardenModel;
 
 char previousModel[256];
+char prevArms[256];
 
 public Plugin myinfo = {
 	name = "[BetterWarden] Player Models",
@@ -79,6 +80,7 @@ public void OnMapStart() {
 public void OnWardenCreated(int client) { // When warden is created, set the models!
 	if(IsValidClient(client) && g_WardenModel.IntValue == 1) {
 		GetEntPropString(client, Prop_Data, "m_ModelName", previousModel, sizeof(previousModel)); // Get the "standard" model that CTs use
+		GetEntPropString(client, Prop_Send, "m_szArmsModel", prevArms, sizeof(prevArms));
 		
 		SetEntityModel(client, "models/player/custom_player/kuristaja/jailbreak/guard1/guard1.mdl"); // Set the warden .mdl model file
 		SetEntPropString(client, Prop_Send, "m_szArmsModel", "models/player/custom_player/kuristaja/jailbreak/guard1/guard1_arms.mdl"); // Sets the warden arms model
@@ -88,5 +90,6 @@ public void OnWardenCreated(int client) { // When warden is created, set the mod
 public void OnWardenRemoved(int client) {
 	if(g_WardenModel.IntValue == 1) {
 		SetEntityModel(client, previousModel); // Reset the model
+		SetEntPropString(client, Prop_Send, "m_szArmsModel", prevArms);
 	}
 }
