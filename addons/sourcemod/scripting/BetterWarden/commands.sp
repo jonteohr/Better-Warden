@@ -144,7 +144,7 @@ public Action Command_SetWarden(int client, int args) {
 		CReplyToCommand(client, "%s {red}%t", prefix, "Not Admin");
 		return Plugin_Handled;
 	}
-	if(!IsValidClient(client, false, true)) {
+	if(!IsValidClient(client)) {
 		CReplyToCommand(client, "%s %t", prefix, "Invalid Client");
 		return Plugin_Handled;
 	}

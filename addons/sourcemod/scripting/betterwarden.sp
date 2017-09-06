@@ -224,7 +224,7 @@ public int Native_GetTeamAliveClientCount(Handle plugin, int numParams) {
 	int count = 0;
 	
 	for(int client = 1; client <= MaxClients; client++) {
-		if(!IsValidClient(client, false, false))
+		if(!IsValidClient(client))
 			continue;
 			
 		if(GetClientTeam(client) == team)
