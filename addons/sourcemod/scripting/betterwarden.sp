@@ -21,6 +21,11 @@
 #include <wardenmenu>
 #include <smartjaildoors>
 #include <emitsoundany>
+#undef REQUIRE_PLUGIN
+#include <updater>
+#define REQUIRE_PLUGIN
+
+#define BW_UPDATE_URL "https://condolent.xyz/betterwarden/updater.txt"
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -159,6 +164,18 @@ public void OnPluginStart() {
 	cv_noblock = FindConVar("mp_solid_teammates");
 	cv_wardenIconPath.GetString(WardenIconPath, sizeof(WardenIconPath));
 	
+	// Updater
+	if(LibraryExists("updater")) {
+		Updater_AddPlugin(BW_UPDATE_URL);
+	}
+	
+}
+
+public void OnLibraryAdded(const char[] name) {
+	// Updater
+	if(StrEqual(name, "updater")) {
+		Updater_AddPlugin(BW_UPDATE_URL);
+	}
 }
 
 /////////////////////////////
