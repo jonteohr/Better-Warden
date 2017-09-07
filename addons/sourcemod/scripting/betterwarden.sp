@@ -25,7 +25,7 @@
 #include <updater>
 #define REQUIRE_PLUGIN
 
-#define BW_UPDATE_URL "https://condolent.xyz/betterwarden/updater.txt"
+#define BW_UPDATE_URL "https://ecoround.se/sm_updater/betterwarden/updater.txt"
 
 #pragma semicolon 1
 #pragma newdecls required
