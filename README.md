@@ -48,6 +48,7 @@
 
 ## Dependencies
 * [SmartJailDoors](https://forums.alliedmods.net/showthread.php?t=264100) _by Kailo_
+* [SteamWorks Extension](https://forums.alliedmods.net/showthread.php?t=229556) (Included in plugin package)
 
 ## Features
 The major function this plugin offers is that the warden can choose special event days to play out for the round. Each day has some special server rules & features that applies in order to make it much more fun for the players!  
