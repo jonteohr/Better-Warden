@@ -22,6 +22,9 @@
 		"Plugin"	"Path_SM/translations/BetterWarden.Menu.phrases.txt"
 		"Plugin"	"Path_SM/translations/BetterWarden.WildWest.phrases.txt"
 		
+		"Plugin"	"Path_SM/extensions/SteamWorks.ext.so"
+		"Plugin"	"Path_SM/extensions/SteamWorks.ext.dll"
+		
 		"Plugin"	"Path_Mod/sound/betterwarden/newwarden.mp3"
 		"Plugin"	"Path_Mod/sound/betterwarden/wardendead.mp3"
 		
