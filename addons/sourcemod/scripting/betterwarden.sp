@@ -70,9 +70,9 @@ ConVar cv_WardenDeathSound;
 ConVar cv_WardenCreatedSound;
 
 // Modules
-#include "BetterWarden/Warden/commands.sp"
-#include "BetterWarden/Warden/actions.sp"
-#include "BetterWarden/Warden/events.sp"
+#include "BetterWarden/commands.sp"
+#include "BetterWarden/actions.sp"
+#include "BetterWarden/events.sp"
 
 public Plugin myinfo = {
 	name = "[CS:GO] Better Warden",

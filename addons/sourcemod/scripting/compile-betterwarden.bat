@@ -12,13 +12,13 @@ echo.
 echo ***************************
 echo   Compiling: BetterWarden 
 echo ***************************
-spcomp BetterWarden/betterwarden.sp -o../plugins/BetterWarden/betterwarden.smx
+spcomp betterwarden.sp -o../plugins/BetterWarden/betterwarden.smx
 echo.
 echo.
 echo ************************
 echo   Compile: Warden Menu 
 echo ************************
-spcomp BetterWarden/wardenmenu.sp -o../plugins/BetterWarden/wardenmenu.smx 
+spcomp wardenmenu.sp -o../plugins/BetterWarden/wardenmenu.smx 
 echo.
 echo.
 echo.
