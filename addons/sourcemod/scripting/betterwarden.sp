@@ -31,17 +31,17 @@
 #pragma newdecls required
 
 // Strings
-char curWardenStat[MAX_NAME_LENGTH];
-char WardenIconPath[256];
+char g_sCurWardenStat[MAX_NAME_LENGTH];
+char g_sWardenIconPath[256];
 
 // Integers
-int curWarden = -1;
-int prevWarden = -1;
-int aliveCT = 0;
-int aliveTerrorists = 0;
-int totalCT = 0;
-int totalTerrorists = 0;
-int iIcon[MAXPLAYERS +1] = {-1, ...};
+int g_iCurWarden = -1;
+int g_iPrevWarden = -1;
+int g_iAliveCT = 0;
+int g_iAliveTerrorists = 0;
+int g_iTotalCT = 0;
+int g_iTotalTerrorists = 0;
+int g_iIcon[MAXPLAYERS +1] = {-1, ...};
 
 // Forward handles
 Handle gF_OnWardenDeath = null;
@@ -53,21 +53,21 @@ Handle gF_OnWardenCreatedByAdmin = null;
 Handle gF_OnWardenRemoved = null;
 
 // Stock ConVars
-stock ConVar cv_version;
+stock ConVar gc_sVersion;
 // Regular ConVars
-ConVar cv_EnableNoblock;
-ConVar cv_noblock;
-ConVar cv_admFlag;
-ConVar cv_openCells;
-ConVar cv_wardenTwice;
-ConVar cv_StatsHint;
-ConVar cv_colorR;
-ConVar cv_colorG;
-ConVar cv_colorB;
-ConVar cv_wardenIcon;
-ConVar cv_wardenIconPath;
-ConVar cv_WardenDeathSound;
-ConVar cv_WardenCreatedSound;
+ConVar gc_bEnableNoblock;
+ConVar gc_bNoblock;
+ConVar gc_sAdmFlag;
+ConVar gc_bOpenCells;
+ConVar gc_bWardenTwice;
+ConVar gc_bStatsHint;
+ConVar gc_iColorR;
+ConVar gc_iColorG;
+ConVar gc_iColorB;
+ConVar gc_bWardenIcon;
+ConVar gc_sWardenIconPath;
+ConVar gc_bWardenDeathSound;
+ConVar gc_bWardenCreatedSound;
 
 // Modules
 #include "BetterWarden/commands.sp"
@@ -113,19 +113,19 @@ public void OnPluginStart() {
 	
 	// CVars
 	AutoExecConfig(true, "warden", "BetterWarden");
-	cv_version = CreateConVar("sm_warden_version", VERSION, "Current version of this plugin. DO NOT CHANGE THIS!", FCVAR_DONTRECORD|FCVAR_NOTIFY);
-	cv_admFlag = CreateConVar("sm_warden_admin", "b", "The flag required to execute admin commands for this plugin.", FCVAR_NOTIFY);
-	cv_EnableNoblock = CreateConVar("sm_warden_noblock", "1", "Give the warden the ability to toggle noblock via sm_noblock?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	cv_openCells = CreateConVar("sm_warden_cellscmd", "1", "Give the warden ability to toggle cell-doors via sm_open?\nCell doors on every map needs to be setup with SmartJailDoors for this to work!\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	cv_wardenTwice = CreateConVar("sm_warden_same_twice", "0", "Prevent the same warden from becoming warden next round instantly?\nThis should only be used on populated servers for obvious reasons.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	cv_StatsHint = CreateConVar("sm_warden_stats", "1", "Have a hint message up during the round with information about who's warden, how many players there are etc.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	cv_colorR = CreateConVar("sm_warden_color_R", "33", "The Red value of the color the warden gets.", FCVAR_NOTIFY, true, 0.0, true, 255.0);
-	cv_colorG = CreateConVar("sm_warden_color_G", "114", "The Green value of the color the warden gets.", FCVAR_NOTIFY, true, 0.0, true, 255.0);
-	cv_colorB = CreateConVar("sm_warden_color_B", "255", "The Blue value of the color the warden gets.", FCVAR_NOTIFY, true, 0.0, true, 255.0);
-	cv_wardenIcon = CreateConVar("sm_warden_icon", "1", "Have an icon above the wardens' head?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	cv_wardenIconPath = CreateConVar("sm_warden_icon_path", "decals/BetterWarden/warden", "The path to the icon. Do not include file extensions!\nThe path here should be from whithin the materials/ folder.", FCVAR_NOTIFY);
-	cv_WardenDeathSound = CreateConVar("sm_warden_deathsound", "1", "Play a sound telling everyone the warden has died?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	cv_WardenCreatedSound = CreateConVar("sm_warden_createsound", "1", "Play a sound to everyone when someone becomes warden\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_sVersion = CreateConVar("sm_warden_version", VERSION, "Current version of this plugin. DO NOT CHANGE THIS!", FCVAR_DONTRECORD|FCVAR_NOTIFY);
+	gc_sAdmFlag = CreateConVar("sm_warden_admin", "b", "The flag required to execute admin commands for this plugin.", FCVAR_NOTIFY);
+	gc_bEnableNoblock = CreateConVar("sm_warden_noblock", "1", "Give the warden the ability to toggle noblock via sm_noblock?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bOpenCells = CreateConVar("sm_warden_cellscmd", "1", "Give the warden ability to toggle cell-doors via sm_open?\nCell doors on every map needs to be setup with SmartJailDoors for this to work!\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bWardenTwice = CreateConVar("sm_warden_same_twice", "0", "Prevent the same warden from becoming warden next round instantly?\nThis should only be used on populated servers for obvious reasons.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bStatsHint = CreateConVar("sm_warden_stats", "1", "Have a hint message up during the round with information about who's warden, how many players there are etc.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_iColorR = CreateConVar("sm_warden_color_R", "33", "The Red value of the color the warden gets.", FCVAR_NOTIFY, true, 0.0, true, 255.0);
+	gc_iColorG = CreateConVar("sm_warden_color_G", "114", "The Green value of the color the warden gets.", FCVAR_NOTIFY, true, 0.0, true, 255.0);
+	gc_iColorB = CreateConVar("sm_warden_color_B", "255", "The Blue value of the color the warden gets.", FCVAR_NOTIFY, true, 0.0, true, 255.0);
+	gc_bWardenIcon = CreateConVar("sm_warden_icon", "1", "Have an icon above the wardens' head?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_sWardenIconPath = CreateConVar("sm_warden_icon_path", "decals/BetterWarden/warden", "The path to the icon. Do not include file extensions!\nThe path here should be from whithin the materials/ folder.", FCVAR_NOTIFY);
+	gc_bWardenDeathSound = CreateConVar("sm_warden_deathsound", "1", "Play a sound telling everyone the warden has died?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bWardenCreatedSound = CreateConVar("sm_warden_createsound", "1", "Play a sound to everyone when someone becomes warden\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	
 	// Translation stuff
 	LoadTranslations("BetterWarden.phrases.txt");
@@ -137,9 +137,9 @@ public void OnPluginStart() {
 	RegConsoleCmd("sm_c", Command_Warden);
 	RegConsoleCmd("sm_rw", Command_Retire);
 	RegConsoleCmd("sm_retire", Command_Retire);
-	if(cv_openCells.IntValue == 1)
+	if(gc_bOpenCells.IntValue == 1)
 		RegConsoleCmd("sm_open", Command_OpenCells);
-	if(cv_EnableNoblock.IntValue == 1)
+	if(gc_bEnableNoblock.IntValue == 1)
 		RegConsoleCmd("sm_noblock", Command_Noblock);
 	
 	// Admin Commands
@@ -157,12 +157,12 @@ public void OnPluginStart() {
 	AddCommandListener(OnPlayerChat, "say");
 	
 	// Timers
-	if(cv_StatsHint.IntValue == 1)
+	if(gc_bStatsHint.IntValue == 1)
 		CreateTimer(0.1, JBToolTip, _, TIMER_REPEAT);
 	
 	// Fetch CVars
-	cv_noblock = FindConVar("mp_solid_teammates");
-	cv_wardenIconPath.GetString(WardenIconPath, sizeof(WardenIconPath));
+	gc_bNoblock = FindConVar("mp_solid_teammates");
+	gc_sWardenIconPath.GetString(g_sWardenIconPath, sizeof(g_sWardenIconPath));
 	
 	// Updater
 	if(LibraryExists("updater")) {
@@ -186,7 +186,7 @@ public void CreateIcon(int client) {
 	if(!IsValidClient(client) || !IsClientWarden(client))
 		return;
 	
-	if(cv_wardenIcon.IntValue != 1)
+	if(gc_bWardenIcon.IntValue != 1)
 		return;
 	
 	RemoveIcon(client);
@@ -195,38 +195,38 @@ public void CreateIcon(int client) {
 	Format(iTarget, 16, "client%d", client);
 	DispatchKeyValue(client, "targetname", iTarget);
 	
-	iIcon[client] = CreateEntityByName("env_sprite");
+	g_iIcon[client] = CreateEntityByName("env_sprite");
 	
-	if (!iIcon[client]) 
+	if (!g_iIcon[client]) 
 		return;
 	
 	char iconbuffer[256];
 	
-	Format(iconbuffer, sizeof(iconbuffer), "materials/%s.vmt", WardenIconPath);
+	Format(iconbuffer, sizeof(iconbuffer), "materials/%s.vmt", g_sWardenIconPath);
 	
-	DispatchKeyValue(iIcon[client], "model", iconbuffer);
-	DispatchKeyValue(iIcon[client], "classname", "env_sprite");
-	DispatchKeyValue(iIcon[client], "spawnflags", "1");
-	DispatchKeyValue(iIcon[client], "scale", "0.3");
-	DispatchKeyValue(iIcon[client], "rendermode", "1");
-	DispatchKeyValue(iIcon[client], "rendercolor", "255 255 255");
-	DispatchSpawn(iIcon[client]);
+	DispatchKeyValue(g_iIcon[client], "model", iconbuffer);
+	DispatchKeyValue(g_iIcon[client], "classname", "env_sprite");
+	DispatchKeyValue(g_iIcon[client], "spawnflags", "1");
+	DispatchKeyValue(g_iIcon[client], "scale", "0.3");
+	DispatchKeyValue(g_iIcon[client], "rendermode", "1");
+	DispatchKeyValue(g_iIcon[client], "rendercolor", "255 255 255");
+	DispatchSpawn(g_iIcon[client]);
 	
 	float origin[3];
 	GetClientAbsOrigin(client, origin);
 	origin[2] = origin[2] + 90.0;
 	
-	TeleportEntity(iIcon[client], origin, NULL_VECTOR, NULL_VECTOR);
+	TeleportEntity(g_iIcon[client], origin, NULL_VECTOR, NULL_VECTOR);
 	SetVariantString(iTarget);
-	AcceptEntityInput(iIcon[client], "SetParent", iIcon[client], iIcon[client], 0);
+	AcceptEntityInput(g_iIcon[client], "SetParent", g_iIcon[client], g_iIcon[client], 0);
 	
-	SDKHook(iIcon[client], SDKHook_SetTransmit, Should_TransmitW);
+	SDKHook(g_iIcon[client], SDKHook_SetTransmit, Should_TransmitW);
 }
 
 public void RemoveIcon(int client) {
-	if(iIcon[client] > 0 && IsValidEdict(iIcon[client])) {
-		AcceptEntityInput(iIcon[client], "Kill");
-		iIcon[client] = -1;
+	if(g_iIcon[client] > 0 && IsValidEdict(g_iIcon[client])) {
+		AcceptEntityInput(g_iIcon[client], "Kill");
+		g_iIcon[client] = -1;
 	}
 }
 
@@ -254,13 +254,13 @@ public int Native_GetTeamAliveClientCount(Handle plugin, int numParams) {
 public int Native_IsClientWarden(Handle plugin, int numParams) {
 	int client = GetNativeCell(1);
 	
-	if(curWarden == client)
+	if(g_iCurWarden == client)
 		return true;
 	
 	return false;
 }
 public int Native_WardenExists(Handle plugin, int numParams) {
-	if(curWarden != -1) {
+	if(g_iCurWarden != -1) {
 		return true;
 	}
 	
@@ -269,15 +269,15 @@ public int Native_WardenExists(Handle plugin, int numParams) {
 public int Native_SetWarden(Handle plugin, int numParams) {
 	int client = GetNativeCell(1);
 	
-	curWarden = client;
+	g_iCurWarden = client;
 	char name[MAX_NAME_LENGTH];
 	GetClientName(client, name, sizeof(name));
-	curWardenStat = name;
+	g_sCurWardenStat = name;
 	CreateTimer(1.0, RenderColor, client, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
 	
 	CreateIcon(client);
 	
-	if(cv_WardenCreatedSound.IntValue == 1)
+	if(gc_bWardenCreatedSound.IntValue == 1)
 		EmitSoundToAllAny("betterwarden/newwarden.mp3");
 	
 	return true;
@@ -287,27 +287,27 @@ public int Native_RemoveWarden(Handle plugin, int numParams) {
 		return false;
 	
 	Call_StartForward(gF_OnWardenRemoved);
-	Call_PushCell(curWarden);
+	Call_PushCell(g_iCurWarden);
 	Call_Finish();
 	
-	if(cv_wardenTwice.IntValue == 1) {
-		prevWarden = curWarden;
+	if(gc_bWardenTwice.IntValue == 1) {
+		g_iPrevWarden = g_iCurWarden;
 	}
 	
 	RemoveIcon(GetCurrentWarden());
 	
-	curWarden = -1;
-	curWardenStat = "None..";
+	g_iCurWarden = -1;
+	g_sCurWardenStat = "None..";
 	
 	return true;
 }
 public int Native_GetCurrentWarden(Handle plugin, int numParams) {
-	return curWarden;
+	return g_iCurWarden;
 }
 public int Native_IsClientWardenAdmin(Handle plugin, int numParams) {
 	int client = GetNativeCell(1);
 	char admflag[32];
-	GetConVarString(cv_admFlag, admflag, sizeof(admflag));
+	GetConVarString(gc_sAdmFlag, admflag, sizeof(admflag));
 	
 	if(IsValidClient(client, false, true)) {
 		if((GetUserFlagBits(client) & ReadFlagString(admflag) == ReadFlagString(admflag)) || GetUserFlagBits(client) & ADMFLAG_ROOT)

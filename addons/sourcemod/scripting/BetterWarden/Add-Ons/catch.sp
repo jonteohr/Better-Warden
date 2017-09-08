@@ -25,7 +25,7 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-bool IsCatchActive;
+bool g_bIsCatchActive;
 
 public Plugin myinfo = {
 	name = "[BetterWarden] Catch",
@@ -53,12 +53,12 @@ public void OnPluginStart() {
 }
 
 public void OnRoundStart(Event event, const char[] name, bool dontBroadcast) {
-	if(IsCatchActive == true) // If catch is still active for some reason
-		IsCatchActive = false;
+	if(g_bIsCatchActive == true) // If catch is still active for some reason
+		g_bIsCatchActive = false;
 }
 
 public void OnPlayerDeath(Event event, const char[] name, bool dontBroadcast) {
-	if(IsCatchActive == true) { // If catch is active
+	if(g_bIsCatchActive == true) { // If catch is active
 		int aliveT = GetTeamAliveClientCount(CS_TEAM_T);
 		
 		if(aliveT == 1) // If we have a winner
@@ -67,7 +67,7 @@ public void OnPlayerDeath(Event event, const char[] name, bool dontBroadcast) {
 }
 
 public Action OnClientTouch(int client, int other) {
-	if(IsCatchActive == false) // Don't do anything if Catch ain't active
+	if(g_bIsCatchActive == false) // Don't do anything if Catch ain't active
 		return Plugin_Continue;
 	if(!IsValidClient(client) || !IsValidClient(other)) // Make sure client !bot & alive
 		return Plugin_Continue;
@@ -83,7 +83,7 @@ public Action OnClientTouch(int client, int other) {
 
 public Action OnTakeDamageAlive(int victim, int &attacker, int &inflictor, float &damage, int &damagetype) {
 	
-	if(IsCatchActive == false) // Don't do anything if Catch ain't active
+	if(g_bIsCatchActive == false) // Don't do anything if Catch ain't active
 		return Plugin_Continue;
 	
 	if(!IsValidClient(inflictor) || !IsValidClient(victim))
@@ -94,11 +94,11 @@ public Action OnTakeDamageAlive(int victim, int &attacker, int &inflictor, float
 }
 
 public void EndCatch() { // End the whole game and choose a winner
-	if(IsCatchActive == true) {
+	if(g_bIsCatchActive == true) {
 		int winner;
 		
-		IsCatchActive = false;
-		IsGameActive = false;
+		g_bIsCatchActive = false;
+		g_bIsGameActive = false;
 		
 		for(int i = 1; i <= MaxClients; i++) {
 			if(!IsValidClient(i))
@@ -126,7 +126,7 @@ public Action OnClientCommand(int client, int args) { // If a client starts a La
 	char cmd[64];
 	GetCmdArg(0, cmd, sizeof(cmd));
 	
-	if(IsCatchActive == false)
+	if(g_bIsCatchActive == false)
 		return Plugin_Continue;
 	
 	if((StrEqual(cmd, "sm_lr", false) != true) || (StrEqual(cmd, "sm_lastrequest", false) != true))
@@ -140,12 +140,12 @@ public Action OnClientCommand(int client, int args) { // If a client starts a La
 *    NATIVES
 ****************/
 public int Native_initCatch(Handle plugin, int numParams) { // Called to start the game
-	if(IsCatchActive == true) {
+	if(g_bIsCatchActive == true) {
 		return false;
 	}
 	
-	IsCatchActive = true;
-	IsGameActive = true;
+	g_bIsCatchActive = true;
+	g_bIsGameActive = true;
 	CPrintToChatAll("%s %t", prefix, "Catch initiated");
 	CPrintToChatTeam(CS_TEAM_CT, "%s %t", prefix, "Info CT");
 	

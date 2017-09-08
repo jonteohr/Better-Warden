@@ -17,7 +17,7 @@
 */
 public int Native_IsEventDayActive(Handle plugin, int numParams)
 {
-	if(IsGameActive) {
+	if(g_bIsGameActive) {
 		return true;
 	}
 	
@@ -25,8 +25,8 @@ public int Native_IsEventDayActive(Handle plugin, int numParams)
 }
 
 public int Native_IsHnsActive(Handle plugin, int numParams) {
-	if(IsGameActive) {
-		if(hnsActive == 1) {
+	if(g_bIsGameActive) {
+		if(g_iHnsActive == 1) {
 			return true;
 		}
 	}
@@ -35,8 +35,8 @@ public int Native_IsHnsActive(Handle plugin, int numParams) {
 }
 
 public int Native_IsGravFreedayActive(Handle plugin, int numParams) {
-	if(IsGameActive) {
-		if(gravActive == 1) {
+	if(g_bIsGameActive) {
+		if(g_iGravActive == 1) {
 			return true;
 		}
 	}
@@ -45,8 +45,8 @@ public int Native_IsGravFreedayActive(Handle plugin, int numParams) {
 }
 
 public int Native_IsWarActive(Handle plugin, int numParams) {
-	if(IsGameActive) {
-		if(wardayActive == 1) {
+	if(g_bIsGameActive) {
+		if(g_iWardayActive == 1) {
 			return true;
 		}
 	}
@@ -55,20 +55,20 @@ public int Native_IsWarActive(Handle plugin, int numParams) {
 }
 
 public int Native_IsFreedayActive(Handle plugin, int numParams) {
-	if(IsGameActive) {
-		if(freedayActive == 1) {
+	if(g_bIsGameActive) {
+		if(g_iFreedayActive == 1) {
 			return true;
 		}
 	}
 	
-	return true;
+	return false;
 }
 
 public int Native_ClientHasFreeday(Handle plugin, int numParams) {
 	int client = GetNativeCell(1);
 	
 	if(IsValidClient(client)) {
-		if(clientFreeday[client] == 1) {
+		if(g_iClientFreeday[client] == 1) {
 			return true;
 		}
 	}
@@ -80,7 +80,7 @@ public int Native_GiveClientFreeday(Handle plugin, int numParams) {
 	int client = GetNativeCell(1);
 	
 	if(IsValidClient(client)) {
-		clientFreeday[client] = 1;
+		g_iClientFreeday[client] = 1;
 		SetClientBeacon(client, true);
 		return true;
 	}
@@ -92,7 +92,7 @@ public int Native_RemoveClientFreeday(Handle plugin, int numParams) {
 	int client = GetNativeCell(1);
 	
 	if(IsValidClient(client)) {
-		clientFreeday[client] = 0;
+		g_iClientFreeday[client] = 0;
 		SetClientBeacon(client, false);
 		return true;
 	}
@@ -107,11 +107,11 @@ public int Native_SetClientBeacon(Handle plugin, int numParams) {
 	if(IsValidClient(client)) {
 		if(beaconState == true) {
 			CreateTimer(1.0, BeaconTimer, client, TIMER_REPEAT);
-			playerBeacon[client] = 1;
+			g_iPlayerBeacon[client] = 1;
 			
 			return true;
 		} else {
-			playerBeacon[client] = 0;
+			g_iPlayerBeacon[client] = 0;
 			
 			return true;
 		}

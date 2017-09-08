@@ -19,7 +19,7 @@ public Action Should_TransmitW(int entity, int client) {
 	char m_ModelName[PLATFORM_MAX_PATH];
 	char iconbuffer[256];
 
-	Format(iconbuffer, sizeof(iconbuffer), "materials/%s.vmt", WardenIconPath);
+	Format(iconbuffer, sizeof(iconbuffer), "materials/%s.vmt", g_sWardenIconPath);
 
 	GetEntPropString(entity, Prop_Data, "m_ModelName", m_ModelName, sizeof(m_ModelName));
 
@@ -44,7 +44,7 @@ public Action RenderColor(Handle timer, int client) {
 		return Plugin_Stop;
 	}
 	
-	SetEntityRenderColor(client, cv_colorR.IntValue, cv_colorG.IntValue, cv_colorB.IntValue);
+	SetEntityRenderColor(client, gc_iColorR.IntValue, gc_iColorG.IntValue, gc_iColorB.IntValue);
 	
 	return Plugin_Continue;
 }
@@ -53,7 +53,7 @@ public Action JBToolTip(Handle timer) {
 	if(IsHnsActive())
 		return Plugin_Handled;
 	
-	PrintHintTextToAll("%t\n%t", "Current Warden Hint", curWardenStat, "Players Stat Hint", aliveCT, totalCT, aliveTerrorists, totalTerrorists);
+	PrintHintTextToAll("%t\n%t", "Current Warden Hint", g_sCurWardenStat, "Players Stat Hint", g_iAliveCT, g_iTotalCT, g_iAliveTerrorists, g_iTotalTerrorists);
 	
 	return Plugin_Continue;
 }

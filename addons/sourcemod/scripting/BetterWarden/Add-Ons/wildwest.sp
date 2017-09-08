@@ -22,12 +22,12 @@
 #include <BetterWarden/wildwest>
 
 // Misc variables
-bool IsWWActive;
-int WeaponOwner[2048];
-ConVar infAmmo;
+bool g_bIsWWActive;
+int g_iWeaponOwner[256];
 
 // ConVars
-ConVar g_weaponUsed;
+ConVar gc_sWeaponUsed;
+ConVar gc_bInfAmmo;
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -53,33 +53,34 @@ public void OnPluginStart() {
 	
 	HookEvent("round_end", OnRoundEnd, EventHookMode_Pre);
 	
-	infAmmo = FindConVar("sv_infinite_ammo"); // This will be changed to 2 when it starts and reset to the value in server.cfg when game ends
+	gc_bInfAmmo = FindConVar("sv_infinite_ammo"); // This will be changed to 2 when it starts and reset to the value in server.cfg when game ends
 	
 	AutoExecConfig(true, "wildwest", "BetterWarden/Add-Ons");
-	g_weaponUsed = CreateConVar("sm_betterwarden_wildwest_weapon", "weapon_revolver", "What weapon is supposed to be used?\nUse the entity names.", FCVAR_NOTIFY);
+	gc_sWeaponUsed = CreateConVar("sm_betterwarden_wildwest_weapon", "weapon_revolver", "What weapon is supposed to be used?\nUse the entity names.", FCVAR_NOTIFY);
 }
 
 
 public void OnRoundEnd(Event event, const char[] name, bool dontBroadcast) { // Post-event cleaning
-	if(IsWWActive == true) {
-		IsWWActive = false;
-		ResetConVar(infAmmo);
+	if(g_bIsWWActive == true) {
+		g_bIsWWActive = false;
+		g_bIsGameActive = false;
+		ResetConVar(gc_bInfAmmo);
 	}
 	
 	// Make sure the array doesn't get filled up!
-	for(int i = 0; i <= sizeof(WeaponOwner); i++) WeaponOwner[i] = 0;
+	for(int i = 0; i <= sizeof(g_iWeaponOwner); i++) g_iWeaponOwner[i] = 0;
 }
 
 public void StartWW() { // Start the actual event
 	char buff[128];
-	GetConVarString(g_weaponUsed, buff, sizeof(buff));
+	GetConVarString(gc_sWeaponUsed, buff, sizeof(buff));
 	for(int i = 1; i <= MaxClients; i++) {
 		if(!IsValidClient(i))
 			continue;
 		GivePlayerItem(i, buff);
 	}
-	IsWWActive = true;
-	SetConVarInt(infAmmo, 2);
+	g_bIsWWActive = true;
+	SetConVarInt(gc_bInfAmmo, 2);
 }
 
 public Action FiveSecTimer(Handle timer) { // Timer for the countdown til the event starts
@@ -103,15 +104,15 @@ public Action FiveSecTimer(Handle timer) { // Timer for the countdown til the ev
 * only pickup-able to that same player!
 ***********************/
 public void WeaponDropPost(int client, int weapon) { // When player drops a weapon
-	if(IsWWActive == true)
-		WeaponOwner[weapon] = client; // Register that weapon's owner as the client
+	if(g_bIsWWActive == true)
+		g_iWeaponOwner[weapon] = client; // Register that weapon's owner as the client
 }
 
 public Action WeaponCanUse(int client, int weapon) { // When player tries to pickup weapon
-	if(IsWWActive == false)
+	if(g_bIsWWActive == false)
 		return Plugin_Continue;
 	
-	if(WeaponOwner[weapon] == client)
+	if(g_iWeaponOwner[weapon] == client)
 		return Plugin_Continue;
 		
 	return Plugin_Handled;
@@ -121,8 +122,8 @@ public Action WeaponCanUse(int client, int weapon) { // When player tries to pic
 *    NATIVES
 ****************/
 public int Native_initWW(Handle plugin, int numParams) { // Called to actually start the game
-	if(IsWWActive == false) {
-		IsGameActive = true;
+	if(g_bIsWWActive == false) {
+		g_bIsGameActive = true;
 		CreateTimer(1.0, FiveSecTimer, _, TIMER_REPEAT);
 		
 		for(int i = 1; i <= MaxClients; i++) {

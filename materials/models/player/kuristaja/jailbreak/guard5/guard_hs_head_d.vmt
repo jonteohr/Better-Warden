@@ -1,0 +1,13 @@
+vertexlitgeneric
+{
+
+	$baseTexture "models/player/kuristaja/jailbreak/guard5/guard_hs_head_d"
+	$bumpmap "models/player/kuristaja/jailbreak/guard5/guard_hs_head_normal"
+
+	"$phong" "1"
+	"$phongexponent" 30
+	"$phongboost" "0.03"
+	"$phongfresnelranges"	"[5 6 8]"
+	"$PhongAlbedoTint" "1"
+
+}

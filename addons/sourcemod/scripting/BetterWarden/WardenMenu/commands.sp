@@ -38,15 +38,15 @@ public Action sm_cmenu(int client, int args) {
 // sm_abortgames
 public Action sm_abortgames(int client, int args) {
 	if(!IsClientWardenAdmin(client)) {
-		CReplyToCommand(client, "%s {red}%t", cmenuPrefix, "Not Admin");
+		CReplyToCommand(client, "%s {red}%t", g_sCMenuPrefix, "Not Admin");
 		return Plugin_Handled;
 	}
-	if(!IsGameActive) {
-		CReplyToCommand(client, "%s %t", cmenuPrefix, "Admin Abort Denied");
+	if(!g_bIsGameActive) {
+		CReplyToCommand(client, "%s %t", g_sCMenuPrefix, "Admin Abort Denied");
 		return Plugin_Handled;
 	}
 	
-	CPrintToChatAll("%s %t", cmenuPrefix, "Admin Aborted", client);
+	CPrintToChatAll("%s %t", g_sCMenuPrefix, "Admin Aborted", client);
 	abortGames();
 	
 	return Plugin_Handled;
@@ -56,7 +56,7 @@ public Action sm_abortgames(int client, int args) {
 public Action sm_days(int client, int args) {
 	
 	if(!IsValidClient(client) && GetClientTeam(client) != CS_TEAM_CT) {
-		CPrintToChat(client, "%s %t", cmenuPrefix, "Neither alive or ct");
+		CPrintToChat(client, "%s %t", g_sCMenuPrefix, "Neither alive or ct");
 		return Plugin_Handled;
 	}
 	

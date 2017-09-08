@@ -18,28 +18,28 @@
 *
 */
 public void OnMapStart() {
-	aliveCT = 0;
-	totalCT = 0;
-	aliveTerrorists = 0;
-	totalTerrorists = 0;
+	g_iAliveCT = 0;
+	g_iTotalCT = 0;
+	g_iAliveTerrorists = 0;
+	g_iTotalTerrorists = 0;
 	
-	totalCT = GetTeamClientCount(CS_TEAM_CT);
-	totalTerrorists = GetTeamClientCount(CS_TEAM_T);
+	g_iTotalCT = GetTeamClientCount(CS_TEAM_CT);
+	g_iTotalTerrorists = GetTeamClientCount(CS_TEAM_T);
 	
 	RemoveWarden();
 	
 	AddFileToDownloadsTable("sound/betterwarden/newwarden.mp3");
 	AddFileToDownloadsTable("sound/betterwarden/wardendead.mp3");
 	
-	if(cv_wardenIcon.IntValue == 1) {
-		PrecacheModelAnyDownload(WardenIconPath);
+	if(gc_bWardenIcon.IntValue == 1) {
+		PrecacheModelAnyDownload(g_sWardenIconPath);
 	}
 	
-	if(cv_WardenDeathSound.IntValue == 1) {
+	if(gc_bWardenDeathSound.IntValue == 1) {
 		PrecacheSoundAny("betterwarden/wardendead.mp3");
 	}
 	
-	if(cv_WardenCreatedSound.IntValue == 1) {
+	if(gc_bWardenCreatedSound.IntValue == 1) {
 		PrecacheSoundAny("betterwarden/newwarden.mp3");
 	}
 }
@@ -48,25 +48,25 @@ public void OnJoinTeam(Event event, const char[] name, bool dontBroadcast) {
 	int client = GetClientOfUserId(GetEventInt(event, "userid"));
 	
 	if(IsValidClient(client, false, true)) {
-		totalCT = GetTeamClientCount(CS_TEAM_CT);
-		aliveCT = GetTeamAliveClientCount(CS_TEAM_CT);
-		totalTerrorists = GetTeamClientCount(CS_TEAM_T);
-		aliveTerrorists = GetTeamAliveClientCount(CS_TEAM_T);
+		g_iTotalCT = GetTeamClientCount(CS_TEAM_CT);
+		g_iAliveCT = GetTeamAliveClientCount(CS_TEAM_CT);
+		g_iTotalTerrorists = GetTeamClientCount(CS_TEAM_T);
+		g_iAliveTerrorists = GetTeamAliveClientCount(CS_TEAM_T);
 	}
 }
 
 public void OnPlayerDeath(Event event, const char[] name, bool dontBroadcast) {
 	int client = GetClientOfUserId(GetEventInt(event, "userid"));
-	aliveCT = GetTeamAliveClientCount(CS_TEAM_CT);
-	aliveTerrorists = GetTeamAliveClientCount(CS_TEAM_T);
+	g_iAliveCT = GetTeamAliveClientCount(CS_TEAM_CT);
+	g_iAliveTerrorists = GetTeamAliveClientCount(CS_TEAM_T);
 	
 	if(IsClientWarden(client)) {
-		if(cv_WardenDeathSound.IntValue == 1)
+		if(gc_bWardenDeathSound.IntValue == 1)
 			EmitSoundToAllAny("betterwarden/wardendead.mp3");
 		
 		
 		RemoveWarden();
-		CPrintToChatAll("%s %t", prefix, "Warden Died");
+		CPrintToChatAll("%s %t", g_sPrefix, "Warden Died");
 		
 		Call_StartForward(gF_OnWardenDeath);
 		Call_PushCell(client);
@@ -78,28 +78,28 @@ public void OnRoundStart(Event event, const char[] name, bool dontBroadcast) {
 	if(WardenExists())
 		RemoveWarden();
 		
-	aliveCT = 0;
-	aliveTerrorists = 0;
+	g_iAliveCT = 0;
+	g_iAliveTerrorists = 0;
 	
-	totalCT = GetTeamClientCount(CS_TEAM_CT);
-	totalTerrorists = GetTeamClientCount(CS_TEAM_T);
-	aliveCT = GetTeamAliveClientCount(CS_TEAM_CT);
-	aliveTerrorists = GetTeamAliveClientCount(CS_TEAM_T);
+	g_iTotalCT = GetTeamClientCount(CS_TEAM_CT);
+	g_iTotalTerrorists = GetTeamClientCount(CS_TEAM_T);
+	g_iAliveCT = GetTeamAliveClientCount(CS_TEAM_CT);
+	g_iAliveTerrorists = GetTeamAliveClientCount(CS_TEAM_T);
 	
-	cv_noblock.RestoreDefault(true, false);
+	gc_bNoblock.RestoreDefault(true, false);
 }
 
 public void OnClientDisconnect(int client) {
 	
-	totalCT = GetTeamClientCount(CS_TEAM_CT);
-	totalTerrorists = GetTeamClientCount(CS_TEAM_T);
-	aliveCT = GetTeamAliveClientCount(CS_TEAM_CT);
-	aliveTerrorists = GetTeamAliveClientCount(CS_TEAM_T);
+	g_iTotalCT = GetTeamClientCount(CS_TEAM_CT);
+	g_iTotalTerrorists = GetTeamClientCount(CS_TEAM_T);
+	g_iAliveCT = GetTeamAliveClientCount(CS_TEAM_CT);
+	g_iAliveTerrorists = GetTeamAliveClientCount(CS_TEAM_T);
 	
 	
 	if(IsClientWarden(client)) {
 		RemoveWarden();
-		CPrintToChatAll("%s %t", prefix, "Warden Died");
+		CPrintToChatAll("%s %t", g_sPrefix, "Warden Died");
 		
 		Call_StartForward(gF_OnWardenDisconnect);
 		Call_PushCell(client);

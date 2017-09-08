@@ -23,21 +23,21 @@ public void openMenu(int client) {
 	
 	menu.SetTitle(title);
 	
-	if(cvEnableWeapons.IntValue == 1) {
+	if(gc_bEnableWeapons.IntValue == 1) {
 		menu.AddItem(CHOICE1, "Choice 1"); // Weapons
 	}
 	
 	menu.AddItem(CHOICE2, "Choice 2"); // Event Days
 	
-	if(cvEnablePlayerFreeday.IntValue == 1) {
+	if(gc_bEnablePlayerFreeday.IntValue == 1) {
 		menu.AddItem(CHOICE4, "Choice 4"); // Player Freeday
 	}
 	
-	if(cvEnableDoors.IntValue == 1) {
+	if(gc_bEnableDoors.IntValue == 1) {
 		menu.AddItem(CHOICE5, "Choice 5"); // Open Doors
 	}
 	
-	if(cvNoblock.IntValue == 1) {
+	if(gc_bNoblock.IntValue == 1) {
 		menu.AddItem(CHOICE3, "Choice 3"); // Noblock
 	}
 	
@@ -189,10 +189,10 @@ public int playerFreedayHandler(Menu menu, MenuAction action, int client, int pa
 					
 					if(!ClientHasFreeday(target)) {
 						GiveClientFreeday(target);
-						CPrintToChatAll("%s %t", cmenuPrefix, "Player Freeday Announce", target);
+						CPrintToChatAll("%s %t", g_sCMenuPrefix, "Player Freeday Announce", target);
 					} else {
 						RemoveClientFreeday(target);
-						CPrintToChatAll("%s %t", cmenuPrefix, "Player Freeday Removed", target);
+						CPrintToChatAll("%s %t", g_sCMenuPrefix, "Player Freeday Removed", target);
 					}
 					
 				}
@@ -232,25 +232,25 @@ public void openDaysMenu(int client) {
 	Format(title, sizeof(title), "%t", "Days Menu Title");
 	
 	menu.SetTitle(title);
-	if(cvFreeday.IntValue == 1)
+	if(gc_bFreeday.IntValue == 1)
 		menu.AddItem(CHOICE1, "Choice 1");
 	
-	if(cvRestFreeday.IntValue == 1)
+	if(gc_bRestFreeday.IntValue == 1)
 		menu.AddItem(CHOICE2, "Choice 2");
 	
-	if(cvHnS.IntValue == 1)
+	if(gc_bHnS.IntValue == 1)
 		menu.AddItem(CHOICE3, "Choice 3");
 	
-	if(cvWarday.IntValue == 1)
+	if(gc_bWarday.IntValue == 1)
 		menu.AddItem(CHOICE4, "Choice 4");
 	
-	if(catchLoaded == true)
+	if(g_bCatchLoaded == true)
 		menu.AddItem(CHOICE6, "Choice 6"); // Catch
 	
-	if(wwLoaded == true)
+	if(g_bWWLoaded == true)
 		menu.AddItem(CHOICE7, "Choice 7"); // Wild West
 		
-	if(cvGrav.IntValue == 1)
+	if(gc_bGrav.IntValue == 1)
 		menu.AddItem(CHOICE5, "Choice 5");
 	
 	menu.AddItem(SPACER, "Spacer");
@@ -278,7 +278,7 @@ public int DaysMenuHandler(Menu menu, MenuAction action, int client, int param2)
 			char info[32];
 			menu.GetItem(param2, info, sizeof(info));
 			if(IsClientWarden(client)) {
-				if(!IsGameActive) {
+				if(!g_bIsGameActive) {
 					if(StrEqual(info, CHOICE1))
 						initFreeday(client);
 					
@@ -305,10 +305,10 @@ public int DaysMenuHandler(Menu menu, MenuAction action, int client, int param2)
 				} else {
 					if(StrEqual(info, CHOICE8)) {
 						abortGames();
-						CPrintToChatAll("%s %t", cmenuPrefix, "Warden Aborted");
+						CPrintToChatAll("%s %t", g_sCMenuPrefix, "Warden Aborted");
 						PrintHintTextToAll("%t", "Warden Aborted");
 					} else if(StrEqual(info, CHOICE1) || StrEqual(info, CHOICE2) || StrEqual(info, CHOICE3) || StrEqual(info, CHOICE4) || StrEqual(info, CHOICE5)) {
-						CPrintToChat(client, "%s %t", cmenuPrefix, "Cannot Exec Game");
+						CPrintToChat(client, "%s %t", g_sCMenuPrefix, "Cannot Exec Game");
 					}
 				}
 			}
@@ -330,7 +330,7 @@ public int DaysMenuHandler(Menu menu, MenuAction action, int client, int param2)
 			menu.GetItem(param2, info, sizeof(info), style);
 			
 			// Disable all if a game is active!
-			if(IsGameActive) {
+			if(g_bIsGameActive) {
 				if(StrEqual(info, CHOICE1)) {
 					return ITEMDRAW_DISABLED;
 				} else if(StrEqual(info, CHOICE2)) {
@@ -440,12 +440,12 @@ public int hnsConfigHandler(Menu menu, MenuAction action, int client, int param2
 			menu.GetItem(param2, info, sizeof(info));
 			if(IsClientWarden(client)) {
 				if(StrEqual(info, CHOICE2)) {
-					hnsWinners = 1;
-					initHns(client, hnsWinners);
+					g_iHnsWinners = 1;
+					initHns(client, g_iHnsWinners);
 				}
 				if(StrEqual(info, CHOICE3)) {
-					hnsWinners = 2;
-					initHns(client, hnsWinners);
+					g_iHnsWinners = 2;
+					initHns(client, g_iHnsWinners);
 				}
 			}
 		}

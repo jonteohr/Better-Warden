@@ -17,7 +17,7 @@ public void OnClientPutInServer(int client) {
 }
 public void OnClientDisconnect(int client) {
 	
-	aliveTs = GetTeamAliveClientCount(CS_TEAM_T);
+	g_iAliveTs = GetTeamAliveClientCount(CS_TEAM_T);
 		
 }
 
@@ -28,27 +28,27 @@ public void OnPlayerDeath(Event event, const char[] name, bool dontBroadcast) {
 		abortGames();
 	}
 	
-	aliveTs = GetTeamAliveClientCount(CS_TEAM_T);
+	g_iAliveTs = GetTeamAliveClientCount(CS_TEAM_T);
 	
 	if(IsHnsActive()) {
 		// Check if HnS should end
-		if(hnsWinners == aliveTs) {
+		if(g_iHnsWinners == g_iAliveTs) {
 			abortGames();
-			CPrintToChatAll("%s %t", cmenuPrefix, "HnS Over");
+			CPrintToChatAll("%s %t", g_sCMenuPrefix, "HnS Over");
 			
 			Call_StartForward(gF_OnHnsOver);
 			Call_Finish();
 		} else {
-			CPrintToChatAll("%s %t", cmenuPrefix, "HnS Players Left", aliveTs);
+			CPrintToChatAll("%s %t", g_sCMenuPrefix, "HnS Players Left", g_iAliveTs);
 		}
 	}
 }
 
 public Action OnTakeDamageAlive(int victim, int &attacker, int &inflictor, float &damage, int &damagetype) {
 	
-	if(hnsActive == 1 && cvHnSGod.IntValue == 1) {
+	if(g_iHnsActive == 1 && gc_bHnSGod.IntValue == 1) {
 		if(IsValidClient(victim) && IsValidClient(inflictor) && GetClientTeam(victim) == CS_TEAM_CT && GetClientTeam(inflictor) == CS_TEAM_T) {
-			CPrintToChat(inflictor, "%s %t", cmenuPrefix, "No Rebel HnS");
+			CPrintToChat(inflictor, "%s %t", g_sCMenuPrefix, "No Rebel HnS");
 			return Plugin_Handled;
 		}
 	}
@@ -59,8 +59,8 @@ public Action OnTakeDamageAlive(int victim, int &attacker, int &inflictor, float
 public void OnRoundStart(Event event, const char[] name, bool dontBroadcast) {
 	abortGames();
 	
-	aliveTs = 0;
-	aliveTs = GetTeamAliveClientCount(CS_TEAM_T);
+	g_iAliveTs = 0;
+	g_iAliveTs = GetTeamAliveClientCount(CS_TEAM_T);
 	for(int client = 1; client <= MaxClients; client++) {
 		if(IsValidClient(client)) {
 			if(ClientHasFreeday(client)) {
@@ -73,10 +73,10 @@ public void OnRoundStart(Event event, const char[] name, bool dontBroadcast) {
 public void OnMapStart() {
 	abortGames();
 	
-	hnsTimes = 0;
-	freedayTimes = 0;
-	warTimes = 0;
-	gravTimes = 0;
+	g_iHnsTimes = 0;
+	g_iFreedayTimes = 0;
+	g_iWarTimes = 0;
+	g_iGravTimes = 0;
 	
 	// Beacon stuff
 	Handle gameConfig = LoadGameConfigFile("funcommands.games");
@@ -86,27 +86,27 @@ public void OnMapStart() {
 		return;
 	}
 	
-	if (GameConfGetKeyValue(gameConfig, "SoundBlip", g_BlipSound, sizeof(g_BlipSound)) && g_BlipSound[0])
+	if (GameConfGetKeyValue(gameConfig, "SoundBlip", g_sBlipSound, sizeof(g_sBlipSound)) && g_sBlipSound[0])
 	{
-		PrecacheSound(g_BlipSound, true);
+		PrecacheSound(g_sBlipSound, true);
 	}
 	
 	char buffer[PLATFORM_MAX_PATH];
 	if (GameConfGetKeyValue(gameConfig, "SpriteBeam", buffer, sizeof(buffer)) && buffer[0])
 	{
-		g_BeamSprite = PrecacheModel(buffer);
+		g_iBeamSprite = PrecacheModel(buffer);
 	}
 	if (GameConfGetKeyValue(gameConfig, "SpriteHalo", buffer, sizeof(buffer)) && buffer[0])
 	{
-		g_HaloSprite = PrecacheModel(buffer);
+		g_iHaloSprite = PrecacheModel(buffer);
 	}
 	
 	delete gameConfig;
 }
 
 public void OnWardenCreated(int client) {
-	CPrintToChat(client, "%s %t", cmenuPrefix, "Available to open menu");
-	if(cvAutoOpen.IntValue == 1) {
+	CPrintToChat(client, "%s %t", g_sCMenuPrefix, "Available to open menu");
+	if(gc_bAutoOpen.IntValue == 1) {
 		openMenu(client);
 	} else {
 		PrintToServer("Skipping auto open since it's disabled in config.");
