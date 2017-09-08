@@ -76,7 +76,7 @@ public Action OnClientTouch(int client, int other) {
 		return Plugin_Continue;
 		
 	ForcePlayerSuicide(other);
-	CPrintToChatAll("%s %t", prefix, "Player Caught T", client, other);
+	CPrintToChatAll("%s %t", g_sPrefix, "Player Caught T", client, other);
 	
 	return Plugin_Handled;
 }
@@ -89,7 +89,7 @@ public Action OnTakeDamageAlive(int victim, int &attacker, int &inflictor, float
 	if(!IsValidClient(inflictor) || !IsValidClient(victim))
 		return Plugin_Continue;
 	
-	CPrintToChat(inflictor, "%s {red}%t", prefix, "No Shooting in Catch");
+	CPrintToChat(inflictor, "%s {red}%t", g_sPrefix, "No Shooting in Catch");
 	return Plugin_Handled;
 }
 
@@ -117,7 +117,7 @@ public void EndCatch() { // End the whole game and choose a winner
 			break;
 		}
 		
-		CPrintToChatAll("%s %t", prefix, "Catch Over", winner);
+		CPrintToChatAll("%s %t", g_sPrefix, "Catch Over", winner);
 		
 	}
 }
@@ -132,7 +132,7 @@ public Action OnClientCommand(int client, int args) { // If a client starts a La
 	if((StrEqual(cmd, "sm_lr", false) != true) || (StrEqual(cmd, "sm_lastrequest", false) != true))
 		return Plugin_Continue;
 	
-	CPrintToChat(client, "%s %t", prefix, "No LR During Catch");
+	CPrintToChat(client, "%s %t", g_sPrefix, "No LR During Catch");
 	return Plugin_Handled;
 }
 
@@ -146,8 +146,8 @@ public int Native_initCatch(Handle plugin, int numParams) { // Called to start t
 	
 	g_bIsCatchActive = true;
 	g_bIsGameActive = true;
-	CPrintToChatAll("%s %t", prefix, "Catch initiated");
-	CPrintToChatTeam(CS_TEAM_CT, "%s %t", prefix, "Info CT");
+	CPrintToChatAll("%s %t", g_sPrefix, "Catch initiated");
+	CPrintToChatTeam(CS_TEAM_CT, "%s %t", g_sPrefix, "Info CT");
 	
 	for(int i = 1; i <= MaxClients; i++) {
 		if(!IsValidClient(i))

@@ -87,14 +87,14 @@ public Action FiveSecTimer(Handle timer) { // Timer for the countdown til the ev
 	static int sec = 6;
 	
 	if(sec == 1) {
-		CPrintToChatAll("%s %t", prefix, "Wild West Begun");
+		CPrintToChatAll("%s %t", g_sPrefix, "Wild West Begun");
 		StartWW();
 		sec = 6; // Reset for possible next rounds
 		return Plugin_Stop;
 	}
 	
 	sec--;
-	CPrintToChatAll("%s %t", prefix, "Countdown", sec);
+	CPrintToChatAll("%s %t", g_sPrefix, "Countdown", sec);
 	return Plugin_Continue;
 }
 
