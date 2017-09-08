@@ -7,7 +7,7 @@ addons:
 env: 
   global:
     - INCLUDE=addons/sourcemod/scripting/include/
-    - SCRIPTING=addons/sourcemod/scripting/BetterWarden
+    - SCRIPTING=addons/sourcemod/scripting/
     - PLUGINS=addons/sourcemod/plugins/
   matrix:
     - SOURCEMOD=1.8
