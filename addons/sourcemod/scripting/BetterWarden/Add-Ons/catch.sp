@@ -27,6 +27,8 @@
 
 bool g_bIsCatchActive;
 
+ConVar gc_bFreezeTime;
+
 public Plugin myinfo = {
 	name = "[BetterWarden] Catch",
 	author = "Hypr",
@@ -47,6 +49,8 @@ public void OnPluginStart() {
 	SetGlobalTransTarget(LANG_SERVER);
 	
 	AutoExecConfig(true, "Catch", "BetterWarden");
+	
+	gc_bFreezeTime = CreateConVar("sm_warden_catch_freezetime", "1", "Freeze all CT's for 5 seconds when game is started?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	
 	HookEvent("player_death", OnPlayerDeath);
 	HookEvent("round_start", OnRoundStart, EventHookMode_Pre);
@@ -136,6 +140,27 @@ public Action OnClientCommand(int client, int args) { // If a client starts a La
 	return Plugin_Handled;
 }
 
+public Action FreezeTimer(Handle timer) {
+	static int secs = 5;
+	
+	if(secs == 0) {
+		CPrintToChatAll("%s Catch has begun!", g_sPrefix);
+		for(int i = 1; i <= MaxClients; i++) {
+			if(!IsValidClient(i))
+				continue;
+			if(GetClientTeam(i) != CS_TEAM_CT)
+				continue;
+			SetEntPropFloat(i, Prop_Data, "m_flLaggedMovementValue", 1.0);
+		}
+		secs = 5;
+		return Plugin_Stop;
+	}
+	
+	CPrintToChatAll("%s Catch starts in %d seconds!", g_sPrefix, secs);
+	secs--;
+	return Plugin_Continue;
+}
+
 /****************
 *    NATIVES
 ****************/
@@ -143,6 +168,7 @@ public int Native_initCatch(Handle plugin, int numParams) { // Called to start t
 	if(g_bIsCatchActive == true) {
 		return false;
 	}
+	
 	
 	g_bIsCatchActive = true;
 	g_bIsGameActive = true;
@@ -155,6 +181,18 @@ public int Native_initCatch(Handle plugin, int numParams) { // Called to start t
 		Client_RemoveAllWeapons(i);
 		SDKHook(i, SDKHook_Touch, OnClientTouch);
 		SDKHook(i, SDKHook_OnTakeDamageAlive, OnTakeDamageAlive);
+	}
+	
+	if(gc_bFreezeTime.IntValue != 0) {
+		for(int i = 1; i <= MaxClients; i++) {
+			if(!IsValidClient(i))
+				continue;
+			if(GetClientTeam(i) != CS_TEAM_CT)
+				continue;
+			
+			SetEntPropFloat(i, Prop_Data, "m_flLaggedMovementValue", 0.0);
+		}
+		CreateTimer(1.0, FreezeTimer, _, TIMER_REPEAT);
 	}
 	
 	return true;

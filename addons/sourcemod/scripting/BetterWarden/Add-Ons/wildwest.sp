@@ -23,7 +23,6 @@
 
 // Misc variables
 bool g_bIsWWActive;
-int g_iWeaponOwner[256];
 
 // ConVars
 ConVar gc_sWeaponUsed;
@@ -51,7 +50,7 @@ public void OnPluginStart() {
 	LoadTranslations("BetterWarden.WildWest.phrases.txt");
 	SetGlobalTransTarget(LANG_SERVER);
 	
-	HookEvent("round_end", OnRoundEnd, EventHookMode_Pre);
+	HookEvent("round_start", OnRoundStart, EventHookMode_Pre);
 	
 	gc_bInfAmmo = FindConVar("sv_infinite_ammo"); // This will be changed to 2 when it starts and reset to the value in server.cfg when game ends
 	
@@ -60,15 +59,12 @@ public void OnPluginStart() {
 }
 
 
-public void OnRoundEnd(Event event, const char[] name, bool dontBroadcast) { // Post-event cleaning
+public void OnRoundStart(Event event, const char[] name, bool dontBroadcast) { // Post-event cleaning
 	if(g_bIsWWActive == true) {
 		g_bIsWWActive = false;
 		g_bIsGameActive = false;
 		ResetConVar(gc_bInfAmmo);
 	}
-	
-	// Make sure the array doesn't get filled up!
-	for(int i = 0; i <= sizeof(g_iWeaponOwner); i++) g_iWeaponOwner[i] = 0;
 }
 
 public void StartWW() { // Start the actual event
@@ -104,15 +100,17 @@ public Action FiveSecTimer(Handle timer) { // Timer for the countdown til the ev
 * only pickup-able to that same player!
 ***********************/
 public void WeaponDropPost(int client, int weapon) { // When player drops a weapon
-	if(g_bIsWWActive == true)
-		g_iWeaponOwner[weapon] = client; // Register that weapon's owner as the client
+	if(g_bIsWWActive == true) {
+		if(weapon != -1)
+			SetEntPropEnt(weapon, Prop_Data, "m_hOwnerEntity", client); // Register that weapon's owner as the client
+	}
 }
 
 public Action WeaponCanUse(int client, int weapon) { // When player tries to pickup weapon
 	if(g_bIsWWActive == false)
 		return Plugin_Continue;
 	
-	if(g_iWeaponOwner[weapon] == client)
+	if(GetEntPropEnt(weapon, Prop_Data, "m_hOwnerEntity") == client)
 		return Plugin_Continue;
 		
 	return Plugin_Handled;

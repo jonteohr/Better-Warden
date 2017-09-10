@@ -19,13 +19,13 @@
 #include <colorvariables>
 #include <betterwarden>
 #include <wardenmenu>
-#include <smartjaildoors>
 #include <emitsoundany>
 #undef REQUIRE_PLUGIN
 #include <updater>
+#include <smartjaildoors>
 #define REQUIRE_PLUGIN
 
-#define BW_UPDATE_URL "https://ecoround.se/sm_updater/betterwarden/updater.txt"
+#define BW_UPDATE_URL "http://updater.ecoround.se/betterwarden/updater.txt"
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -167,6 +167,7 @@ public void OnPluginStart() {
 	// Updater
 	if(LibraryExists("updater")) {
 		Updater_AddPlugin(BW_UPDATE_URL);
+		Updater_ForceUpdate();
 	}
 	
 }
@@ -175,6 +176,7 @@ public void OnLibraryAdded(const char[] name) {
 	// Updater
 	if(StrEqual(name, "updater")) {
 		Updater_AddPlugin(BW_UPDATE_URL);
+		Updater_ForceUpdate();
 	}
 }
 

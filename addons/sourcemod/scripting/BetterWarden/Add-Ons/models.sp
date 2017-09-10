@@ -39,9 +39,9 @@ public void OnPluginStart() {
 	AutoExecConfig(true, "models", "BetterWarden/Add-Ons"); // Create a addon-specific config!
 	
 	gc_bWardenModel = CreateConVar("sm_warden_model", "1", "Enable or disable the warden getting a player model.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	gc_bDeputyModel = CreateConVar("sm_warden_deputy_model", "1", "Give the other CT's a fitting model aswell?", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bDeputyModel = CreateConVar("sm_warden_deputy_model", "0", "Give the other CT's a fitting model aswell?", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	
-	HookEvent("round_start", OnRoundStart, EventHookMode_PostNoCopy);
+	HookEvent("player_spawn", OnPlayerSpawn, EventHookMode_Pre);
 }
 
 public void OnMapStart() {
@@ -108,17 +108,12 @@ public void OnMapStart() {
 	}
 }
 
-public void OnRoundStart(Event event, const char[] name, bool dontBroadcast) {
-	for(int i = 1; i <= MaxClients; i++) {
-		if(gc_bDeputyModel.IntValue != 1)
-			break;
-		if(!IsValidClient(i))
-			continue;
-		if(GetClientTeam(i) != CS_TEAM_CT)
-			continue;
-		
-		SetEntityModel(i, "models/player/custom_player/kuristaja/jailbreak/guard5/guard5.mdl"); // Set the deputy skin
-		SetEntPropString(i, Prop_Send, "m_szArmsModel", "models/player/custom_player/kuristaja/jailbreak/guard5/guard5_arms.mdl");
+public void OnPlayerSpawn(Event event, const char[] name, bool dontBroadcast) {
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
+	
+	if(GetClientTeam(client) == CS_TEAM_CT && IsValidClient(client) && gc_bDeputyModel.IntValue == 1) {
+		SetEntityModel(client, "models/player/custom_player/kuristaja/jailbreak/guard5/guard5.mdl"); // Set the deputy skin
+		SetEntPropString(client, Prop_Send, "m_szArmsModel", "models/player/custom_player/kuristaja/jailbreak/guard5/guard5_arms.mdl");
 	}
 }
 
