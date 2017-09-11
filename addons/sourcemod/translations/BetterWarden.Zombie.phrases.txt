@@ -4,6 +4,7 @@
 	{
 		"en"	"Zombie"
 		"sv"	"Zombie"
+		"fr"	"Zombie"
 	}
 	
 	"Zombie Infected"
@@ -11,5 +12,6 @@
 		"#format"	"{1:N},{2:N}"
 		"en"	"{1} infected {2}!"
 		"sv"	"{1} infekterade {2}!"
+		"fr"	"{1} infecté {2}!"
 	}
 }
