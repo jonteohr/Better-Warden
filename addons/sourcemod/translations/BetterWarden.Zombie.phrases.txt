@@ -12,4 +12,10 @@
 		"en"	"{1} infected {2}!"
 		"sv"	"{1} infekterade {2}!"
 	}
+	
+	"Zombie Started"
+	{
+		"en"	"THE ZOMBIE APOCALYPSE HAS HIT THE PRISON!"
+		"sv"	"ZOMBIES HAS INFEKTERAT ALLA FÅNGAR!"
+	}
 }

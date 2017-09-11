@@ -90,6 +90,10 @@ public void OnMapStart() {
 	AddFileToDownloadsTable("materials/models/player/kuristaja/zombies/zpz/zombie2_shirt_normal.vtf");
 	AddFileToDownloadsTable("materials/models/player/kuristaja/zombies/zpz/zombie2_teeth.vtf");
 	AddFileToDownloadsTable("materials/models/player/kuristaja/zombies/zpz/zp_sv1_shoe.vtf");
+	AddFileToDownloadsTable("materials/models/player/custom/hunter/hunter_01.vmt");
+	AddFileToDownloadsTable("materials/models/player/custom/hunter/hunter_01.vtf");
+	AddFileToDownloadsTable("materials/models/player/custom/hunter/hunter_exponent.vtf");
+	AddFileToDownloadsTable("materials/models/player/custom/hunter/hunter_normal.vtf");
 	// Models
 	AddFileToDownloadsTable("models/player/kuristaja/zombies/classic/classic.dx90.vtx");
 	AddFileToDownloadsTable("models/player/kuristaja/zombies/classic/classic.mdl");
@@ -100,19 +104,25 @@ public void OnMapStart() {
 	AddFileToDownloadsTable("models/player/kuristaja/zombies/zpz/zpz.phy");
 	AddFileToDownloadsTable("models/player/kuristaja/zombies/zpz/zpz.vvd");
 	// Arms
-	AddFileToDownloadsTable("models/player/custom_player/legacy/zombie/zombie_arms.mdl");
-	AddFileToDownloadsTable("models/player/custom_player/legacy/zombie/zombie_arms.dx90.vtx");
-	AddFileToDownloadsTable("models/player/custom_player/legacy/zombie/zombie_arms.vvd");
+	AddFileToDownloadsTable("models/player/custom/hunter/hunterarms.mdl");
+	AddFileToDownloadsTable("models/player/custom/hunter/hunterarms.dx90.vtx");
+	AddFileToDownloadsTable("models/player/custom/hunter/hunterarms.vvd");
 	// Sounds
 	AddFileToDownloadsTable("sound/betterwarden/zombie.mp3");
 	AddFileToDownloadsTable("sound/betterwarden/became_zombie.mp3");
+	AddFileToDownloadsTable("sound/betterwarden/zombie_kill1.mp3");
+	AddFileToDownloadsTable("sound/betterwarden/zombie_kill2.mp3");
+	AddFileToDownloadsTable("sound/betterwarden/zombie_kill3.mp3");
 	
 	// Precache necessary files
-	PrecacheModel("models/player/custom_player/legacy/zombie/zombie_arms.mdl", true);
+	PrecacheModel("models/player/custom/hunter/hunterarms.mdl", true);
 	PrecacheModel("models/player/kuristaja/zombies/classic/classic.mdl", true);
 	PrecacheModel("models/player/kuristaja/zombies/zpz/zpz.mdl", true);
 	PrecacheSoundAny("betterwarden/zombie.mp3", true);
 	PrecacheSoundAny("betterwarden/became_zombie.mp3", true);
+	PrecacheSoundAny("betterwarden/zombie_kill1.mp3", true);
+	PrecacheSoundAny("betterwarden/zombie_kill2.mp3", true);
+	PrecacheSoundAny("betterwarden/zombie_kill3.mp3", true);
 }
 
 public void OnPlayerSpawn(Event event, const char[] name, bool dontBroadcast) {
@@ -141,11 +151,15 @@ public void OnRoundEnd(Event event, const char[] name, bool dontBroadcast) {
 }
 
 public Action OnWeaponCanUse(int client, int weapon) {
+	char sBuffer[64];
+	GetEdictClassname(weapon, sBuffer, sizeof(sBuffer));
 	if(!IsValidClient(client))
 		return Plugin_Continue;
 	if(!g_bIsZombieActive)
 		return Plugin_Continue;
 	if(GetClientTeam(client) != CS_TEAM_T)
+		return Plugin_Continue;
+	if(StrEqual(sBuffer, "weapon_knife"))
 		return Plugin_Continue;
 	
 	return Plugin_Handled; // Deny zombies picking up weapons!
@@ -158,12 +172,21 @@ public Action OnTakeDamageAlive(int victim, int &attacker, int &inflictor, float
 		return Plugin_Continue;
 	
 	if(GetClientTeam(victim) == CS_TEAM_CT && GetClientTeam(inflictor) == CS_TEAM_T) { // Zombie infects CT
+		int sound = GetRandomInt(1, 3);
 		if(gc_bSwapBack.IntValue == 1) {
 			g_iCTs[victim] = 1;
 		}
+		ForcePlayerSuicide(victim);
 		CS_SwitchTeam(victim, CS_TEAM_T);
+		CS_RespawnPlayer(victim);
 		SetClientZombie(victim);
-		EmitSoundToClientAny(victim, "betterwarden/became_warden.mp3");
+		EmitSoundToClientAny(victim, "betterwarden/became_zombie.mp3");
+		if(sound == 1)
+			EmitSoundToClientAny(inflictor, "betterwarden/zombie_kill1.mp3");
+		if(sound == 2)
+			EmitSoundToClientAny(inflictor, "betterwarden/zombie_kill2.mp3");
+		if(sound == 3)
+			EmitSoundToClientAny(inflictor, "betterwarden/zombie_kill3.mp3");
 		CPrintToChatAll("%s %t", g_sPrefix, "Zombie Infected", inflictor, victim);
 		return Plugin_Handled;
 	}
@@ -192,6 +215,12 @@ public int Native_initZombie(Handle plugin, int numParams) {
 	
 	EmitSoundToAllAny("betterwarden/zombie.mp3");
 	
+	CPrintToChatAll("");
+	CPrintToChatAll("%s {red}****************************************************", g_sPrefix);
+	CPrintToChatAll("%s {red}%t", g_sPrefix, "Zombie Started");
+	CPrintToChatAll("%s {red}****************************************************", g_sPrefix);
+	CPrintToChatAll("");
+	
 	return true;
 }
 
@@ -211,7 +240,7 @@ public void SetZombies() {
 public void SetClientZombie(int client) {
 	int zombieSkin = GetRandomInt(1, 2);
 	
-	SetEntPropString(client, Prop_Send, "m_szArmsModel", "models/player/custom_player/legacy/zombie/zombie_arms.mdl"); // Set zombie arms
+	SetEntPropString(client, Prop_Send, "m_szArmsModel", "models/player/custom/hunter/hunterarms.mdl"); // Set zombie arms
 	
 	if(zombieSkin == 1) {
 		SetEntityModel(client, "models/player/kuristaja/zombies/zpz/zpz.mdl"); // Set the zombie skin
