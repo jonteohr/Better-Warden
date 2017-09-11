@@ -42,7 +42,7 @@
 2. In the `SERVER FILES` folder, drag all of its' content to your servers root folder (`csgo`)
 3. Everything in the `FASTDL` folder should be uploaded to your FastDL webserver
 4. Restart your server or change map
-5. Make your desired changes in the two configs located in `csgo/cfg/BetterWarden` folder
+5. Make your desired changes in the configs located in `csgo/cfg/BetterWarden` folder
 6. Change map or restart the server
 7. Done!
 
