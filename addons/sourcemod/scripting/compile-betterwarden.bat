@@ -29,4 +29,5 @@ echo ************************
 spcomp BetterWarden/Add-Ons/catch.sp -o../plugins/BetterWarden/Add-Ons/catch.smx
 spcomp BetterWarden/Add-Ons/wildwest.sp -o../plugins/BetterWarden/Add-Ons/wildwest.smx
 spcomp BetterWarden/Add-Ons/models.sp -o../plugins/BetterWarden/Add-Ons/models.smx
+spcomp BetterWarden/Add-Ons/zombie.sp -o../plugins/BetterWarden/Add-Ons/zombie.smx
 pause

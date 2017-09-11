@@ -249,6 +249,9 @@ public void openDaysMenu(int client) {
 	
 	if(g_bWWLoaded == true)
 		menu.AddItem(CHOICE7, "Choice 7"); // Wild West
+	
+	if(g_bZombieLoaded == true)
+		menu.AddItem(CHOICE9, "Choice 9"); // Zombie
 		
 	if(gc_bGrav.IntValue == 1)
 		menu.AddItem(CHOICE5, "Choice 5");
@@ -300,6 +303,9 @@ public int DaysMenuHandler(Menu menu, MenuAction action, int client, int param2)
 					if(StrEqual(info, CHOICE7))
 						initWW();
 					
+					if(StrEqual(info, CHOICE9))
+						initZombie();
+					
 					Call_StartForward(gF_OnEventDayCreated);
 					Call_Finish();
 				} else {
@@ -307,7 +313,7 @@ public int DaysMenuHandler(Menu menu, MenuAction action, int client, int param2)
 						abortGames();
 						CPrintToChatAll("%s %t", g_sCMenuPrefix, "Warden Aborted");
 						PrintHintTextToAll("%t", "Warden Aborted");
-					} else if(StrEqual(info, CHOICE1) || StrEqual(info, CHOICE2) || StrEqual(info, CHOICE3) || StrEqual(info, CHOICE4) || StrEqual(info, CHOICE5)) {
+					} else if(StrEqual(info, CHOICE1) || StrEqual(info, CHOICE2) || StrEqual(info, CHOICE3) || StrEqual(info, CHOICE4) || StrEqual(info, CHOICE5) || StrEqual(info, CHOICE6) || StrEqual(info, CHOICE7) || StrEqual(info, CHOICE9)) {
 						CPrintToChat(client, "%s %t", g_sCMenuPrefix, "Cannot Exec Game");
 					}
 				}
@@ -344,6 +350,8 @@ public int DaysMenuHandler(Menu menu, MenuAction action, int client, int param2)
 				} else if(StrEqual(info, CHOICE6)) {
 					return ITEMDRAW_DISABLED;
 				} else if(StrEqual(info, CHOICE7)) {
+					return ITEMDRAW_DISABLED;
+				} else if(StrEqual(info, CHOICE9)) {
 					return ITEMDRAW_DISABLED;
 				} else if(StrEqual(info, CHOICE8)) {
 					return ITEMDRAW_DEFAULT;
@@ -395,6 +403,10 @@ public int DaysMenuHandler(Menu menu, MenuAction action, int client, int param2)
 			}
 			if(StrEqual(info, CHOICE7)) {
 				Format(display, sizeof(display), "%t", "Wild West Entry");
+				return RedrawMenuItem(display);
+			}
+			if(StrEqual(info, CHOICE9)) {
+				Format(display, sizeof(display), "%t", "Zombie Entry");
 				return RedrawMenuItem(display);
 			}
 			if(StrEqual(info, CHOICE8)) {

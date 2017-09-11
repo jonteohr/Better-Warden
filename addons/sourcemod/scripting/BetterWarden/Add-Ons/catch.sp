@@ -39,7 +39,7 @@ public Plugin myinfo = {
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) {
 	CreateNative("initCatch", Native_initCatch);
-	RegPluginLibrary("catch"); // Register library so main plugin can check if this is loaded
+	RegPluginLibrary("bwcatch"); // Register library so main plugin can check if this is loaded
 	
 	return APLRes_Success;
 }

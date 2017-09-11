@@ -32,7 +32,7 @@ public Plugin myinfo = {
 	author = "Hypr",
 	description = "An Add-On for Better Warden.",
 	version = VERSION,
-	url = "https://trinityplay.net"
+	url = "https://github.com/condolent/Better-Warden"
 };
 
 public void OnPluginStart() {

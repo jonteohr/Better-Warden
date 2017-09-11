@@ -41,7 +41,7 @@ public Plugin myinfo = {
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) {
 	CreateNative("initWW", Native_initWW);
-	RegPluginLibrary("wildwest"); // Register plugin library so main plugin can check if this is running or not!
+	RegPluginLibrary("bwwildwest"); // Register plugin library so main plugin can check if this is running or not!
 	
 	return APLRes_Success;
 }
