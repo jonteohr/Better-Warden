@@ -36,11 +36,11 @@ public void OnMapStart() {
 	}
 	
 	if(gc_bWardenDeathSound.IntValue == 1) {
-		PrecacheSoundAny("betterwarden/wardendead.mp3");
+		PrecacheSoundAny("betterwarden/wardendead.mp3", true);
 	}
 	
 	if(gc_bWardenCreatedSound.IntValue == 1) {
-		PrecacheSoundAny("betterwarden/newwarden.mp3");
+		PrecacheSoundAny("betterwarden/newwarden.mp3", true);
 	}
 }
 

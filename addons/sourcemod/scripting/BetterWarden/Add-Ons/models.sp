@@ -78,8 +78,8 @@ public void OnMapStart() {
 		AddFileToDownloadsTable("models/player/custom_player/kuristaja/jailbreak/guard1/guard1_arms.vvd");
 		
 		// Precache models
-		PrecacheModel("models/player/custom_player/kuristaja/jailbreak/guard1/guard1.mdl"); // Only need to precache the .mdl files
-		PrecacheModel("models/player/custom_player/kuristaja/jailbreak/guard1/guard1_arms.mdl");
+		PrecacheModel("models/player/custom_player/kuristaja/jailbreak/guard1/guard1.mdl", true); // Only need to precache the .mdl files
+		PrecacheModel("models/player/custom_player/kuristaja/jailbreak/guard1/guard1_arms.mdl", true);
 	}
 	
 	if(gc_bDeputyModel.IntValue == 1) { // Only need to download the files if the model is enabled in config!
@@ -103,8 +103,8 @@ public void OnMapStart() {
 		AddFileToDownloadsTable("models/player/custom_player/kuristaja/jailbreak/guard5/guard5_arms.vvd");
 		
 		// Precache models
-		PrecacheModel("models/player/custom_player/kuristaja/jailbreak/guard5/guard5.mdl");
-		PrecacheModel("models/player/custom_player/kuristaja/jailbreak/guard5/guard5_arms.mdl");
+		PrecacheModel("models/player/custom_player/kuristaja/jailbreak/guard5/guard5.mdl", true);
+		PrecacheModel("models/player/custom_player/kuristaja/jailbreak/guard5/guard5_arms.mdl", true);
 	}
 }
 

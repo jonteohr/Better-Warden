@@ -108,11 +108,11 @@ public void OnMapStart() {
 	AddFileToDownloadsTable("sound/betterwarden/became_zombie.mp3");
 	
 	// Precache necessary files
-	PrecacheModel("models/player/custom_player/legacy/zombie/zombie_arms.mdl");
-	PrecacheModel("models/player/kuristaja/zombies/classic/classic.mdl");
-	PrecacheModel("models/player/kuristaja/zombies/zpz/zpz.mdl");
-	PrecacheSoundAny("betterwarden/zombie.mp3");
-	PrecacheSoundAny("betterwarden/became_zombie.mp3");
+	PrecacheModel("models/player/custom_player/legacy/zombie/zombie_arms.mdl", true);
+	PrecacheModel("models/player/kuristaja/zombies/classic/classic.mdl", true);
+	PrecacheModel("models/player/kuristaja/zombies/zpz/zpz.mdl", true);
+	PrecacheSoundAny("betterwarden/zombie.mp3", true);
+	PrecacheSoundAny("betterwarden/became_zombie.mp3", true);
 }
 
 public void OnPlayerSpawn(Event event, const char[] name, bool dontBroadcast) {
