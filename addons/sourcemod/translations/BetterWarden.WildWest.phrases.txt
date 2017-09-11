@@ -4,6 +4,7 @@
 	{
 		"en"	"Wild West"
 		"sv"	"Vilda Västern"
+		"fr"	"Conquête de l'Ouest"
 	}
 	
 	"Countdown"
@@ -11,11 +12,13 @@
 		"#format"	"{1:d}"
 		"en"	"Wild West shootout starts in {1} seconds!"
 		"sv"	"Vilda Västern börjar om {1} sekunder!"
+		"fr"	"les fusillades de la Conquête de l'Ouest commence dans {1} secondes!"
 	}
 	
 	"Wild West Begun"
 	{
 		"en"	"Wild West Shootout has started!"
 		"sv"	"Vilda Västern har börjat!"
+		"fr"	"les fusillades de la Conquête de l'Ouest ont commencé!"
 	}
 }
