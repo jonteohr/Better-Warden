@@ -178,6 +178,25 @@ public void OnLibraryAdded(const char[] name) {
 	}
 }
 
+public void OnAllPluginsLoaded() {
+	int addons;
+	
+	if(LibraryExists("bwwildwest"))
+		addons++;
+	if(LibraryExists("bwcatch"))
+		addons++;
+	if(LibraryExists("bwzombie"))
+		addons++;
+	if(LibraryExists("bwmodels"))
+		addons++;
+	if(LibraryExists("bwvoteday"))
+		addons++;
+	
+	PrintToServer("");
+	PrintToServer("#### BETTERWARDEN LOADED SUCCESSFULLY WITH %d ADDONS! ####", addons);
+	PrintToServer("");
+}
+
 /////////////////////////////
 //		   FORWARDS		   //
 /////////////////////////////

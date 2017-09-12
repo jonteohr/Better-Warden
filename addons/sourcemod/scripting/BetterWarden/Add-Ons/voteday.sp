@@ -54,6 +54,12 @@ public Plugin myinfo = {
 	url = "https://github.com/condolent/Better-Warden"
 };
 
+public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) {
+	RegPluginLibrary("bwvoteday"); // Register plugin library so main plugin can check if this is running or not!
+	
+	return APLRes_Success;
+}
+
 public void OnPluginStart() {
 	LoadTranslations("BetterWarden.Votes.phrases.txt");
 	SetGlobalTransTarget(LANG_SERVER);
@@ -84,7 +90,7 @@ public void OnAllPluginsLoaded() { // Handle late loads
 }
 
 public void OnRoundStart(Event event, const char[] name, bool dontBroadcast) { // Make sure to do a safety reset!
-	for(int i = 0; i <= sizeof(g_iVoted); i++) g_iVoted[i] = 0;
+	for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
 	g_iVoteYes = 0;
 	g_iVoteNo = 0;
 	g_iGameVote = -1;
@@ -265,7 +271,7 @@ public void StartVote(int client, int game) {
 	g_iVoteYes++;
 	g_iVoteRound = 1;
 	CreateTimer(gc_fVoteTime.FloatValue, VoteTimer);
-	
+	CPrintToChat(client, "%s %t", g_sPrefix, "Vote Started");
 	for(int i = 1; i <= MaxClients; i++) {
 		if(!IsValidClient(i))
 			continue;

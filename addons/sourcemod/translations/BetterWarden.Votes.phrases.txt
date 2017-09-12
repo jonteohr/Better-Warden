@@ -1,0 +1,88 @@
+"Phrases"
+{
+	"Vote War"
+	{
+		"en"	"Start a Warday?"
+		"sv"	"Starta en Warday?"
+	}
+	
+	"Vote HNS"
+	{
+		"en"	"Start a HnS?"
+		"sv"	"Starta en HnS?"
+	}
+	
+	"Vote Grav"
+	{
+		"en"	"Start a Gravity Freeday?"
+		"sv"	"Starta en Gravity Freeday?"
+	}
+	
+	"Vote Freeday"
+	{
+		"en"	"Start a Freeday?"
+		"sv"	"Starta en Freeday?"
+	}
+	
+	"Vote WW"
+	{
+		"en"	"Start Wild West?"
+		"sv"	"Starta Vilda Västern?"
+	}
+	
+	"Vote Zombie"
+	{
+		"en"	"Start Zombie?"
+		"sv"	"Starta Zombie?"
+	}
+	
+	"Vote Catch"
+	{
+		"en"	"Start Catch?"
+		"sv"	"Starta Kull?"
+	}
+	
+	"Client Voted Yes"
+	{
+		"#format"	"{1:N}"
+		"en"	"{1} voted Yes!"
+		"sv"	"{1} röstade Ja!"
+	}
+	
+	"Client Voted No"
+	{
+		"#format"	"{1:N}"
+		"en"	"{1} voted No."
+		"sv"	"{1} röstade Nej."
+	}
+	
+	"Yes"
+	{
+		"en"	"Yes!"
+		"sv"	"Ja!"
+	}
+	
+	"No"
+	{
+		"en"	"No!"
+		"sv"	"Nej!"
+	}
+	
+	"Vote Already Active"
+	{
+		"en"	"A vote is already in progress."
+		"sv"	"En omröstning är redan igång."
+	}
+	
+	"Voted Down"
+	{
+		"en"	"The vote was voted down."
+		"sv"	"Omröstningen blev nedröstad."
+	}
+	
+	"Vote Started"
+	{
+		"en"	"You started a vote!"
+		"sv"	"Du startade en omröstning!"
+	}
+}

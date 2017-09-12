@@ -35,6 +35,12 @@ public Plugin myinfo = {
 	url = "https://github.com/condolent/Better-Warden"
 };
 
+public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) {
+	RegPluginLibrary("bwmodels"); // Register plugin library so main plugin can check if this is running or not!
+	
+	return APLRes_Success;
+}
+
 public void OnPluginStart() {
 	AutoExecConfig(true, "models", "BetterWarden/Add-Ons"); // Create a addon-specific config!
 	
