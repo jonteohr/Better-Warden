@@ -283,7 +283,7 @@ public int DaysMenuHandler(Menu menu, MenuAction action, int client, int param2)
 			if(IsClientWarden(client)) {
 				if(!g_bIsGameActive) {
 					if(StrEqual(info, CHOICE1))
-						initFreeday(client);
+						ExecFreeday();
 					
 					if(StrEqual(info, CHOICE2))
 						initRestFreeday(client);
@@ -292,7 +292,7 @@ public int DaysMenuHandler(Menu menu, MenuAction action, int client, int param2)
 						hnsConfig(client);
 					
 					if(StrEqual(info, CHOICE4))
-						initWarday(client);
+						ExecWarday();
 					
 					if(StrEqual(info, CHOICE5))
 						initGrav(client);
@@ -452,12 +452,10 @@ public int hnsConfigHandler(Menu menu, MenuAction action, int client, int param2
 			menu.GetItem(param2, info, sizeof(info));
 			if(IsClientWarden(client)) {
 				if(StrEqual(info, CHOICE2)) {
-					g_iHnsWinners = 1;
-					initHns(client, g_iHnsWinners);
+					ExecHnS(1);
 				}
 				if(StrEqual(info, CHOICE3)) {
-					g_iHnsWinners = 2;
-					initHns(client, g_iHnsWinners);
+					ExecHnS(2);
 				}
 			}
 		}

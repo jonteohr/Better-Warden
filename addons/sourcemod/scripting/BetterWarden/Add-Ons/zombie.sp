@@ -172,7 +172,7 @@ public Action OnTakeDamageAlive(int victim, int &attacker, int &inflictor, float
 		return Plugin_Continue;
 	
 	if(GetClientTeam(victim) == CS_TEAM_CT && GetClientTeam(inflictor) == CS_TEAM_T) { // Zombie infects CT
-		int sound = GetRandomInt(1, 3);
+		int iSound = GetRandomInt(1, 3);
 		if(gc_bSwapBack.IntValue == 1) {
 			g_iCTs[victim] = 1;
 		}
@@ -181,11 +181,11 @@ public Action OnTakeDamageAlive(int victim, int &attacker, int &inflictor, float
 		CS_RespawnPlayer(victim);
 		SetClientZombie(victim);
 		EmitSoundToClientAny(victim, "betterwarden/became_zombie.mp3");
-		if(sound == 1)
+		if(iSound == 1)
 			EmitSoundToClientAny(inflictor, "betterwarden/zombie_kill1.mp3");
-		if(sound == 2)
+		if(iSound == 2)
 			EmitSoundToClientAny(inflictor, "betterwarden/zombie_kill2.mp3");
-		if(sound == 3)
+		if(iSound == 3)
 			EmitSoundToClientAny(inflictor, "betterwarden/zombie_kill3.mp3");
 		CPrintToChatAll("%s %t", g_sPrefix, "Zombie Infected", inflictor, victim);
 		return Plugin_Handled;
@@ -238,14 +238,14 @@ public void SetZombies() {
 }
 
 public void SetClientZombie(int client) {
-	int zombieSkin = GetRandomInt(1, 2);
+	int iZombieSkin = GetRandomInt(1, 2);
 	
 	SetEntPropString(client, Prop_Send, "m_szArmsModel", "models/player/custom/hunter/hunterarms.mdl"); // Set zombie arms
 	
-	if(zombieSkin == 1) {
+	if(iZombieSkin == 1) {
 		SetEntityModel(client, "models/player/kuristaja/zombies/zpz/zpz.mdl"); // Set the zombie skin
 	}
-	if(zombieSkin == 2) {
+	if(iZombieSkin == 2) {
 		SetEntityModel(client, "models/player/kuristaja/zombies/classic/classic.mdl"); // Set the zombie skin
 	}
 	

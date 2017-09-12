@@ -15,11 +15,11 @@
 #pragma semicolon 1
 
 #include <sourcemod>
+#include <sdktools>
+#include <sdkhooks>
 #include <menus>
 #include <colorvariables>
 #include <cstrike>
-#include <sdktools>
-#include <sdkhooks>
 #include <wardenmenu>
 #include <adminmenu>
 #include <betterwarden>
@@ -120,16 +120,17 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	CreateNative("GiveClientFreeday", Native_GiveClientFreeday);
 	CreateNative("RemoveClientFreeday", Native_RemoveClientFreeday);
 	CreateNative("SetClientBeacon", Native_SetClientBeacon);
+	CreateNative("ExecWarday", Native_ExecWarday);
+	CreateNative("ExecFreeday", Native_ExecFreeday);
+	CreateNative("ExecHnS", Native_ExecHnS);
+	CreateNative("ExecGravday", Native_ExecGravday);
 	
-	MarkNativeAsOptional("initCatch");
-	MarkNativeAsOptional("initWW");
-	MarkNativeAsOptional("initZombie");
 	RegPluginLibrary("wardenmenu");
 	
 	return APLRes_Success;
 }
 
-public OnPluginStart() {
+public void OnPluginStart() {
 	
 	LoadTranslations("BetterWarden.Menu.phrases");
 	LoadTranslations("BetterWarden.phrases.txt");
@@ -180,7 +181,7 @@ public OnPluginStart() {
 	
 }
 
-public OnAllPluginsLoaded() {
+public void OnAllPluginsLoaded() {
 	gc_fBeaconRadius = FindConVar("sm_beacon_radius");
 	
 	g_bCatchLoaded = LibraryExists("bwcatch");
@@ -210,35 +211,6 @@ public void abortGames() {
 	}
 }
 
-public void initHns(int client, int winners) {
-	if(g_iHnsWinners != 0 || g_iHnsWinners <= 2) {
-		if(gc_iHnSTimes.IntValue == 0) {
-			CPrintToChatAll("{blue}-----------------------------------------------------");
-			CPrintToChatAll("%s %t", g_sCMenuPrefix, "HnS Begun");
-			CPrintToChatAll("%s %t", g_sCMenuPrefix, "Amount of Winners", g_iHnsWinners);
-			CPrintToChatAll("{blue}-----------------------------------------------------");
-			g_iHnsActive = 1;
-			g_bIsGameActive = true;
-			CreateTimer(0.5, HnSInfo, _, TIMER_REPEAT);
-		} else if(gc_iHnSTimes.IntValue != 0 && g_iHnsTimes >= gc_iHnSTimes.IntValue) {
-			
-			CPrintToChat(client, "%s %t", g_sCMenuPrefix, "Too many hns", g_iHnsTimes, gc_iHnSTimes.IntValue);
-			
-		} else if(gc_iHnSTimes.IntValue != 0 && g_iHnsTimes < gc_iHnSTimes.IntValue) {
-			CPrintToChatAll("{blue}-----------------------------------------------------");
-			CPrintToChatAll("%s %t", g_sCMenuPrefix, "HnS Begun");
-			CPrintToChatAll("%s %t", g_sCMenuPrefix, "Amount of Winners", g_iHnsWinners);
-			CPrintToChatAll("{blue}-----------------------------------------------------");
-			g_iHnsActive = 1;
-			g_bIsGameActive = true;
-			g_iHnsTimes++;
-			CreateTimer(0.5, HnSInfo, _, TIMER_REPEAT);
-		}
-	} else {
-		CPrintToChat(client, "%s {red}%t", g_sCMenuPrefix, "No Winners Selected");
-	}
-}
-
 public Action HnSInfo(Handle timer) {
 	if(!IsHnsActive())
 		return Plugin_Handled;
@@ -252,33 +224,6 @@ public Action HnSInfo(Handle timer) {
 	PrintHintTextToAll("%s\n%s", msg1, msg2);
 	
 	return Plugin_Continue;
-}
-
-public void initFreeday(int client) {
-	
-	/*
-	* What to do to the server here??
-	* Probably nothing that needs to be done..
-	*/
-	
-	if(gc_iFreedayTimes.IntValue == 0) {
-		PrintHintTextToAll("%t", "Freeday Begun");
-		CPrintToChatAll("{blue}-----------------------------------------------------");
-		CPrintToChatAll("%s %t", g_sCMenuPrefix, "Freeday Begun");
-		CPrintToChatAll("{blue}-----------------------------------------------------");
-		g_iFreedayActive = 1;
-		g_bIsGameActive = true;
-	} else if(gc_iFreedayTimes.IntValue != 0 && g_iFreedayTimes >= gc_iFreedayTimes.IntValue) {
-		CPrintToChat(client, "%s %t", g_sCMenuPrefix, "Too many freedays", g_iFreedayTimes, gc_iFreedayTimes.IntValue);
-	} else if(gc_iFreedayTimes.IntValue != 0 && g_iFreedayTimes < gc_iFreedayTimes.IntValue) {
-		PrintHintTextToAll("%t", "Freeday Begun");
-		CPrintToChatAll("{blue}-----------------------------------------------------");
-		CPrintToChatAll("%s %t", g_sCMenuPrefix, "Freeday Begun");
-		CPrintToChatAll("{blue}-----------------------------------------------------");
-		g_iFreedayActive = 1;
-		g_bIsGameActive = true;
-		g_iFreedayTimes++;
-	}
 }
 
 public void initRestFreeday(int client) {
@@ -304,86 +249,8 @@ public void initRestFreeday(int client) {
 	}
 }
 
-public void initWarday(int client) {
-	
-	/*
-	* Same here. Anything to do to the server?
-	*/
-	
-	if(gc_iWardayTimes.IntValue == 0) {
-		PrintHintTextToAll("%t", "Warday Begun");
-		CPrintToChatAll("{blue}-----------------------------------------------------");
-		CPrintToChatAll("%s %t", g_sCMenuPrefix, "Warday Begun");
-		CPrintToChatAll("%s %t", g_sCMenuPrefix, "Warday Warning");
-		CPrintToChatAll("{blue}-----------------------------------------------------");
-		g_iWardayActive = 1;
-		g_bIsGameActive = true;
-	} else if(gc_iWardayTimes.IntValue != 0 && g_iWarTimes >= gc_iWardayTimes.IntValue) {
-		CPrintToChat(client, "%s %t", "Too many wardays", g_iWarTimes, gc_iWardayTimes.IntValue);
-	} else if(gc_iWardayTimes.IntValue != 0 && g_iWarTimes < gc_iWardayTimes.IntValue) {
-		PrintHintTextToAll("%t", "Warday Begun");
-		CPrintToChatAll("{blue}-----------------------------------------------------");
-		CPrintToChatAll("%s %t", g_sCMenuPrefix, "Warday Begun");
-		CPrintToChatAll("%s %t", g_sCMenuPrefix, "Warday Warning");
-		CPrintToChatAll("{blue}-----------------------------------------------------");
-		g_iWardayActive = 1;
-		g_bIsGameActive = true;
-		g_iWarTimes++;
-	}
-	
-}
-
 public void initGrav(int client) {
-	if(gc_iGravTimes.IntValue == 0) {
-		PrintHintTextToAll("%t", "Gravday Begun");
-		CPrintToChatAll("{blue}-----------------------------------------------------");
-		CPrintToChatAll("%s %t", g_sCMenuPrefix, "Gravday Begun");
-		CPrintToChatAll("{blue}-----------------------------------------------------");
-		g_iGravActive = 1;
-		g_bIsGameActive = true;
-		
-		for(int usr = 1; usr <= MaxClients; usr++) {
-			if(gc_iGravTeam.IntValue == 0) {
-				if(IsValidClient(usr)) {
-					SetEntityGravity(client, gc_fGravStrength.FloatValue);
-				}
-			} else if(gc_iGravTeam.IntValue == 1) {
-				if(IsValidClient(usr) && GetClientTeam(usr) == CS_TEAM_CT) {
-					SetEntityGravity(usr, gc_fGravStrength.FloatValue);
-				}
-			} else if(gc_iGravTeam.IntValue == 2) {
-				if(IsValidClient(usr) && GetClientTeam(usr) == CS_TEAM_T) {
-					SetEntityGravity(usr, gc_fGravStrength.FloatValue);
-				}
-			}
-		}
-	} else if(gc_iGravTimes.IntValue != 0 && g_iGravTimes >= gc_iGravTimes.IntValue) {
-		CPrintToChat(client, "%s %t", g_sCMenuPrefix, "Too many gravdays", g_iGravTimes, gc_iGravTimes.IntValue);
-	} else if(gc_iGravTimes.IntValue != 0 && g_iGravTimes < gc_iGravTimes.IntValue) {
-		PrintHintTextToAll("%t", "Gravday Begun");
-		CPrintToChatAll("{blue}-----------------------------------------------------");
-		CPrintToChatAll("%s %t", g_sCMenuPrefix, "Gravday Begun");
-		CPrintToChatAll("{blue}-----------------------------------------------------");
-		g_iGravActive = 1;
-		g_bIsGameActive = true;
-		
-		for(int usr = 1; usr <= MaxClients; usr++) {
-			if(gc_iGravTeam.IntValue == 0) {
-				if(IsValidClient(usr)) {
-					SetEntityGravity(usr, gc_fGravStrength.FloatValue);
-				}
-			} else if(gc_iGravTeam.IntValue == 1) {
-				if(IsValidClient(usr) && GetClientTeam(usr) == CS_TEAM_CT) {
-					SetEntityGravity(usr, gc_fGravStrength.FloatValue);
-				}
-			} else if(gc_iGravTeam.IntValue == 2) {
-				if(IsValidClient(usr) && GetClientTeam(usr) == CS_TEAM_T) {
-					SetEntityGravity(usr, gc_fGravStrength.FloatValue);
-				}
-			}
-		}
-		
-	}
+	
 }
 
 public void error(int client, int errorCode) {

@@ -52,8 +52,6 @@ Handle gF_OnWardenCreated = null;
 Handle gF_OnWardenCreatedByAdmin = null;
 Handle gF_OnWardenRemoved = null;
 
-// Stock ConVars
-stock ConVar gc_sVersion;
 // Regular ConVars
 ConVar gc_bEnableNoblock;
 ConVar gc_bNoblock;
@@ -113,7 +111,7 @@ public void OnPluginStart() {
 	
 	// CVars
 	AutoExecConfig(true, "warden", "BetterWarden");
-	gc_sVersion = CreateConVar("sm_warden_version", VERSION, "Current version of this plugin. DO NOT CHANGE THIS!", FCVAR_DONTRECORD|FCVAR_NOTIFY);
+	CreateConVar("sm_warden_version", VERSION, "Current version of this plugin. DO NOT CHANGE THIS!", FCVAR_DONTRECORD|FCVAR_NOTIFY);
 	gc_sAdmFlag = CreateConVar("sm_warden_admin", "b", "The flag required to execute admin commands for this plugin.", FCVAR_NOTIFY);
 	gc_bEnableNoblock = CreateConVar("sm_warden_noblock", "1", "Give the warden the ability to toggle noblock via sm_noblock?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	gc_bOpenCells = CreateConVar("sm_warden_cellscmd", "1", "Give the warden ability to toggle cell-doors via sm_open?\nCell doors on every map needs to be setup with SmartJailDoors for this to work!\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
