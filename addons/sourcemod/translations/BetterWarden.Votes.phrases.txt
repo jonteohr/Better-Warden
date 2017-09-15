@@ -85,4 +85,34 @@
 		"en"	"You started a vote!"
 		"sv"	"Du startade en omröstning!"
 	}
+	
+	"Votes Opened"
+	{
+		"en"	"The warden has allowed voting for an event day!"
+		"sv"	"Direktören har tillåtit omröstningar för en dag!"
+	}
+	
+	"Votes Closed"
+	{
+		"en"	"The warden has closed voting."
+		"sv"	"Direktören har stängt av omröstningar."
+	}
+	
+	"Allow Votes"
+	{
+		"en"	"Allow Votes"
+		"sv"	"Tillåt omröstningar"
+	}
+	
+	"Dis-Allow Votes"
+	{
+		"en"	"Dis-Allow Votes"
+		"sv"	"Stäng av omröstningar"
+	}
+	
+	"Votes Not Allowed"
+	{
+		"en"	"Voting is not allowed currently!"
+		"sv"	"Omröstningar är inte tillåtna just nu!"
+	}
 }

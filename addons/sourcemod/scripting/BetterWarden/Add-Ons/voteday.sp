@@ -252,6 +252,12 @@ public int BWMenuHandler(Menu menu, MenuAction action, int client, int param2) {
 public bool IsValidVote(int client) {
 	if(!IsValidClient(client))
 		return false;
+	if(!g_bAllowVotes && WardenExists()) {
+		CPrintToChat(client, "%s %t", g_sPrefix, "Votes Not Allowed");
+		return false;
+	}
+	if(g_bIsGameActive)
+		return false;
 	if(g_iGameVote != -1) {
 		CPrintToChat(client, "%s %t", g_sPrefix, "Vote Already Active");
 		return false;
@@ -286,12 +292,12 @@ public bool VoteFinished() {
 		if(g_iVoteYes > g_iVoteNo) {
 			ExecWarday();
 			g_iGameVote = -1;
-			for(int i = 0; i <= sizeof(g_iVoted); i++) g_iVoted[i] = 0; // Reset votes
+			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
 			return true;
 		} else {
 			CPrintToChatAll("%s %t", g_sPrefix, "Voted Down");
 			g_iGameVote = -1;
-			for(int i = 0; i <= sizeof(g_iVoted); i++) g_iVoted[i] = 0; // Reset votes
+			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
 			return true;
 		}
 	}
@@ -300,12 +306,12 @@ public bool VoteFinished() {
 			int randomInt = GetRandomInt(1, 2); // Set the number of winners randomly
 			ExecHnS(randomInt);
 			g_iGameVote = -1;
-			for(int i = 0; i <= sizeof(g_iVoted); i++) g_iVoted[i] = 0; // Reset votes
+			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
 			return true;
 		} else {
 			CPrintToChatAll("%s %t", g_sPrefix, "Voted Down");
 			g_iGameVote = -1;
-			for(int i = 0; i <= sizeof(g_iVoted); i++) g_iVoted[i] = 0; // Reset votes
+			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
 			return true;
 		}
 	}
@@ -313,12 +319,12 @@ public bool VoteFinished() {
 		if(g_iVoteYes > g_iVoteNo) {
 			ExecGravday();
 			g_iGameVote = -1;
-			for(int i = 0; i <= sizeof(g_iVoted); i++) g_iVoted[i] = 0; // Reset votes
+			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
 			return true;
 		} else {
 			CPrintToChatAll("%s %t", g_sPrefix, "Voted Down");
 			g_iGameVote = -1;
-			for(int i = 0; i <= sizeof(g_iVoted); i++) g_iVoted[i] = 0; // Reset votes
+			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
 			return true;
 		}
 	}
@@ -326,12 +332,12 @@ public bool VoteFinished() {
 		if(g_iVoteYes > g_iVoteNo) {
 			ExecFreeday();
 			g_iGameVote = -1;
-			for(int i = 0; i <= sizeof(g_iVoted); i++) g_iVoted[i] = 0; // Reset votes
+			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
 			return true;
 		} else {
 			CPrintToChatAll("%s %t", g_sPrefix, "Voted Down");
 			g_iGameVote = -1;
-			for(int i = 0; i <= sizeof(g_iVoted); i++) g_iVoted[i] = 0; // Reset votes
+			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
 			return true;
 		}
 	}
@@ -339,12 +345,12 @@ public bool VoteFinished() {
 		if(g_iVoteYes > g_iVoteNo) {
 			initWW();
 			g_iGameVote = -1;
-			for(int i = 0; i <= sizeof(g_iVoted); i++) g_iVoted[i] = 0; // Reset votes
+			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
 			return true;
 		} else {
 			CPrintToChatAll("%s %t", g_sPrefix, "Voted Down");
 			g_iGameVote = -1;
-			for(int i = 0; i <= sizeof(g_iVoted); i++) g_iVoted[i] = 0; // Reset votes
+			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
 			return true;
 		}
 	}
@@ -352,12 +358,12 @@ public bool VoteFinished() {
 		if(g_iVoteYes > g_iVoteNo) {
 			initZombie();
 			g_iGameVote = -1;
-			for(int i = 0; i <= sizeof(g_iVoted); i++) g_iVoted[i] = 0; // Reset votes
+			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
 			return true;
 		} else {
 			CPrintToChatAll("%s %t", g_sPrefix, "Voted Down");
 			g_iGameVote = -1;
-			for(int i = 0; i <= sizeof(g_iVoted); i++) g_iVoted[i] = 0; // Reset votes
+			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
 			return true;
 		}
 	}
@@ -365,12 +371,12 @@ public bool VoteFinished() {
 		if(g_iVoteYes > g_iVoteNo) {
 			initCatch();
 			g_iGameVote = -1;
-			for(int i = 0; i <= sizeof(g_iVoted); i++) g_iVoted[i] = 0; // Reset votes
+			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
 			return true;
 		} else {
 			CPrintToChatAll("%s %t", g_sPrefix, "Voted Down");
 			g_iGameVote = -1;
-			for(int i = 0; i <= sizeof(g_iVoted); i++) g_iVoted[i] = 0; // Reset votes
+			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
 			return true;
 		}
 	}

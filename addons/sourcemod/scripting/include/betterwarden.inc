@@ -8,7 +8,7 @@
  #endinput
 #endif
 #define bwardenincluded
-#define VERSION "0.6.2"
+#define VERSION "0.6.2c"
 
 stock char g_sPrefix[] = "[{blue}Warden{default}] ";
 

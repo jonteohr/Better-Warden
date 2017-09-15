@@ -59,6 +59,8 @@ public Action OnTakeDamageAlive(int victim, int &attacker, int &inflictor, float
 public void OnRoundStart(Event event, const char[] name, bool dontBroadcast) {
 	abortGames();
 	
+	g_bAllowVotes = false;
+	
 	g_iAliveTs = 0;
 	g_iAliveTs = GetTeamAliveClientCount(CS_TEAM_T);
 	for(int client = 1; client <= MaxClients; client++) {

@@ -47,6 +47,7 @@
 bool g_bCatchLoaded;
 bool g_bWWLoaded;
 bool g_bZombieLoaded;
+bool g_bVotesLoaded;
 
 char g_sCMenuPrefix[] = "[{bluegrey}WardenMenu{default}] ";
 char g_sBlipSound[PLATFORM_MAX_PATH];
@@ -187,7 +188,7 @@ public void OnAllPluginsLoaded() {
 	g_bCatchLoaded = LibraryExists("bwcatch");
 	g_bWWLoaded = LibraryExists("bwwildwest");
 	g_bZombieLoaded = LibraryExists("bwzombie");
-	
+	g_bVotesLoaded = LibraryExists("bwvoteday");
 }
 
 public void abortGames() {

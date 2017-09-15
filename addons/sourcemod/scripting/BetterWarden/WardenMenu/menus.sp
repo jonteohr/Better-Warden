@@ -23,23 +23,22 @@ public void openMenu(int client) {
 	
 	menu.SetTitle(title);
 	
-	if(gc_bEnableWeapons.IntValue == 1) {
+	if(gc_bEnableWeapons.IntValue == 1)
 		menu.AddItem(CHOICE1, "Choice 1"); // Weapons
-	}
 	
 	menu.AddItem(CHOICE2, "Choice 2"); // Event Days
 	
-	if(gc_bEnablePlayerFreeday.IntValue == 1) {
+	if(gc_bEnablePlayerFreeday.IntValue == 1)
 		menu.AddItem(CHOICE4, "Choice 4"); // Player Freeday
-	}
 	
-	if(gc_bEnableDoors.IntValue == 1) {
+	if(gc_bEnableDoors.IntValue == 1)
 		menu.AddItem(CHOICE5, "Choice 5"); // Open Doors
-	}
 	
-	if(gc_bNoblock.IntValue == 1) {
+	if(gc_bNoblock.IntValue == 1)
 		menu.AddItem(CHOICE3, "Choice 3"); // Noblock
-	}
+	
+	if(g_bVotesLoaded)
+		menu.AddItem(CHOICE6, "Choice 6"); // Allow votes
 	
 	menu.AddItem(CHOICE8, "Choice 8"); // Leave warden
 	
@@ -84,6 +83,15 @@ public int WardenMenuHandler(Menu menu, MenuAction action, int client, int param
 				if(StrEqual(info, CHOICE5)) {
 					FakeClientCommand(client, "sm_open");
 				}
+				if(StrEqual(info, CHOICE6)) {
+					if(g_bAllowVotes) {
+						g_bAllowVotes = false;
+						CPrintToChatAll("%s %t", g_sPrefix, "Votes Closed");
+					} else {
+						g_bAllowVotes = true;
+						CPrintToChatAll("%s %t", g_sPrefix, "Votes Opened");
+					}
+				}
 				if(StrEqual(info, CHOICE8)) {
 					FakeClientCommand(client, "sm_rw");
 				}
@@ -108,8 +116,13 @@ public int WardenMenuHandler(Menu menu, MenuAction action, int client, int param
 			} else if(StrEqual(info, CHOICE3)) {
 				return ITEMDRAW_DEFAULT;
 			} else if(StrEqual(info, CHOICE4)) {
-				return ITEMDRAW_DEFAULT;
+				if(!IsHnsActive())
+					return ITEMDRAW_DEFAULT;
+				if(IsHnsActive())
+					return ITEMDRAW_DISABLED;
 			} else if(StrEqual(info, CHOICE5)) {
+				return ITEMDRAW_DEFAULT;
+			} else if(StrEqual(info, CHOICE6)) {
 				return ITEMDRAW_DEFAULT;
 			} else if(StrEqual(info, SEP)) {
 				return ITEMDRAW_DISABLED;
@@ -142,6 +155,14 @@ public int WardenMenuHandler(Menu menu, MenuAction action, int client, int param
 			}
 			if(StrEqual(info, CHOICE5)) {
 				Format(display, sizeof(display), "%t", "Toggle doors");
+				return RedrawMenuItem(display);
+			}
+			if(StrEqual(info, CHOICE6)) {
+				if(!g_bAllowVotes)
+					Format(display, sizeof(display), "%t", "Allow Votes");
+				if(g_bAllowVotes)
+					Format(display, sizeof(display), "%t", "Dis-Allow Votes");
+				
 				return RedrawMenuItem(display);
 			}
 			if(StrEqual(info, CHOICE8)) {
