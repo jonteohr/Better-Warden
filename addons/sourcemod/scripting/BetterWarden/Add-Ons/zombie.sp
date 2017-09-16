@@ -21,6 +21,7 @@
 #include <cstrike>
 #include <smlib>
 #include <emitsoundany>
+#include <autoexecconfig>
 
 // Compiler options
 #pragma semicolon 1
@@ -58,9 +59,13 @@ public void OnPluginStart() {
 	HookEvent("player_spawn", OnPlayerSpawn, EventHookMode_Pre);
 	HookEvent("round_end", OnRoundEnd, EventHookMode_PostNoCopy);
 	
-	AutoExecConfig(true, "zombie", "BetterWarden/Add-Ons");
-	gc_bSwapBack = CreateConVar("sm_warden_zombie_swapback", "1", "In the round after a zombie round, swap back the CT's, that were infected, to Counter-Terrorists?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	gc_iZombieHealth = CreateConVar("sm_warden_zombie_health", "2000", "How much max-health should zombies have?", FCVAR_NOTIFY);
+	AutoExecConfig_SetFile("zombie", "BetterWarden/Add-Ons");
+	AutoExecConfig_SetCreateFile(true);
+	gc_bSwapBack = AutoExecConfig_CreateConVar("sm_warden_zombie_swapback", "1", "In the round after a zombie round, swap back the CT's, that were infected, to Counter-Terrorists?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_iZombieHealth = AutoExecConfig_CreateConVar("sm_warden_zombie_health", "2000", "How much max-health should zombies have?", FCVAR_NOTIFY);
+	
+	AutoExecConfig_ExecuteFile();
+	AutoExecConfig_CleanFile();
 }
 
 public void OnMapStart() {
@@ -130,6 +135,7 @@ public void OnPlayerSpawn(Event event, const char[] name, bool dontBroadcast) {
 	
 	if(IsValidClient(client) && GetClientTeam(client) == CS_TEAM_T && g_bIsZombieActive) { // Support respawns
 		SetClientZombie(client);
+		AddToBWLog("%N was made a zombie.", client);
 	}
 }
 
@@ -188,6 +194,7 @@ public Action OnTakeDamageAlive(int victim, int &attacker, int &inflictor, float
 		if(iSound == 3)
 			EmitSoundToClientAny(inflictor, "betterwarden/zombie_kill3.mp3");
 		CPrintToChatAll("%s %t", g_sPrefix, "Zombie Infected", inflictor, victim);
+		AddToBWLog("%N was infected by %N during zombie round.", victim, inflictor);
 		return Plugin_Handled;
 	}
 	
@@ -220,6 +227,8 @@ public int Native_initZombie(Handle plugin, int numParams) {
 	CPrintToChatAll("%s {red}%t", g_sPrefix, "Zombie Started");
 	CPrintToChatAll("%s {red}****************************************************", g_sPrefix);
 	CPrintToChatAll("");
+	
+	AddToBWLog("Zombie mode has started!");
 	
 	return true;
 }

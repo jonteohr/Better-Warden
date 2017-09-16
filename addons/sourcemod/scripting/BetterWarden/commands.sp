@@ -72,6 +72,8 @@ public Action Command_Retire(int client, int args) {
 	Call_PushCell(client);
 	Call_Finish();
 	
+	AddToBWLog("The warden retired.");
+	
 	return Plugin_Handled;
 }
 
@@ -94,6 +96,8 @@ public Action Command_Noblock(int client, int args) {
 		SetConVarInt(gc_bNoblock, 1, true, false);
 	}
 	
+	AddToBWLog("The warden toggled noblock.");
+	
 	return Plugin_Handled;
 }
 
@@ -110,6 +114,8 @@ public Action Command_OpenCells(int client, int args) {
 	
 	SJD_ToggleDoors();
 	CPrintToChat(client, "%s %t", g_sPrefix, "Doors Opened");
+	
+	AddToBWLog("The warden toggled cell doors");
 	
 	return Plugin_Handled;
 }
@@ -181,6 +187,8 @@ public Action Command_SetWarden(int client, int args) {
 		Call_PushCell(client);
 		Call_PushCell(target_list[usr]);
 		Call_Finish();
+		
+		AddToBWLog("%N appointed %N as warden.", client, target_list[usr]);
 	}
 	
 	return Plugin_Handled;

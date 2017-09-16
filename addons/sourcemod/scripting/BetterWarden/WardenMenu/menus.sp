@@ -316,7 +316,7 @@ public int DaysMenuHandler(Menu menu, MenuAction action, int client, int param2)
 						ExecWarday();
 					
 					if(StrEqual(info, CHOICE5))
-						initGrav(client);
+						ExecGravday();
 					
 					if(StrEqual(info, CHOICE6))
 						initCatch();

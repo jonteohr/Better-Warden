@@ -49,6 +49,8 @@ public Action sm_abortgames(int client, int args) {
 	CPrintToChatAll("%s %t", g_sCMenuPrefix, "Admin Aborted", client);
 	abortGames();
 	
+	AddToBWLog("An admin has stopped the current game.");
+	
 	return Plugin_Handled;
 }
 

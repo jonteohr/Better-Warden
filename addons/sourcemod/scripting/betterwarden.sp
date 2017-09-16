@@ -20,6 +20,7 @@
 #include <betterwarden>
 #include <wardenmenu>
 #include <emitsoundany>
+#include <autoexecconfig>
 #undef REQUIRE_PLUGIN
 #include <updater>
 #include <smartjaildoors>
@@ -110,20 +111,25 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 public void OnPluginStart() {
 	
 	// CVars
-	AutoExecConfig(true, "warden", "BetterWarden");
-	CreateConVar("sm_warden_version", VERSION, "Current version of this plugin. DO NOT CHANGE THIS!", FCVAR_DONTRECORD|FCVAR_NOTIFY);
-	gc_sAdmFlag = CreateConVar("sm_warden_admin", "b", "The flag required to execute admin commands for this plugin.", FCVAR_NOTIFY);
-	gc_bEnableNoblock = CreateConVar("sm_warden_noblock", "1", "Give the warden the ability to toggle noblock via sm_noblock?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	gc_bOpenCells = CreateConVar("sm_warden_cellscmd", "1", "Give the warden ability to toggle cell-doors via sm_open?\nCell doors on every map needs to be setup with SmartJailDoors for this to work!\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	gc_bWardenTwice = CreateConVar("sm_warden_same_twice", "0", "Prevent the same warden from becoming warden next round instantly?\nThis should only be used on populated servers for obvious reasons.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	gc_bStatsHint = CreateConVar("sm_warden_stats", "1", "Have a hint message up during the round with information about who's warden, how many players there are etc.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	gc_iColorR = CreateConVar("sm_warden_color_R", "33", "The Red value of the color the warden gets.", FCVAR_NOTIFY, true, 0.0, true, 255.0);
-	gc_iColorG = CreateConVar("sm_warden_color_G", "114", "The Green value of the color the warden gets.", FCVAR_NOTIFY, true, 0.0, true, 255.0);
-	gc_iColorB = CreateConVar("sm_warden_color_B", "255", "The Blue value of the color the warden gets.", FCVAR_NOTIFY, true, 0.0, true, 255.0);
-	gc_bWardenIcon = CreateConVar("sm_warden_icon", "1", "Have an icon above the wardens' head?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	gc_sWardenIconPath = CreateConVar("sm_warden_icon_path", "decals/BetterWarden/warden", "The path to the icon. Do not include file extensions!\nThe path here should be from whithin the materials/ folder.", FCVAR_NOTIFY);
-	gc_bWardenDeathSound = CreateConVar("sm_warden_deathsound", "1", "Play a sound telling everyone the warden has died?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	gc_bWardenCreatedSound = CreateConVar("sm_warden_createsound", "1", "Play a sound to everyone when someone becomes warden\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	AutoExecConfig_SetFile("warden", "BetterWarden"); // What's the configs name and location?
+	AutoExecConfig_SetCreateFile(true); // Create config if it does not exist
+	AutoExecConfig_CreateConVar("sm_warden_version", VERSION, "Current version of this plugin. DO NOT CHANGE THIS!", FCVAR_DONTRECORD|FCVAR_NOTIFY);
+	gc_sAdmFlag = AutoExecConfig_CreateConVar("sm_warden_admin", "b", "The flag required to execute admin commands for this plugin.", FCVAR_NOTIFY);
+	gc_bLogging = AutoExecConfig_CreateConVar("sm_warden_logs", "0", "Do you want the plugin to write logs?\nGenerally only necessary when you're experiencing any sort of issue.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bEnableNoblock = AutoExecConfig_CreateConVar("sm_warden_noblock", "1", "Give the warden the ability to toggle noblock via sm_noblock?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bOpenCells = AutoExecConfig_CreateConVar("sm_warden_cellscmd", "1", "Give the warden ability to toggle cell-doors via sm_open?\nCell doors on every map needs to be setup with SmartJailDoors for this to work!\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bWardenTwice = AutoExecConfig_CreateConVar("sm_warden_same_twice", "0", "Prevent the same warden from becoming warden next round instantly?\nThis should only be used on populated servers for obvious reasons.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bStatsHint = AutoExecConfig_CreateConVar("sm_warden_stats", "1", "Have a hint message up during the round with information about who's warden, how many players there are etc.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_iColorR = AutoExecConfig_CreateConVar("sm_warden_color_R", "33", "The Red value of the color the warden gets.", FCVAR_NOTIFY, true, 0.0, true, 255.0);
+	gc_iColorG = AutoExecConfig_CreateConVar("sm_warden_color_G", "114", "The Green value of the color the warden gets.", FCVAR_NOTIFY, true, 0.0, true, 255.0);
+	gc_iColorB = AutoExecConfig_CreateConVar("sm_warden_color_B", "255", "The Blue value of the color the warden gets.", FCVAR_NOTIFY, true, 0.0, true, 255.0);
+	gc_bWardenIcon = AutoExecConfig_CreateConVar("sm_warden_icon", "1", "Have an icon above the wardens' head?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_sWardenIconPath = AutoExecConfig_CreateConVar("sm_warden_icon_path", "decals/BetterWarden/warden", "The path to the icon. Do not include file extensions!\nThe path here should be from whithin the materials/ folder.", FCVAR_NOTIFY);
+	gc_bWardenDeathSound = AutoExecConfig_CreateConVar("sm_warden_deathsound", "1", "Play a sound telling everyone the warden has died?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bWardenCreatedSound = AutoExecConfig_CreateConVar("sm_warden_createsound", "1", "Play a sound to everyone when someone becomes warden\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	
+	AutoExecConfig_ExecuteFile(); // Execute the config
+	AutoExecConfig_CleanFile(); // Clean the .cfg from spaces etc.
 	
 	// Translation stuff
 	LoadTranslations("BetterWarden.phrases.txt");
@@ -195,6 +201,7 @@ public void OnAllPluginsLoaded() {
 	PrintToServer("");
 	PrintToServer("#### BETTERWARDEN LOADED SUCCESSFULLY WITH %d ADDONS! ####", addons);
 	PrintToServer("");
+	AddToBWLog("Betterwarden loaded successfully with %d addons!", addons);
 }
 
 /////////////////////////////
@@ -246,6 +253,7 @@ public void RemoveIcon(int client) {
 	if(g_iIcon[client] > 0 && IsValidEdict(g_iIcon[client])) {
 		AcceptEntityInput(g_iIcon[client], "Kill");
 		g_iIcon[client] = -1;
+		AddToBWLog("Removed icon from warden %N", client);
 	}
 }
 
@@ -299,6 +307,8 @@ public int Native_SetWarden(Handle plugin, int numParams) {
 	if(gc_bWardenCreatedSound.IntValue == 1)
 		EmitSoundToAllAny("betterwarden/newwarden.mp3");
 	
+	AddToBWLog("%N was set as warden", client);
+	
 	return true;
 }
 public int Native_RemoveWarden(Handle plugin, int numParams) {
@@ -317,6 +327,8 @@ public int Native_RemoveWarden(Handle plugin, int numParams) {
 	
 	g_iCurWarden = -1;
 	g_sCurWardenStat = "None..";
+	
+	AddToBWLog("The Warden was successfully removed");
 	
 	return true;
 }

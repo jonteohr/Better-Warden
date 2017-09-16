@@ -35,11 +35,12 @@ public void OnPlayerDeath(Event event, const char[] name, bool dontBroadcast) {
 		if(g_iHnsWinners == g_iAliveTs) {
 			abortGames();
 			CPrintToChatAll("%s %t", g_sCMenuPrefix, "HnS Over");
-			
+			AddToBWLog("Hide n' Seek is now over and there's a winner!");
 			Call_StartForward(gF_OnHnsOver);
 			Call_Finish();
 		} else {
 			CPrintToChatAll("%s %t", g_sCMenuPrefix, "HnS Players Left", g_iAliveTs);
+			AddToBWLog("A Terrorist died during Hide n' Seek but there's still contenders left.");
 		}
 	}
 }
@@ -49,6 +50,7 @@ public Action OnTakeDamageAlive(int victim, int &attacker, int &inflictor, float
 	if(g_iHnsActive == 1 && gc_bHnSGod.IntValue == 1) {
 		if(IsValidClient(victim) && IsValidClient(inflictor) && GetClientTeam(victim) == CS_TEAM_CT && GetClientTeam(inflictor) == CS_TEAM_T) {
 			CPrintToChat(inflictor, "%s %t", g_sCMenuPrefix, "No Rebel HnS");
+			AddToBWLog("%N tried attacking %N but was denied since Hide n' Seek is active.", inflictor, victim);
 			return Plugin_Handled;
 		}
 	}
@@ -63,10 +65,11 @@ public void OnRoundStart(Event event, const char[] name, bool dontBroadcast) {
 	
 	g_iAliveTs = 0;
 	g_iAliveTs = GetTeamAliveClientCount(CS_TEAM_T);
-	for(int client = 1; client <= MaxClients; client++) {
-		if(IsValidClient(client)) {
-			if(ClientHasFreeday(client)) {
-				RemoveClientFreeday(client);
+	for(int i = 1; i <= MaxClients; i++) {
+		if(IsValidClient(i)) {
+			if(ClientHasFreeday(i)) {
+				RemoveClientFreeday(i);
+				AddToBWLog("%N's freeday was removed since it's a new round.", i);
 			}
 		}
 	}
@@ -111,7 +114,7 @@ public void OnWardenCreated(int client) {
 	if(gc_bAutoOpen.IntValue == 1) {
 		openMenu(client);
 	} else {
-		PrintToServer("Skipping auto open since it's disabled in config.");
+		AddToBWLog("Skipping auto open since it's disabled in config.");
 	}
 }
 

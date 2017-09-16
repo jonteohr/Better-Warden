@@ -100,6 +100,7 @@ public void OnClientDisconnect(int client) {
 	if(IsClientWarden(client)) {
 		RemoveWarden();
 		CPrintToChatAll("%s %t", g_sPrefix, "Warden Died");
+		AddToBWLog("%N disconnected while being warden. Removed warden.", client);
 		
 		Call_StartForward(gF_OnWardenDisconnect);
 		Call_PushCell(client);

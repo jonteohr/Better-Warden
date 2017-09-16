@@ -16,6 +16,7 @@
 #include <sdktools>
 #include <betterwarden>
 #include <cstrike>
+#include <autoexecconfig>
 
 // Compiler options
 #pragma semicolon 1
@@ -42,10 +43,13 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 }
 
 public void OnPluginStart() {
-	AutoExecConfig(true, "models", "BetterWarden/Add-Ons"); // Create a addon-specific config!
+	AutoExecConfig_SetFile("models", "BetterWarden/Add-Ons"); // Create a addon-specific config!
+	AutoExecConfig_SetCreateFile(true);
+	gc_bWardenModel = AutoExecConfig_CreateConVar("sm_warden_model", "1", "Enable or disable the warden getting a player model.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bDeputyModel = AutoExecConfig_CreateConVar("sm_warden_deputy_model", "0", "Give the other CT's a fitting model aswell?", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	
-	gc_bWardenModel = CreateConVar("sm_warden_model", "1", "Enable or disable the warden getting a player model.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	gc_bDeputyModel = CreateConVar("sm_warden_deputy_model", "0", "Give the other CT's a fitting model aswell?", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	AutoExecConfig_ExecuteFile();
+	AutoExecConfig_CleanFile();
 	
 	HookEvent("player_spawn", OnPlayerSpawn, EventHookMode_Pre);
 }

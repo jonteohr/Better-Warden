@@ -15,8 +15,7 @@
 /*
 * Natives
 */
-public int Native_IsEventDayActive(Handle plugin, int numParams)
-{
+public int Native_IsEventDayActive(Handle plugin, int numParams) {
 	if(g_bIsGameActive) {
 		return true;
 	}
@@ -82,6 +81,7 @@ public int Native_GiveClientFreeday(Handle plugin, int numParams) {
 	if(IsValidClient(client)) {
 		g_iClientFreeday[client] = 1;
 		SetClientBeacon(client, true);
+		AddToBWLog("%N was given a freeday.", client);
 		return true;
 	}
 	
@@ -94,6 +94,7 @@ public int Native_RemoveClientFreeday(Handle plugin, int numParams) {
 	if(IsValidClient(client)) {
 		g_iClientFreeday[client] = 0;
 		SetClientBeacon(client, false);
+		AddToBWLog("%N's freeday was cancelled.", client);
 		return true;
 	}
 	
@@ -131,7 +132,7 @@ public int Native_ExecWarday(Handle plugin, int numParams) {
 		CPrintToChatAll("{blue}-----------------------------------------------------");
 		g_iWardayActive = 1;
 		g_bIsGameActive = true;
-		
+		AddToBWLog("A warday was executed.");
 		return true;
 	} else if(gc_iWardayTimes.IntValue != 0 && g_iWarTimes >= gc_iWardayTimes.IntValue) {
 		CPrintToChat(client, "%s %t", "Too many wardays", g_iWarTimes, gc_iWardayTimes.IntValue);
@@ -145,7 +146,7 @@ public int Native_ExecWarday(Handle plugin, int numParams) {
 		g_iWardayActive = 1;
 		g_bIsGameActive = true;
 		g_iWarTimes++;
-		
+		AddToBWLog("A warday was executed.");
 		return true;
 	}
 	
@@ -162,7 +163,7 @@ public int Native_ExecFreeday(Handle plugin, int numParams) {
 		CPrintToChatAll("{blue}-----------------------------------------------------");
 		g_iFreedayActive = 1;
 		g_bIsGameActive = true;
-		
+		AddToBWLog("A Freeday was executed.");
 		return true;
 	} else if(gc_iFreedayTimes.IntValue != 0 && g_iFreedayTimes >= gc_iFreedayTimes.IntValue) {
 		CPrintToChat(client, "%s %t", g_sCMenuPrefix, "Too many freedays", g_iFreedayTimes, gc_iFreedayTimes.IntValue);
@@ -175,7 +176,7 @@ public int Native_ExecFreeday(Handle plugin, int numParams) {
 		g_iFreedayActive = 1;
 		g_bIsGameActive = true;
 		g_iFreedayTimes++;
-		
+		AddToBWLog("A Freeday was executed.");
 		return true;
 	}
 	
@@ -195,7 +196,7 @@ public int Native_ExecHnS(Handle plugin, int numParams) {
 			g_iHnsActive = 1;
 			g_bIsGameActive = true;
 			CreateTimer(0.5, HnSInfo, _, TIMER_REPEAT);
-			
+			AddToBWLog("A Hide n' Seek was executed.");
 			return true;
 			
 		} else if(gc_iHnSTimes.IntValue != 0 && g_iHnsTimes >= gc_iHnSTimes.IntValue) {
@@ -212,7 +213,7 @@ public int Native_ExecHnS(Handle plugin, int numParams) {
 			g_bIsGameActive = true;
 			g_iHnsTimes++;
 			CreateTimer(0.5, HnSInfo, _, TIMER_REPEAT);
-			
+			AddToBWLog("A Hide n' Seek was executed.");
 			return true;
 		}
 	} else {
@@ -249,7 +250,7 @@ public int Native_ExecGravday(Handle plugin, int numParams) {
 				}
 			}
 		}
-		
+		AddToBWLog("A Gravity Freeday was executed.");
 		return true;
 		
 	} else if(gc_iGravTimes.IntValue != 0 && g_iGravTimes >= gc_iGravTimes.IntValue) {
@@ -280,7 +281,7 @@ public int Native_ExecGravday(Handle plugin, int numParams) {
 				}
 			}
 		}
-		
+		AddToBWLog("A Gravity Freeday was executed.");
 		return true;
 	}
 	
