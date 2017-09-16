@@ -101,6 +101,7 @@ Some of the other entries in the menu include:
 |`sm_cmenu_restricted_freeday`|**1**|Add an option for a restricted freeday in the menu? This event uses the same configuration as a normal freeday. 0 = Disable. 1 = Enable.|
 |`sm_cmenu_player_freeday`|**1**|Add an option for giving a specific player a freeday in the menu? 0 = Disable. 1 = Enable.|
 |`sm_cmenu_doors`|**1**|sm_warden_cellscmd needs to be set to 1 for this to work! Add an option for opening doors via the menu. 0 = Disable. 1 = Enable|
+|`sm_warden_logs`|**0**|Do you want the plugin to write logs? Generally only necessary when you're experiencing any sort of issue. 1 = Enable. 0 = Disable.|
 
 ## Translations
 * English ✓
