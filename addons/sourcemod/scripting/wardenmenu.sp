@@ -139,6 +139,7 @@ public void OnPluginStart() {
 	LoadTranslations("BetterWarden.Catch.phrases.txt");
 	LoadTranslations("BetterWarden.WildWest.phrases.txt");
 	LoadTranslations("BetterWarden.Zombie.phrases.txt");
+	LoadTranslations("BetterWarden.Votes.phrases.txt");
 	SetGlobalTransTarget(LANG_SERVER);
 	
 	AutoExecConfig_SetFile("menu", "BetterWarden"); // What's the configs name and location?

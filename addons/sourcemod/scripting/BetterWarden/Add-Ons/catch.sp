@@ -122,6 +122,7 @@ public void EndCatch() { // End the whole game and choose a winner
 			
 			if(GetClientTeam(i) != CS_TEAM_T)
 				continue;
+			SetEntPropFloat(i, Prop_Data, "m_flLaggedMovementValue", 1.0);
 			winner = i;
 			break;
 		}
@@ -155,7 +156,7 @@ public Action FreezeTimer(Handle timer) {
 				continue;
 			if(GetClientTeam(i) != CS_TEAM_CT)
 				continue;
-			SetEntPropFloat(i, Prop_Data, "m_flLaggedMovementValue", 1.0);
+			SetEntPropFloat(i, Prop_Data, "m_flLaggedMovementValue", 1.5);
 		}
 		secs = 5;
 		return Plugin_Stop;

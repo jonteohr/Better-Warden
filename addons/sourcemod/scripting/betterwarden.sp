@@ -67,6 +67,7 @@ ConVar gc_bWardenIcon;
 ConVar gc_sWardenIconPath;
 ConVar gc_bWardenDeathSound;
 ConVar gc_bWardenCreatedSound;
+ConVar gc_bLogging;
 
 // Modules
 #include "BetterWarden/commands.sp"
@@ -94,6 +95,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	CreateNative("GetCurrentWarden", Native_GetCurrentWarden);
 	CreateNative("GetTeamAliveClientCount", Native_GetTeamAliveClientCount);
 	CreateNative("IsClientWardenAdmin", Native_IsClientWardenAdmin);
+	CreateNative("AddToBWLog", Native_AddToBWLog);
 	RegPluginLibrary("betterwarden");
 	
 	// Global forwards
@@ -151,6 +153,9 @@ public void OnPluginStart() {
 	RegConsoleCmd("sm_unwarden", Command_Unwarden);
 	RegConsoleCmd("sm_sw", Command_SetWarden);
 	RegConsoleCmd("sm_setwarden", Command_SetWarden);
+	
+	// Server Commands
+	RegServerCmd("sm_reloadbw", Command_ReloadPlugin);
 	
 	// Event Hooks
 	HookEvent("player_death", OnPlayerDeath);
@@ -343,6 +348,19 @@ public int Native_IsClientWardenAdmin(Handle plugin, int numParams) {
 	if(IsValidClient(client, false, true)) {
 		if((GetUserFlagBits(client) & ReadFlagString(admflag) == ReadFlagString(admflag)) || GetUserFlagBits(client) & ADMFLAG_ROOT)
 			return true;
+	}
+	
+	return false;
+}
+public int Native_AddToBWLog(Handle plugin, int numParams) {
+	
+	if(gc_bLogging.IntValue == 1) {
+		char sBuffer[1024];
+		int written;
+		FormatNativeString(0, 1, 2, sizeof(sBuffer), written, sBuffer);
+		LogToFile(g_sLogPath, "%s", sBuffer);
+		
+		return true;
 	}
 	
 	return false;

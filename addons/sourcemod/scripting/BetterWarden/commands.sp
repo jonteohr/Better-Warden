@@ -193,3 +193,21 @@ public Action Command_SetWarden(int client, int args) {
 	
 	return Plugin_Handled;
 }
+
+// sm_reloadbw (ServerCMD)
+public Action Command_ReloadPlugin(int args) {
+	ServerCommand("sm plugins reload BetterWarden/betterwarden");
+	ServerCommand("sm plugins reload BetterWarden/wardenmenu");
+	if(LibraryExists("bwwildwest"))
+		ServerCommand("sm plugins reload BetterWarden/Add-Ons/wildwest");
+	if(LibraryExists("bwzombie"))
+		ServerCommand("sm plugins reload BetterWarden/Add-Ons/zombie");
+	if(LibraryExists("bwcatch"))
+		ServerCommand("sm plugins reload BetterWarden/Add-Ons/catch");
+	if(LibraryExists("bwmodels"))
+		ServerCommand("sm plugins reload BetterWarden/Add-Ons/models");
+	if(LibraryExists("bwvoteday"))
+		ServerCommand("sm plugins reload BetterWarden/Add-Ons/voteday");
+	
+	return Plugin_Handled;
+}
