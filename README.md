@@ -81,6 +81,7 @@ Some of the other entries in the menu include:
 |`sm_warden_deathsound`|**1**|Play a sound telling everyone the warden has died? 1 = Enable. 0 = Disable.|
 |`sm_warden_createsound`|**1**|Play a sound to everyone when someone becomes warden 1 = Enable. 0 = Disable.|
 |`sm_warden_logs`|**0**|Do you want the plugin to write logs? Generally only necessary when you're experiencing any sort of issue. 1 = Enable. 0 = Disable.|
+|`sm_warden_nolr`|**1**|Allow warden to control if terrorists can do a !lastrequest or !lr when available? 1 = Enable. 0 = Disable.|
 
 ### WardenMenu
 | ConVar      | Default | Description   |
