@@ -211,3 +211,24 @@ public Action Command_ReloadPlugin(int args) {
 	
 	return Plugin_Handled;
 }
+
+public Action Command_NoLR(int client, int args) {
+	if(!IsValidClient(client)) {
+		CPrintToChat(client, "%s %t", g_sPrefix, "Invalid Client");
+		return Plugin_Handled;
+	}
+	if(!IsClientWarden(client)) {
+		CPrintToChat(client, "%s %t", g_sPrefix, "Not Warden");
+		return Plugin_Handled;
+	}
+	
+	if(g_iNoLR == 0) {
+		g_iNoLR = 1;
+		CPrintToChatAll("%s %t", g_sPrefix, "Deactivated LR");
+	} else {
+		g_iNoLR = 0;
+		CPrintToChatAll("%s %t", g_sPrefix, "Activated LR");
+	}
+	
+	return Plugin_Handled;
+}

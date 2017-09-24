@@ -43,6 +43,7 @@ int g_iAliveTerrorists = 0;
 int g_iTotalCT = 0;
 int g_iTotalTerrorists = 0;
 int g_iIcon[MAXPLAYERS +1] = {-1, ...};
+int g_iNoLR = 0;
 
 // Forward handles
 Handle gF_OnWardenDeath = null;
@@ -68,6 +69,7 @@ ConVar gc_sWardenIconPath;
 ConVar gc_bWardenDeathSound;
 ConVar gc_bWardenCreatedSound;
 ConVar gc_bLogging;
+ConVar gc_bNoLR;
 
 // Modules
 #include "BetterWarden/commands.sp"
@@ -129,6 +131,7 @@ public void OnPluginStart() {
 	gc_sWardenIconPath = AutoExecConfig_CreateConVar("sm_warden_icon_path", "decals/BetterWarden/warden", "The path to the icon. Do not include file extensions!\nThe path here should be from whithin the materials/ folder.", FCVAR_NOTIFY);
 	gc_bWardenDeathSound = AutoExecConfig_CreateConVar("sm_warden_deathsound", "1", "Play a sound telling everyone the warden has died?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	gc_bWardenCreatedSound = AutoExecConfig_CreateConVar("sm_warden_createsound", "1", "Play a sound to everyone when someone becomes warden\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bNoLR = AutoExecConfig_CreateConVar("sm_warden_nolr", "1", "Allow warden to control if terrorists can do a !lastrequest or !lr when available?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	
 	AutoExecConfig_ExecuteFile(); // Execute the config
 	AutoExecConfig_CleanFile(); // Clean the .cfg from spaces etc.
@@ -147,6 +150,8 @@ public void OnPluginStart() {
 		RegConsoleCmd("sm_open", Command_OpenCells);
 	if(gc_bEnableNoblock.IntValue == 1)
 		RegConsoleCmd("sm_noblock", Command_Noblock);
+	if(gc_bNoLR.IntValue == 1)
+		RegConsoleCmd("sm_nolr", Command_NoLR);
 	
 	// Admin Commands
 	RegConsoleCmd("sm_uw", Command_Unwarden);
@@ -164,6 +169,8 @@ public void OnPluginStart() {
 	
 	// Command listeners
 	AddCommandListener(OnPlayerChat, "say");
+	AddCommandListener(OnPlayerLR, "sm_lr");
+	AddCommandListener(OnPlayerLR, "sm_lastrequest");
 	
 	// Timers
 	if(gc_bStatsHint.IntValue == 1)
