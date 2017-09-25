@@ -1,1 +1,1 @@
-- Fixes on some french translations.
+- Fixes on some french translations. <sup>_25/09-2017_</sup>
