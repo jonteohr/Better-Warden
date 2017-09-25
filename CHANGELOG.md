@@ -1,0 +1,1 @@
+- Fixes on some french translations.
