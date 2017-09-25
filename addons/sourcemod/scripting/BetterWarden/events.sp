@@ -87,6 +87,8 @@ public void OnRoundStart(Event event, const char[] name, bool dontBroadcast) {
 	g_iAliveTerrorists = GetTeamAliveClientCount(CS_TEAM_T);
 	
 	gc_bNoblock.RestoreDefault(true, false);
+	
+	g_iNoLR = 0;
 }
 
 public void OnClientDisconnect(int client) {
