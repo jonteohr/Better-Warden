@@ -23,6 +23,7 @@
 #include <wardenmenu>
 #include <adminmenu>
 #include <betterwarden>
+#include <autoexecconfig>
 
 // Optional plugins
 #undef REQUIRE_PLUGIN
@@ -138,27 +139,31 @@ public void OnPluginStart() {
 	LoadTranslations("BetterWarden.Catch.phrases.txt");
 	LoadTranslations("BetterWarden.WildWest.phrases.txt");
 	LoadTranslations("BetterWarden.Zombie.phrases.txt");
+	LoadTranslations("BetterWarden.Votes.phrases.txt");
 	SetGlobalTransTarget(LANG_SERVER);
 	
-	AutoExecConfig(true, "menu", "BetterWarden");
+	AutoExecConfig_SetFile("menu", "BetterWarden"); // What's the configs name and location?
+	AutoExecConfig_SetCreateFile(true); // Create config if it does not exist
+	gc_bHnS = AutoExecConfig_CreateConVar("sm_cmenu_hns", "1", "Add an option for Hide and Seek in the menu?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bHnSGod = AutoExecConfig_CreateConVar("sm_cmenu_hns_godmode", "1", "Makes CT's invulnerable against attacks from T's during HnS to prevent rebels.\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_iHnSTimes = AutoExecConfig_CreateConVar("sm_cmenu_hns_rounds", "2", "How many times is HnS allowed per map?\nSet to 0 for unlimited.", FCVAR_NOTIFY);
+	gc_bFreeday = AutoExecConfig_CreateConVar("sm_cmenu_freeday", "1", "Add an option for a freeday in the menu?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_iFreedayTimes = AutoExecConfig_CreateConVar("sm_cmenu_freeday_rounds", "2", "How many times is a Freeday allowed per map?\nSet to 0 for unlimited.", FCVAR_NOTIFY);
+	gc_bWarday = AutoExecConfig_CreateConVar("sm_cmenu_warday", "1", "Add an option for Warday in the menu?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_iWardayTimes = AutoExecConfig_CreateConVar("sm_cmenu_warday_rounds", "1", "How many times is a Warday allowed per map?\nSet to 0 for unlimited.", FCVAR_NOTIFY);
+	gc_bGrav = AutoExecConfig_CreateConVar("sm_cmenu_gravity", "1", "Add an option for a gravity freeday in the menu?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_iGravTeam = AutoExecConfig_CreateConVar("sm_cmenu_gravity_team", "2", "Which team should get a special gravity on Gravity Freedays?\n0 = All teams.\n1 = Counter-Terrorists.\n2 = Terorrists.", FCVAR_NOTIFY, true, 0.0, true, 2.0);
+	gc_fGravStrength = AutoExecConfig_CreateConVar("sm_cmenu_gravity_strength", "0.5", "What should the gravity be set to on Gravity Freedays?", FCVAR_NOTIFY);
+	gc_iGravTimes = AutoExecConfig_CreateConVar("sm_cmenu_gravity_rounds", "1", "How many times is a Gravity Freeday allowed per map?\nSet to 0 for unlimited.", FCVAR_NOTIFY);
+	gc_bNoblock = AutoExecConfig_CreateConVar("sm_cmenu_noblock", "1", "sm_warden_noblock needs to be set to 1 for this to work!\nAdd an option for toggling noblock in the menu?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bAutoOpen = AutoExecConfig_CreateConVar("sm_cmenu_auto_open", "1", "Automatically open the menu when a user becomes warden?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bEnableWeapons = AutoExecConfig_CreateConVar("sm_cmenu_weapons", "1", "Add an option for giving the warden a list of weapons via the menu?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bRestFreeday = AutoExecConfig_CreateConVar("sm_cmenu_restricted_freeday", "1", "Add an option for a restricted freeday in the menu?\nThis event uses the same configuration as a normal freeday.\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bEnablePlayerFreeday = AutoExecConfig_CreateConVar("sm_cmenu_player_freeday", "1", "Add an option for giving a specific player a freeday in the menu?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bEnableDoors = AutoExecConfig_CreateConVar("sm_cmenu_doors", "1", "sm_warden_cellscmd needs to be set to 1 for this to work!\nAdd an option for opening doors via the menu.\n0 = Disable.\n1 = Enable", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	
-	gc_bHnS = CreateConVar("sm_cmenu_hns", "1", "Add an option for Hide and Seek in the menu?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	gc_bHnSGod = CreateConVar("sm_cmenu_hns_godmode", "1", "Makes CT's invulnerable against attacks from T's during HnS to prevent rebels.\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	gc_iHnSTimes = CreateConVar("sm_cmenu_hns_rounds", "2", "How many times is HnS allowed per map?\nSet to 0 for unlimited.", FCVAR_NOTIFY);
-	gc_bFreeday = CreateConVar("sm_cmenu_freeday", "1", "Add an option for a freeday in the menu?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	gc_iFreedayTimes = CreateConVar("sm_cmenu_freeday_rounds", "2", "How many times is a Freeday allowed per map?\nSet to 0 for unlimited.", FCVAR_NOTIFY);
-	gc_bWarday = CreateConVar("sm_cmenu_warday", "1", "Add an option for Warday in the menu?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	gc_iWardayTimes = CreateConVar("sm_cmenu_warday_rounds", "1", "How many times is a Warday allowed per map?\nSet to 0 for unlimited.", FCVAR_NOTIFY);
-	gc_bGrav = CreateConVar("sm_cmenu_gravity", "1", "Add an option for a gravity freeday in the menu?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	gc_iGravTeam = CreateConVar("sm_cmenu_gravity_team", "2", "Which team should get a special gravity on Gravity Freedays?\n0 = All teams.\n1 = Counter-Terrorists.\n2 = Terorrists.", FCVAR_NOTIFY, true, 0.0, true, 2.0);
-	gc_fGravStrength = CreateConVar("sm_cmenu_gravity_strength", "0.5", "What should the gravity be set to on Gravity Freedays?", FCVAR_NOTIFY);
-	gc_iGravTimes = CreateConVar("sm_cmenu_gravity_rounds", "1", "How many times is a Gravity Freeday allowed per map?\nSet to 0 for unlimited.", FCVAR_NOTIFY);
-	gc_bNoblock = CreateConVar("sm_cmenu_noblock", "1", "sm_warden_noblock needs to be set to 1 for this to work!\nAdd an option for toggling noblock in the menu?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	gc_bAutoOpen = CreateConVar("sm_cmenu_auto_open", "1", "Automatically open the menu when a user becomes warden?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	gc_bEnableWeapons = CreateConVar("sm_cmenu_weapons", "1", "Add an option for giving the warden a list of weapons via the menu?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	gc_bRestFreeday = CreateConVar("sm_cmenu_restricted_freeday", "1", "Add an option for a restricted freeday in the menu?\nThis event uses the same configuration as a normal freeday.\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	gc_bEnablePlayerFreeday = CreateConVar("sm_cmenu_player_freeday", "1", "Add an option for giving a specific player a freeday in the menu?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	gc_bEnableDoors = CreateConVar("sm_cmenu_doors", "1", "sm_warden_cellscmd needs to be set to 1 for this to work!\nAdd an option for opening doors via the menu.\n0 = Disable.\n1 = Enable", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	AutoExecConfig_ExecuteFile(); // Execute the config
+	AutoExecConfig_CleanFile(); // Clean the .cfg from spaces etc.
 	
 	RegConsoleCmd("sm_abortgames", sm_abortgames);
 	RegConsoleCmd("sm_cmenu", sm_cmenu);
@@ -236,6 +241,7 @@ public void initRestFreeday(int client) {
 		CPrintToChatAll("{blue}-----------------------------------------------------");
 		g_iFreedayActive = 1;
 		g_bIsGameActive = true;
+		AddToBWLog("A Restricted Freeday was executed.");
 	} else if(gc_iFreedayTimes.IntValue != 0 && g_iFreedayTimes >= gc_iFreedayTimes.IntValue) {
 		CPrintToChat(client, "%s %t", g_sCMenuPrefix, "Too many freedays", g_iFreedayTimes, gc_iFreedayTimes.IntValue);
 	} else if(gc_iFreedayTimes.IntValue != 0 && g_iFreedayTimes < gc_iFreedayTimes.IntValue) {
@@ -247,11 +253,8 @@ public void initRestFreeday(int client) {
 		g_iFreedayActive = 1;
 		g_bIsGameActive = true;
 		g_iFreedayTimes++;
+		AddToBWLog("A Restricted Freeday was executed.");
 	}
-}
-
-public void initGrav(int client) {
-	
 }
 
 public void error(int client, int errorCode) {

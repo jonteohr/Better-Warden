@@ -72,6 +72,8 @@ public Action Command_Retire(int client, int args) {
 	Call_PushCell(client);
 	Call_Finish();
 	
+	AddToBWLog("The warden retired.");
+	
 	return Plugin_Handled;
 }
 
@@ -94,6 +96,8 @@ public Action Command_Noblock(int client, int args) {
 		SetConVarInt(gc_bNoblock, 1, true, false);
 	}
 	
+	AddToBWLog("The warden toggled noblock.");
+	
 	return Plugin_Handled;
 }
 
@@ -110,6 +114,8 @@ public Action Command_OpenCells(int client, int args) {
 	
 	SJD_ToggleDoors();
 	CPrintToChat(client, "%s %t", g_sPrefix, "Doors Opened");
+	
+	AddToBWLog("The warden toggled cell doors");
 	
 	return Plugin_Handled;
 }
@@ -181,6 +187,47 @@ public Action Command_SetWarden(int client, int args) {
 		Call_PushCell(client);
 		Call_PushCell(target_list[usr]);
 		Call_Finish();
+		
+		AddToBWLog("%N appointed %N as warden.", client, target_list[usr]);
+	}
+	
+	return Plugin_Handled;
+}
+
+// sm_reloadbw (ServerCMD)
+public Action Command_ReloadPlugin(int args) {
+	ServerCommand("sm plugins reload BetterWarden/betterwarden");
+	ServerCommand("sm plugins reload BetterWarden/wardenmenu");
+	if(LibraryExists("bwwildwest"))
+		ServerCommand("sm plugins reload BetterWarden/Add-Ons/wildwest");
+	if(LibraryExists("bwzombie"))
+		ServerCommand("sm plugins reload BetterWarden/Add-Ons/zombie");
+	if(LibraryExists("bwcatch"))
+		ServerCommand("sm plugins reload BetterWarden/Add-Ons/catch");
+	if(LibraryExists("bwmodels"))
+		ServerCommand("sm plugins reload BetterWarden/Add-Ons/models");
+	if(LibraryExists("bwvoteday"))
+		ServerCommand("sm plugins reload BetterWarden/Add-Ons/voteday");
+	
+	return Plugin_Handled;
+}
+
+public Action Command_NoLR(int client, int args) {
+	if(!IsValidClient(client)) {
+		CPrintToChat(client, "%s %t", g_sPrefix, "Invalid Client");
+		return Plugin_Handled;
+	}
+	if(!IsClientWarden(client)) {
+		CPrintToChat(client, "%s %t", g_sPrefix, "Not Warden");
+		return Plugin_Handled;
+	}
+	
+	if(g_iNoLR == 0) {
+		g_iNoLR = 1;
+		CPrintToChatAll("%s %t", g_sPrefix, "Deactivated LR");
+	} else {
+		g_iNoLR = 0;
+		CPrintToChatAll("%s %t", g_sPrefix, "Activated LR");
 	}
 	
 	return Plugin_Handled;

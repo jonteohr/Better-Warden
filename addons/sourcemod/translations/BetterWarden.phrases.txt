@@ -138,4 +138,22 @@
 		"sv"	"Användaren är inte en Counter-Terrorist."
 		"fr"	"Le joueur est pas un Counter-Terrorist."
 	}
+	
+	"Deactivated LR"
+	{
+		"en"	"The warden has deactivated Last Request."
+		"sv"	"Direktören har avaktiverat Last Request."
+	}
+	
+	"Activated LR"
+	{
+		"en"	"The warden has activated Last Request!"
+		"sv"	"Direktören har aktiverat Last Request!"
+	}
+	
+	"No LR Allowed"
+	{
+		"en"	"The warden does not allow LR right now."
+		"sv"	"Direktören tillåter inte LR för tillfället."
+	}
 }

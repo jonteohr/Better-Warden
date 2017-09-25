@@ -21,6 +21,7 @@
 #include <colorvariables>
 #include <smlib>
 #include <BetterWarden/catch>
+#include <autoexecconfig>
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -48,9 +49,11 @@ public void OnPluginStart() {
 	LoadTranslations("BetterWarden.Catch.phrases.txt");
 	SetGlobalTransTarget(LANG_SERVER);
 	
-	AutoExecConfig(true, "Catch", "BetterWarden");
-	
-	gc_bFreezeTime = CreateConVar("sm_warden_catch_freezetime", "1", "Freeze all CT's for 5 seconds when game is started?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	AutoExecConfig_SetFile("Catch", "BetterWarden/Add-Ons");
+	AutoExecConfig_SetCreateFile(true);
+	gc_bFreezeTime = AutoExecConfig_CreateConVar("sm_warden_catch_freezetime", "1", "Freeze all CT's for 5 seconds when game is started?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	AutoExecConfig_ExecuteFile();
+	AutoExecConfig_CleanFile();
 	
 	HookEvent("player_death", OnPlayerDeath);
 	HookEvent("round_start", OnRoundStart, EventHookMode_Pre);
@@ -70,7 +73,7 @@ public void OnPlayerDeath(Event event, const char[] name, bool dontBroadcast) {
 	}
 }
 
-public Action OnClientTouch(int client, int other) {
+public Action OnClientTouch(int client, int other) { // Client = The CT. other = the victim (T)
 	if(g_bIsCatchActive == false) // Don't do anything if Catch ain't active
 		return Plugin_Continue;
 	if(!IsValidClient(client) || !IsValidClient(other)) // Make sure client !bot & alive
@@ -81,6 +84,8 @@ public Action OnClientTouch(int client, int other) {
 		
 	ForcePlayerSuicide(other);
 	CPrintToChatAll("%s %t", g_sPrefix, "Player Caught T", client, other);
+	
+	AddToBWLog("%N caught %N during catch.", client, other);
 	
 	return Plugin_Handled;
 }
@@ -117,6 +122,7 @@ public void EndCatch() { // End the whole game and choose a winner
 			
 			if(GetClientTeam(i) != CS_TEAM_T)
 				continue;
+			SetEntPropFloat(i, Prop_Data, "m_flLaggedMovementValue", 1.0);
 			winner = i;
 			break;
 		}
@@ -150,7 +156,7 @@ public Action FreezeTimer(Handle timer) {
 				continue;
 			if(GetClientTeam(i) != CS_TEAM_CT)
 				continue;
-			SetEntPropFloat(i, Prop_Data, "m_flLaggedMovementValue", 1.0);
+			SetEntPropFloat(i, Prop_Data, "m_flLaggedMovementValue", 1.5);
 		}
 		secs = 5;
 		return Plugin_Stop;
@@ -194,6 +200,8 @@ public int Native_initCatch(Handle plugin, int numParams) { // Called to start t
 		}
 		CreateTimer(1.0, FreezeTimer, _, TIMER_REPEAT);
 	}
+	
+	AddToBWLog("Catch was initiated!");
 	
 	return true;
 }

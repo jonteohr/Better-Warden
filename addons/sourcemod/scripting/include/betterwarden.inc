@@ -8,9 +8,11 @@
  #endinput
 #endif
 #define bwardenincluded
-#define VERSION "0.6.2c"
+#define VERSION "0.6.3.2"
 
 stock char g_sPrefix[] = "[{blue}Warden{default}] ";
+stock char g_sLogPath[PLATFORM_MAX_PATH] = "addons/sourcemod/logs/betterwarden.log";
+
 
 /**
 * Called when the current warden dies.
@@ -148,3 +150,12 @@ stock void PrecacheModelAnyDownload(char[] sModel)
 	AddFileToDownloadsTable(sBuffer);
 	PrecacheModel(sBuffer, true);
 }
+
+/**
+* Adds a message to logfile if enabled in config.
+*
+* @param sMessage		Message to enter in log
+* @param ...			Formatting arguments
+* @return				true if successful
+*/
+native bool AddToBWLog(const char[] sMessage, any ...);

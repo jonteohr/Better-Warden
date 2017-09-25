@@ -100,6 +100,7 @@ public void OnClientDisconnect(int client) {
 	if(IsClientWarden(client)) {
 		RemoveWarden();
 		CPrintToChatAll("%s %t", g_sPrefix, "Warden Died");
+		AddToBWLog("%N disconnected while being warden. Removed warden.", client);
 		
 		Call_StartForward(gF_OnWardenDisconnect);
 		Call_PushCell(client);
@@ -115,7 +116,7 @@ public void OnClientDisconnect(int client) {
 */
 public Action OnPlayerChat(int client, char[] command, int args) {
 	if(!IsValidClient(client)) // Make sure warden isn't glitched and is in fact alive etc.
-		return Plugin_Continue;
+		return Plugin_Handled;
 	if(!IsClientWarden(client)) // Client is warden; let's make the message cool!
 		return Plugin_Continue;
 	
@@ -128,4 +129,14 @@ public Action OnPlayerChat(int client, char[] command, int args) {
 	CPrintToChatAll("{bluegrey}[Warden] {team2}%N :{default} %s", client, message);
 	return Plugin_Handled;
 	
+}
+
+public Action OnPlayerLR(int client, char[] command, int args) {
+	if(gc_bNoLR.IntValue != 1)
+		return Plugin_Continue;
+	if(g_iNoLR == 0)
+		return Plugin_Continue;
+		
+	CPrintToChat(client, "%s %t", g_sPrefix, "No LR Allowed");
+	return Plugin_Handled;
 }

@@ -18,6 +18,7 @@
 #include <wardenmenu>
 #include <cstrike>
 #include <colorvariables>
+#include <autoexecconfig>
 
 // Optional plugins (Add-Ons)
 #undef REQUIRE_PLUGIN
@@ -71,9 +72,13 @@ public void OnPluginStart() {
 	
 	HookEvent("round_start", OnRoundStart, EventHookMode_Pre);
 	
-	AutoExecConfig(true, "voteday", "BetterWarden/Add-Ons");
-	gc_fVoteTime = CreateConVar("sm_warden_vote_duration", "30.0", "The duration of event day votes.", FCVAR_NOTIFY, true, 1.0, true, 120.0);
-	gc_bVoteCooldown = CreateConVar("sm_warden_vote_spam", "1", "Prevent users from starting another vote after one has failed in the same round?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	AutoExecConfig_SetFile("voteday", "BetterWarden/Add-Ons");
+	AutoExecConfig_SetCreateFile(true);
+	gc_fVoteTime = AutoExecConfig_CreateConVar("sm_warden_vote_duration", "30.0", "The duration of event day votes.", FCVAR_NOTIFY, true, 1.0, true, 120.0);
+	gc_bVoteCooldown = AutoExecConfig_CreateConVar("sm_warden_vote_spam", "1", "Prevent users from starting another vote after one has failed in the same round?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	
+	AutoExecConfig_ExecuteFile();
+	AutoExecConfig_CleanFile();
 }
 
 public void OnAllPluginsLoaded() { // Handle late loads
@@ -285,6 +290,7 @@ public void StartVote(int client, int game) {
 			continue;
 		BWVoteMenu(i);
 	}
+	AddToBWLog("%N started a vote.", client);
 }
 
 public bool VoteFinished() {
