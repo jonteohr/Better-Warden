@@ -27,6 +27,7 @@
 #define REQUIRE_PLUGIN
 
 #define BW_UPDATE_URL "http://updater.ecoround.se/betterwarden/updater.txt"
+#define SERVERTAG "BetterWarden, Better Warden"
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -70,6 +71,7 @@ ConVar gc_bWardenDeathSound;
 ConVar gc_bWardenCreatedSound;
 ConVar gc_bLogging;
 ConVar gc_bNoLR;
+ConVar gc_bServerTag;
 
 // Modules
 #include "BetterWarden/commands.sp"
@@ -132,6 +134,7 @@ public void OnPluginStart() {
 	gc_bWardenDeathSound = AutoExecConfig_CreateConVar("sm_warden_deathsound", "1", "Play a sound telling everyone the warden has died?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	gc_bWardenCreatedSound = AutoExecConfig_CreateConVar("sm_warden_createsound", "1", "Play a sound to everyone when someone becomes warden\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	gc_bNoLR = AutoExecConfig_CreateConVar("sm_warden_nolr", "1", "Allow warden to control if terrorists can do a !lastrequest or !lr when available?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bServerTag = AutoExecConfig_CreateConVar("sm_warden_servertag", "1", "Add Better Warden tags to your servers sv_tags?", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	
 	AutoExecConfig_ExecuteFile(); // Execute the config
 	AutoExecConfig_CleanFile(); // Clean the .cfg from spaces etc.
@@ -184,6 +187,21 @@ public void OnPluginStart() {
 	if(LibraryExists("updater")) {
 		Updater_AddPlugin(BW_UPDATE_URL);
 		Updater_ForceUpdate();
+	}
+	
+	if(gc_bServerTag.IntValue == 1) {
+		ConVar gc_sTags = FindConVar("sv_tags");
+		char sTags[128];
+		
+		GetConVarString(gc_sTags, sTags, sizeof(sTags));
+		
+		if(StrContains(sTags, SERVERTAG, false) == -1) {
+			char murderTag[64];
+			Format(murderTag, sizeof(murderTag), ", %s", SERVERTAG);
+			
+			StrCat(sTags, sizeof(sTags), murderTag);
+			SetConVarString(gc_sTags, sTags);
+		}
 	}
 	
 }
