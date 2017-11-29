@@ -31,6 +31,6 @@
 	{
 		"#format"	"{1:N}"
 		"en"	"{1} could not be kicked from your gang since you don't own one."
-		"sv"	""
+		"sv"	"Kunde inte kicka {1} eftersom personen inte är med i ett gäng som du äger."
 	}
 }
