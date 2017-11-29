@@ -54,6 +54,7 @@ public void OnPluginStart() {
 	SQL_InitDB(); // Try to initiate database connection
 	
 	RegConsoleCmd("sm_gang", Command_Gang); // Base command
+	RegConsoleCmd("sm_mygang", Command_MyGang);
 }
 
 public void OnMapEnd() {
@@ -103,11 +104,27 @@ public Action Command_Gang(int client, int args) {
 	return Plugin_Handled;
 }
 
+public Action Command_MyGang(int client, int args) {
+	if(!IsValidClient(client, _, true))
+		return Plugin_Handled;
+	if(!SQL_IsInGang(client)) {
+		CPrintToChat(client, "%s You're not in a gang.", g_sPrefix);
+		return Plugin_Handled;
+	}
+	
+	char gang[128];
+	SQL_GetGang(client, gang, sizeof(gang));
+	
+	CPrintToChat(client, "%s Gang: %s", g_sPrefix, gang);
+	
+	return Plugin_Handled;
+}
+
 ////////////////////////////////////
 //			Functions
 ////////////////////////////////////
 public void CreateGang(int client, char[] name) { // Creates gangs
-	if(!SQL_GangExists(name) && !SQL_OwnsGang(client)) { // User is not in a gang and gang name is not taken
+	if(!SQL_GangExists(name) && !SQL_IsInGang(client)) { // User is not in a gang and gang name is not taken
 		SQL_CreateGang(client, name);
 		CPrintToChat(client, "%s %t", g_sPrefix, "Success Create Gang", name);
 	} else {
@@ -116,7 +133,13 @@ public void CreateGang(int client, char[] name) { // Creates gangs
 }
 
 public void DeleteGang(int client) { // Deletes gangs
-	CPrintToChat(client, "%s This command is not currently finished.", g_sPrefix);
+	if(SQL_OwnsGang(client)) {
+		/*
+			TODO
+		*/
+	} else {
+		CPrintToChat(client, "%s This command is not currently finished.", g_sPrefix); // Not the owner
+	}
 }
 
 public void InviteGang(int client, char[] arg) { // Invites a client to the given gang
@@ -128,10 +151,15 @@ public void InviteGang(int client, char[] arg) { // Invites a client to the give
 		ReplyToTargetError(client, target_count);
 	}
 	
-	for(int usr = 0; usr < target_count; usr++) {
-		// target_list[usr] is now the target entity index
-		CPrintToChat(client, "%s %t", g_sPrefix, "Could not Invite", target_list[usr]);
-		CPrintToChat(client, "%s This command is not currently finished.", g_sPrefix);
+	for(int usr = 0; usr < target_count; usr++) { // target_list[usr] is now the target entity index
+		if(!SQL_OwnsGang(client)) {
+			CPrintToChat(client, "%s %t", g_sPrefix, "Could not Invite", target_list[usr]);
+			CPrintToChat(client, "%s This command is not currently finished.", g_sPrefix);
+		} else {
+			/*
+				TODO
+			*/
+		}
 	}
 }
 
@@ -140,16 +168,18 @@ public void KickGang(int client, char[] arg) { // Kicks a client from their gang
 	int target_list[MAXPLAYERS], target_count;
 	bool tn_is_ml;
 	
-	int target;
-	
 	if((target_count = ProcessTargetString(arg, client, target_list, sizeof(target_list), COMMAND_FILTER_NO_BOTS, target_name, sizeof(target_name), tn_is_ml)) <= 0) {
 		ReplyToTargetError(client, target_count);
 	}
 	
 	for(int usr = 0; usr < target_count; usr++) {
-		target = target_list[usr];
+		if(!SQL_OwnsGang(client)) {
+			CPrintToChat(client, "%s %t", g_sPrefix, "Could not Kick", target_list[usr]);
+			CPrintToChat(client, "%s This command is not currently finished.", g_sPrefix);
+		} else {
+			/*
+				TODO
+			*/
+		}
 	}
-	
-	CPrintToChat(client, "%s %t", g_sPrefix, "Could not Kick",target);
-	CPrintToChat(client, "%s This command is not currently finished.", g_sPrefix);
 }

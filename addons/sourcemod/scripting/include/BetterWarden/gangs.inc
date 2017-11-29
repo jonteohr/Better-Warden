@@ -34,7 +34,7 @@ stock void SQL_InitDB() {
 stock void SQL_CreateBWTable() {
 	char sQuery[255];
 	char sQuery2[255];
-	Format(sQuery, sizeof(sQuery), "CREATE TABLE IF NOT EXISTS betterwarden_players (ID int NOT NULL AUTO_INCREMENT, STEAMID varchar(255), Gang int, GangName varchar(128));");
+	Format(sQuery, sizeof(sQuery), "CREATE TABLE IF NOT EXISTS betterwarden_players (ID int NOT NULL AUTO_INCREMENT, STEAMID varchar(255), GangID int);");
 	Format(sQuery2, sizeof(sQuery2), "CREATE TABLE IF NOT EXISTS betterwarden_gangs (ID int NOT NULL AUTO_INCREMENT, Name varchar(255), Owner varchar(255));");
 	
 	if(!SQL_FastQuery(gH_Db, sQuery)) {
@@ -158,6 +158,69 @@ stock bool SQL_OwnsGang(int client) {
 	}
 	
 	CloseHandle(SQL);
+	return false;
+}
+
+/**
+* Retrieves the gang name of the specified client
+* 
+* @param client			Client entity index
+* @param buffer			Destination string to store the name
+* @param maxlen			Max length of the destination buffer
+* @error				Not in a gang or invalid client
+*/
+stock void SQL_GetGang(int client, char[] buffer, int maxlen) {
+	int GangID;
+	char sQuery[255];
+	char sID[64];
+	GetClientAuthId(client, AuthId_Steam2, sID, sizeof(sID));
+	
+	// Stage one
+	Format(sQuery, sizeof(sQuery), "SELECT GangID FROM betterwarden_players WHERE STEAMID LIKE '%s'", sID);
+	
+	DBResultSet SQL = SQL_Query(gH_Db, sQuery);
+	if(SQL != null) {
+		if(SQL_FetchRow(SQL)) {
+			GangID = SQL_FetchInt(SQL, 0);
+			CloseHandle(SQL);
+		}
+	}
+	
+	// Stage two
+	Format(sQuery, sizeof(sQuery), "SELECT Name FROM betterwarden_gangs WHERE ID LIKE %d", GangID);
+	DBResultSet SQL2 = SQL_Query(gH_Db, sQuery);
+	if(SQL2 != null) {
+		if(SQL_FetchRow(SQL2)) {
+			char result[255];
+			SQL_FetchString(SQL2, 0, result, sizeof(result));
+			CloseHandle(SQL2);
+			
+			Format(buffer, maxlen, "%s", result);
+		}
+	}
+}
+
+/**
+* Checks if a client is in a gang
+*
+* @param client			Client entity index
+* @return				true if yes
+*/
+stock bool SQL_IsInGang(int client) {
+	char sQuery[255];
+	char sID[64];
+	GetClientAuthId(client, AuthId_Steam2, sID, sizeof(sID));
+	
+	Format(sQuery, sizeof(sQuery), "SELECT GangID FROM betterwarden_players WHERE STEAMID LIKE '%s'", sID);
+	
+	DBResultSet SQL = SQL_Query(gH_Db, sQuery);
+	if(SQL != null) {
+		if(SQL_FetchRow(SQL)) {
+			CloseHandle(SQL);
+			return true;
+		}
+	}
+	
 	return false;
 }
 
