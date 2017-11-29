@@ -41,10 +41,11 @@
 1. [Download the plugin package](https://github.com/condolent/Better-Warden/releases)
 2. In the `SERVER FILES` folder, drag all of its' content to your servers root folder (`csgo`)
 3. Everything in the `FASTDL` folder should be uploaded to your FastDL webserver
-4. Restart your server or change map
-5. Make your desired changes in the configs located in `csgo/cfg/BetterWarden` folder
-6. Change map or restart the server
-7. Done!
+4. Add the database entry named `betterwarden` to your databases.cfg file in _root/addons/sourcemod/configs_
+5. Restart your server or change map
+6. Make your desired changes in the configs located in `csgo/cfg/BetterWarden` folder
+7. Change map or restart the server
+8. Done!
 
 ## Dependencies
 * [SmartJailDoors](https://forums.alliedmods.net/showthread.php?t=264100) _by Kailo_
