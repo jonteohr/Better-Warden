@@ -1,0 +1,36 @@
+"Phrases"
+{
+	"Available Commands"
+	{
+		"en"	"Available gang commands:"
+		"sv"	"Tillgängliga gäng-kommands:"
+	}
+	
+	"Success Create Gang"
+	{
+		"#format"	"{1:s}"
+		"en"	"Successfully created the gang \"{1}\"!"
+		"sv"	"Lyckades skapa gänget \"{1}\"!"
+	}
+	
+	"Gang Create Error"
+	{
+		"#format"	"{1:s}"
+		"en"	"You either already own a gang, are a member of one or there already exists a gang named \"{1}\"."
+		"sv"	"Antingen äger du redan ett gäng, är medlem i ett annat eller så finns det redan ett gäng döpt till \"{1}\"."
+	}
+	
+	"Could not Invite"
+	{
+		"#format"	"{1:N}"
+		"en"	"{1} could not be invited since you don't own a gang."
+		"sv"	"Kunde inte bjuda in {1} eftersom du inte äger ett gäng."
+	}
+	
+	"Could not Kick"
+	{
+		"#format"	"{1:N}"
+		"en"	"{1} could not be kicked from your gang since you don't own one."
+		"sv"	""
+	}
+}

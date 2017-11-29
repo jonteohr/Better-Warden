@@ -57,6 +57,8 @@ The major function this plugin offers is that the warden can choose special even
 3. Warday
 4. Gravity Freeday
 
+Also introducing gangs. Prisoners can now create gangs where they can communicate in their own gangchat and such.
+
 There's also some other functions in the menu that the warden can take advantage of in order to make the game more comfortable.  
 Some of the other entries in the menu include:  
 1. Toggle noblock

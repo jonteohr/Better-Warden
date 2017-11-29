@@ -227,6 +227,8 @@ public void OnAllPluginsLoaded() {
 		addons++;
 	if(LibraryExists("bwvoteday"))
 		addons++;
+	if(LibraryExists("bwgangs"))
+		addons++;
 	
 	PrintToServer("");
 	PrintToServer("#### BETTERWARDEN LOADED SUCCESSFULLY WITH %d ADDONS! ####", addons);
