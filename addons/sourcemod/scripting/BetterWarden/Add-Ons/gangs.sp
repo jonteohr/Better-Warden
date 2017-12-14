@@ -27,6 +27,11 @@
 #pragma semicolon 1
 #pragma newdecls required
 
+// Console Variables
+ConVar gc_bClanTag;
+ConVar gc_bChatTag;
+ConVar gc_fTagTimer;
+
 public Plugin myinfo = {
 	name = "[BetterWarden] Gangs",
 	author = "Hypr",
@@ -42,19 +47,37 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 }
 
 public void OnPluginStart() {
+	// Translations
 	LoadTranslations("BetterWarden.Gangs.phrases.txt");
 	SetGlobalTransTarget(LANG_SERVER);
 	
+	// Config
 	AutoExecConfig_SetFile("Gangs", "BetterWarden/Add-Ons");
 	AutoExecConfig_SetCreateFile(true);
-	
+	gc_bClanTag = AutoExecConfig_CreateConVar("sm_warden_gang_clantag", "1", "Show the player's gang name as a clan tag.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bChatTag = AutoExecConfig_CreateConVar("sm_warden_gang_chattag", "1", "Show the player's gang name in chat before the name.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_fTagTimer = AutoExecConfig_CreateConVar("sm_warden_gang_clantag_tiemr", "5", "This only matters if sm_warden_gang_clantag is set to 1!\nThe amount of seconds the plugin should check a clients tag.", FCVAR_NOTIFY, true, 0.1);
 	AutoExecConfig_ExecuteFile();
 	AutoExecConfig_CleanFile();
 	
+	// Database
 	SQL_InitDB(); // Try to initiate database connection
 	
-	RegConsoleCmd("sm_gang", Command_Gang); // Base command
+	// Commands
+	RegConsoleCmd("sm_gang", Command_Gang);
 	RegConsoleCmd("sm_mygang", Command_MyGang);
+	
+	// Command Listeners
+	AddCommandListener(OnPlayerChat, "say");
+}
+
+////////////////////////////////////
+//			Forwards
+////////////////////////////////////
+
+public void OnMapStart() {
+	if(gc_bClanTag.IntValue == 1)
+		CreateTimer(gc_fTagTimer.FloatValue, ClanTagTimer, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
 }
 
 public void OnMapEnd() {
@@ -64,6 +87,48 @@ public void OnMapEnd() {
 public void OnClientPutInServer(int client) {
 	if(!SQL_UserExists(client)) // If user is not in DB, add him without a gang
 		SQL_AddUserToBWTable(client);
+}
+
+public Action OnPlayerChat(int client, char[] command, int args) {
+	if(!IsValidClient(client))
+		return Plugin_Continue;
+	if(gc_bChatTag.IntValue != 1)
+		return Plugin_Continue;
+	if(!SQL_IsInGang(client))
+		return Plugin_Continue;
+	
+	char message[255];
+	GetCmdArg(1, message, sizeof(message));
+	
+	if(message[0] == '/' || message[0] == '@' || IsChatTrigger())
+		return Plugin_Handled;
+	
+	//CPrintToChatAll("{bluegrey}[Warden] {team2}%N :{default} %s", client, message);
+	
+	/*
+		TODO
+			Append the gang name in brackets before the name
+	*/
+	
+	return Plugin_Handled;
+}
+
+////////////////////////////////////
+//			Timers
+////////////////////////////////////
+
+public Action ClanTagTimer(Handle timer) {
+	for(int i = 1; i <= MaxClients; i++) {
+		if(!IsValidClient(i) || !SQL_IsInGang(i)) // Make sure client is actually in a gang and/or is valid
+			continue;
+		char buffer[255];
+		char clanTag[255];
+		
+		SQL_GetGang(i, buffer, sizeof(buffer));
+		Format(clanTag, sizeof(clanTag), "[%s]", buffer);
+		
+		CS_SetClientClanTag(i, clanTag);
+	}
 }
 
 ////////////////////////////////////
