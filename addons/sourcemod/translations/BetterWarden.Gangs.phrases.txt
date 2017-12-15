@@ -1,5 +1,11 @@
 "Phrases"
 {
+	"Not Owner"
+	{
+		"en"	"You don't own a gang."
+		"sv"	"Du äger inte ett gäng."
+	}
+	
 	"Available Commands"
 	{
 		"en"	"Available gang commands:"
@@ -32,5 +38,19 @@
 		"#format"	"{1:N}"
 		"en"	"{1} could not be kicked from your gang since you don't own one."
 		"sv"	"Kunde inte kicka {1} eftersom personen inte är med i ett gäng som du äger."
+	}
+	
+	"Success Delete Gang"
+	{
+		"#format"	"{1:s}"
+		"en"	"Successfully deleted gang \"{1}\"!"
+		"sv"	"Lyckades med att ta bort gänget \"{1}\"!"
+	}
+	
+	"Failed Delete Gang"
+	{
+		"#format"	"{1:s}"
+		"en"	"Failed to delete gang \"{1}\"."
+		"sv"	"Misslyckades med att ta bort gänget \"{1}\"."
 	}
 }

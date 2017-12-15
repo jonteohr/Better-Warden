@@ -224,6 +224,82 @@ stock bool SQL_IsInGang(int client) {
 	return false;
 }
 
+/**
+* Returns the gang ID from a gang name
+*
+* @param				Gang name (Non-Case specific)
+* @return				Gang ID if successful, -1 if not
+*/
+stock int SQL_GetGangId(char[] GangName) {
+	int gangID;
+	char sQuery[255];
+	
+	Format(sQuery, sizeof(sQuery), "SELECT ID FROM betterwarden_gangs WHERE Name LIKE '%s'", GangName);
+	
+	DBResultSet SQL = SQL_Query(gH_Db, sQuery);
+	if(SQL != null) {
+		if(SQL_FetchRow(SQL)) {
+			gangID = SQL_FetchInt(SQL, 0);
+			CloseHandle(SQL);
+			
+			return gangID;
+		}
+	}
+	
+	return -1;
+}
+
+/**
+* Returns gang ID from the owner of a gang
+*
+* @param			client entity index of the owner
+* @return			Gang ID
+* @error			Invalid client ID, or client owns no gang (-1)
+*/
+stock int SQL_GetGangIdFromOwner(int client) {
+	char sQuery[255];
+	char SteamID[64];
+	int gangID;
+	GetClientAuthId(client, AuthId_Steam2, SteamID, sizeof(SteamID));
+	
+	Format(sQuery, sizeof(sQuery), "SELECT ID FROM betterwarden_gangs WHERE Owner LIKE '%s'", SteamID);
+	
+	DBResultSet SQL = SQL_Query(gH_Db, sQuery);
+	if(SQL != null) {
+		if(SQL_FetchRow(SQL)) {
+			gangID = SQL_FetchInt(SQL, 0);
+			CloseHandle(SQL);
+			
+			return gangID;
+		}
+	}
+	
+	return -1;
+}
+
+/**
+* Deletes a gang from the database
+*
+* @param				Gang ID
+* @return				true if successful
+* @error				Invalid database handle
+*/
+stock bool SQL_DeleteGang(int GangID) {
+	char sQuery[255];
+	
+	Format(sQuery, sizeof(sQuery), "DELETE FROM betterwarden_gangs WHERE ID = %d", GangID);
+	
+	if(!SQL_FastQuery(gH_Db, sQuery)) {
+		char err[255];
+		SQL_GetError(gH_Db, err, sizeof(err));
+		PrintToServer("DB Error: %s", err);
+		
+		return false;
+	}
+	
+	return true;
+}
+
 public SharedPlugin __pl_bwgangs = 
 {
 	name = "gangs",
@@ -238,6 +314,6 @@ public SharedPlugin __pl_bwgangs =
 #if !defined REQUIRE_PLUGIN
 public void __pl_bwgangs_SetNTVOptional()
 {
-	//MarkNativeAsOptional("initZombie");
+	//MarkNativeAsOptional("");
 }
 #endif
