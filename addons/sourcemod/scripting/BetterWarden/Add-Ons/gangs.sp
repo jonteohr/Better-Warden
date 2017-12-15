@@ -90,25 +90,29 @@ public void OnClientPutInServer(int client) {
 }
 
 public Action OnPlayerChat(int client, char[] command, int args) {
-	if(!IsValidClient(client))
+	if(!IsValidClient(client, _, true))
 		return Plugin_Continue;
 	if(gc_bChatTag.IntValue != 1)
 		return Plugin_Continue;
-	if(!SQL_IsInGang(client))
+	if(GetClientTeam(client) != CS_TEAM_T && GetClientTeam(client) != CS_TEAM_CT) // Only show to active players
+		return Plugin_Continue;
+	if(IsClientWarden(client)) // If client is warden, only the warden tag should show
+		return Plugin_Continue;
+	if(!SQL_IsInGang(client)) // Make sure the client is actually in a gang
 		return Plugin_Continue;
 	
 	char message[255];
+	char gang[255];
 	GetCmdArg(1, message, sizeof(message));
+	SQL_GetGang(client, gang, sizeof(gang));
 	
 	if(message[0] == '/' || message[0] == '@' || IsChatTrigger())
 		return Plugin_Handled;
 	
-	//CPrintToChatAll("{bluegrey}[Warden] {team2}%N :{default} %s", client, message);
-	
-	/*
-		TODO
-			Append the gang name in brackets before the name
-	*/
+	if(GetClientTeam(client) == CS_TEAM_CT)
+		CPrintToChatAll("{green}[%s] {team2}%N :{default} %s", gang, client, message);
+	if(GetClientTeam(client) == CS_TEAM_T)
+		CPrintToChatAll("{green}[%s] {team1}%N :{default} %s", gang, client, message);
 	
 	return Plugin_Handled;
 }
