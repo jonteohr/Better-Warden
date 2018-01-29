@@ -8,7 +8,7 @@
 #define wardenmenuincluded
 
 stock bool g_bIsGameActive;
-stock bool g_bAllowVotes;
+stock bool g_bAllowVotes = false;
 
 /**
 * Called when a warden opens the warden menu. Also called when a player becomes a warden if sm_cmenu_auto_open is set to 1.

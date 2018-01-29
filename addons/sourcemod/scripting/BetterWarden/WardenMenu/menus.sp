@@ -91,6 +91,7 @@ public int WardenMenuHandler(Menu menu, MenuAction action, int client, int param
 						g_bAllowVotes = true;
 						CPrintToChatAll("%s %t", g_sPrefix, "Votes Opened");
 					}
+					openMenu(client);
 				}
 				if(StrEqual(info, CHOICE8)) {
 					FakeClientCommand(client, "sm_rw");
