@@ -1,1 +1,5 @@
-- Fixes on some french translations. <sup>_25/09-2017_</sup>
+- Fixes on some french translations
+- Fixed variable names
+- Added gangs <sup>Add-On!</sup>
+- Code cleanup
+- Warden-menu bug fixes

@@ -196,10 +196,10 @@ public void OnPluginStart() {
 		GetConVarString(gc_sTags, sTags, sizeof(sTags));
 		
 		if(StrContains(sTags, SERVERTAG, false) == -1) {
-			char murderTag[64];
-			Format(murderTag, sizeof(murderTag), ", %s", SERVERTAG);
+			char wardenTag[64];
+			Format(wardenTag, sizeof(wardenTag), ", %s", SERVERTAG);
 			
-			StrCat(sTags, sizeof(sTags), murderTag);
+			StrCat(sTags, sizeof(sTags), wardenTag);
 			SetConVarString(gc_sTags, sTags);
 		}
 	}
