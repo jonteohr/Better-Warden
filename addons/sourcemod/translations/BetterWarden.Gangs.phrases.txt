@@ -100,4 +100,37 @@
 		"en"	"Failed to delete gang \"{1}\"."
 		"sv"	"Misslyckades med att ta bort gänget \"{1}\"."
 	}
+	
+	"Invitation"
+	{
+		"#format"	"{1:N},{2:s}"
+		"en"	"You've been invited by {1} to join the gang \"{2}\". Type {lightgreen}!accept{gold} or {lightred}!deny{gold} in chat to reply within 30 seconds."
+		"sv"	"Du har blivit inbjuden att gå med i \"{2}\" av {1}. Skriv {lightgreen}!accept{gold} eller {lightred}!deny{gold} för att svara inom 30 sekunder."
+	}
+	
+	"Client Joined Gang"
+	{
+		"#format"	"{1:N}"
+		"en"	"{1} has joined the gang!"
+		"sv"	"{1} har gått med i gänget!"
+	}
+	
+	"Invite Accepted"
+	{
+		"en"	"You've accepted the gang invite."
+		"sv"	"Du har accepterat inbjudan."
+	}
+	
+	"You Declined Invite"
+	{
+		"en"	"You declined the invite to join a gang."
+		"sv"	"Du nekade inbjudan för att gå med i ett gäng."
+	}
+	
+	"Invite Declined"
+	{
+		"#format"	"{1:N}"
+		"en"	"{1} has declined your invite to join the gang."
+		"sv"	"{1} har nekat din inbjudan för att gå med i ditt gäng."
+	}
 }

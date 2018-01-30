@@ -352,6 +352,41 @@ stock bool SQL_AddToGang(int client, int gang) {
 }
 
 /**
+* Fetch the owner of a gang
+*
+* @param gang			Gang ID
+* @return				Client ID if successful, -1 if not
+* @error				Invalid gang ID
+*/
+stock int SQL_GetGangOwner(int gang) {
+	char sQuery[255];
+	char sID[64]; // buffer
+	
+	Format(sQuery, sizeof(sQuery), "SELECT Owner FROM betterwarden_gangs WHERE ID = %d", gang);
+	
+	DBResultSet SQL = SQL_Query(gH_Db, sQuery);
+	
+	if(SQL != null) {
+		if(SQL_FetchRow(SQL)) {
+			SQL_FetchString(SQL, 0, sID, sizeof(sID));
+			for(int i = 1; i <= MaxClients; i++) {
+				if(!IsValidClient(i))
+					continue;
+				char buff[64];
+				GetClientAuthId(i, AuthId_Steam2, buff, sizeof(buff));
+				
+				if(!StrEqual(buff, sID, false))
+					continue;
+				
+				return i;
+			}
+		}
+	}
+	
+	return -1; // Owner not online or not found
+}
+
+/**
 * Send a message to the gang chat
 *
 * @param				Gang ID

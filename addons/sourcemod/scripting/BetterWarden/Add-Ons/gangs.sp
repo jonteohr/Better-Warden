@@ -33,6 +33,10 @@ ConVar gc_bChatTag;
 ConVar gc_fTagTimer;
 ConVar gc_bGangChat;
 
+// Integers
+int g_iInviteTime[MAXPLAYERS +1];
+int g_iInviteGang[MAXPLAYERS +1];
+
 public Plugin myinfo = {
 	name = "[BetterWarden] Gangs",
 	author = "Hypr",
@@ -70,6 +74,8 @@ public void OnPluginStart() {
 	// Commands
 	RegConsoleCmd("sm_gang", Command_Gang);
 	RegConsoleCmd("sm_mygang", Command_MyGang);
+	RegConsoleCmd("sm_accept", Command_AcceptInvite);
+	RegConsoleCmd("sm_deny", Command_DenyInvite);
 	
 	// Command Listeners
 	AddCommandListener(OnPlayerChat, "say");
@@ -221,6 +227,38 @@ public Action Command_MyGang(int client, int args) {
 	return Plugin_Handled;
 }
 
+public Action Command_AcceptInvite(int client, int args) {
+	if(!IsValidClient(client))
+		return Plugin_Handled;
+	if(g_iInviteTime[client] < GetTime()) // Invite timed out
+		return Plugin_Handled;
+	
+	g_iInviteTime[client] = -1;
+	SQL_AddToGang(client, g_iInviteGang[client]);
+	
+	SendToGang(g_iInviteGang[client], "%t", "Client Joined Gang", client);
+	CPrintToChat(client, "%s %t", g_sPrefix, "Invite Accepted");
+	
+	return Plugin_Handled;
+}
+
+public Action Command_DenyInvite(int client, int args) {
+	if(!IsValidClient(client))
+		return Plugin_Handled;
+	if(g_iInviteTime[client] < GetTime()) // Invite timed out
+		return Plugin_Handled;
+	
+	CPrintToChat(client, "%s %t", g_sPrefix, "You Declined Invite");
+	
+	if(SQL_GetGangOwner(g_iInviteGang[client]) != -1)
+		CPrintToChat(g_iInviteGang[client], "%s {error}%t", g_sPrefix, "Invite Declined", client);
+	
+	g_iInviteTime[client] = -1;
+	g_iInviteGang[client] = -1;
+	
+	return Plugin_Handled;
+}
+
 ////////////////////////////////////
 //			Functions
 ////////////////////////////////////
@@ -276,7 +314,9 @@ public void InviteGang(int client, char[] arg) { // Invites a client to the give
 			
 			if(!SQL_IsInGang(target_list[usr])) { // Target is not in a gang, let's send the invite!
 				
-				SQL_AddToGang(target_list[usr], iGang); // Assuming the target accepted the invite (TODO)
+				g_iInviteTime[target_list[usr]] = (GetTime() + 30);
+				g_iInviteGang[target_list[usr]] = iGang;
+				CPrintToChat(target_list[usr], "%s {gold}%t", g_sPrefix, "Invitation", client, sGang);
 				
 			} else { // Target is already in a gang
 				CPrintToChat(client, "%s {error}%t", g_sPrefix, "Already In Gang", target_list[usr]);
@@ -317,7 +357,7 @@ public void KickGang(int client, char[] arg) { // Kicks a client from their gang
 				CPrintToChat(client, "%s %t", g_sPrefix, "Kicked Client", target_list[usr], sGang); // Tell the owner about the success
 				CPrintToChat(target_list[usr], "%s %t", g_sPrefix, "You Have Been Kicked", client, sGang); // Let the target know he was kicked
 				
-				SendToGang(GangID, "{green}(%s) {yellow} %t", sGang, "Announce Kick", target_list[usr]); // Announce in gangchat
+				SendToGang(GangID, "%t", sGang, "Announce Kick", target_list[usr]); // Announce in gangchat
 				
 			} else { // Target not in same gang
 				CPrintToChat(client, "%s {error}%t", g_sPrefix, "Client Not in Gang", target_list[usr]);
@@ -347,7 +387,7 @@ public int Native_SendToGang(Handle plugin, int numParams) {
 		if(iGang != SQL_GetGangId(sGang))
 			continue;
 		
-		CPrintToChat(i, sBuffer);
+		CPrintToChat(i, "{green}(%s) {yellow} %s", sGang, sBuffer);
 	}
 	
 	return true;
