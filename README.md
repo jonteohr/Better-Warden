@@ -113,3 +113,5 @@ Some of the other entries in the menu include:
 * Swedish ✓
 * French ✓
 * Russian ×
+
+_Wish to help the translation? [Go here!](http://translator.mitchdempsey.com/sourcemod_plugins/tagged/betterwarden)_

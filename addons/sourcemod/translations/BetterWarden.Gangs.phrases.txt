@@ -29,15 +29,62 @@
 	"Could not Invite"
 	{
 		"#format"	"{1:N}"
-		"en"	"{1} could not be invited since you don't own a gang."
-		"sv"	"Kunde inte bjuda in {1} eftersom du inte äger ett gäng."
+		"en"	"{1} could not be invited to your gang."
+		"sv"	"Kunde inte bjuda in {1} till ditt gäng."
+	}
+	
+	"Cannot Invite Self"
+	{
+		"en"	"You cannot invite yourself."
+		"sv"	"Du kan inte bjuda in dig själv."
+	}
+	
+	"Already In Gang"
+	{
+		"#format"	"{1:N}"
+		"en"	"{1} is already in a gang."
+		"sv"	"{1} är redan i ett gäng."
 	}
 	
 	"Could not Kick"
 	{
 		"#format"	"{1:N}"
-		"en"	"{1} could not be kicked from your gang since you don't own one."
-		"sv"	"Kunde inte kicka {1} eftersom personen inte är med i ett gäng som du äger."
+		"en"	"{1} could not be kicked from your gang."
+		"sv"	"Kunde inte kicka {1} från ditt gäng."
+	}
+	
+	"Kicked Client"
+	{
+		"#format"	"{1:N},{2:s}"
+		"en"	"{1} has been successfully kicked from \"{2}\"!"
+		"sv"	"{1} har blivit kickad från \"{2}\"!"
+	}
+	
+	"Cannot Kick Self"
+	{
+		"en"	"You cannot kick yourself."
+		"sv"	"Du kan inte kicka dig själv."
+	}
+	
+	"Client Not in Gang"
+	{
+		"#format"	"{1:N}"
+		"en"	"{1} is not in your gang."
+		"sv"	"{1} är inte i ditt gäng."
+	}
+	
+	"You Have Been Kicked"
+	{
+		"#format"	"{1:N},{2:s}"
+		"en"	"You have been kicked by {1} from \"{2}\"."
+		"sv"	"Du har blivit kickad från \"{2}\" av {1}."
+	}
+	
+	"Announce Kick"
+	{
+		"#format"	"{1:N}"
+		"en"	"{1} has been kicked from the gang."
+		"sv"	"{1} har blivit kickad från gänget."
 	}
 	
 	"Success Delete Gang"

@@ -112,7 +112,6 @@ stock bool SQL_GangExists(char[] name) {
 		}
 	}
 	
-	CloseHandle(SQL);
 	return false;
 }
 
@@ -299,6 +298,77 @@ stock bool SQL_DeleteGang(int GangID) {
 	
 	return true;
 }
+
+/**
+* Kicks a player from a gang
+*
+* @param				Kicked client ID
+* @param				Gang ID
+* @return				true if successful
+* @error				Invalid client/gang ID, or database connection
+*/
+stock bool SQL_KickFromGang(int client) {
+	char sQuery[255];
+	char sID[64];
+	GetClientAuthId(client, AuthId_Steam2, sID, sizeof(sID));
+	
+	Format(sQuery, sizeof(sQuery), "UPDATE betterwarden_players SET GangID = NULL WHERE SteamID LIKE '%s'", sID);
+	
+	if(!SQL_FastQuery(gH_Db, sQuery)) {
+		char err[255];
+		SQL_GetError(gH_Db, err, sizeof(err));
+		PrintToServer("DB Error: %s", err);
+		
+		return false;
+	}
+	
+	return true;
+}
+
+/**
+* Adds a player to a gang
+*
+* @param				Client ID
+* @param				Gang ID
+* @return				success if successful
+* @error				Invalid client/gang ID or database connection
+*/
+stock bool SQL_AddToGang(int client, int gang) {
+	char sQuery[255];
+	char sID[64];
+	GetClientAuthId(client, AuthId_Steam2, sID, sizeof(sID));
+	
+	Format(sQuery, sizeof(sQuery), "UPDATE betterwarden_players SET GangID = %d WHERE SteamID LIKE '%s'", gang, sID);
+	
+	if(!SQL_FastQuery(gH_Db, sQuery)) {
+		char err[255];
+		SQL_GetError(gH_Db, err, sizeof(err));
+		PrintToServer("DB Error: %s", err);
+		
+		return false;
+	}
+	
+	return true;
+}
+
+/**
+* Send a message to the gang chat
+*
+* @param				Gang ID
+* @param message		Message to send (formatting rules)
+* @error				Invalid gang ID
+*/
+native void SendToGang(int gang, const char[] message, any ...);
+
+/**
+* Sends a message from a client to the gang chat
+*
+* @param sender			Client ID of the sender
+* @param gang			Gang ID
+* @param message		Message to send (formatting rules)
+* @error				Invalid gang ID
+*/
+native void CPrintToChatGang(int sender, int gang, const char[] message, any ...);
 
 public SharedPlugin __pl_bwgangs = 
 {
