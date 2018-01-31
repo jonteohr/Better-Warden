@@ -29,6 +29,7 @@
 bool g_bIsCatchActive;
 
 ConVar gc_bFreezeTime;
+ConVar gc_iFreezeTime;
 
 public Plugin myinfo = {
 	name = "[BetterWarden] Catch",
@@ -51,7 +52,8 @@ public void OnPluginStart() {
 	
 	AutoExecConfig_SetFile("Catch", "BetterWarden/Add-Ons");
 	AutoExecConfig_SetCreateFile(true);
-	gc_bFreezeTime = AutoExecConfig_CreateConVar("sm_warden_catch_freezetime", "1", "Freeze all CT's for 5 seconds when game is started?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bFreezeTime = AutoExecConfig_CreateConVar("sm_warden_catch_freezetime", "1", "Freeze all CT's for a specified time when game is started?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_iFreezeTime = AutoExecConfig_CreateConVar("sm_warden_catch_freezetime_amount", "5.0", "If sm_warden_catch_freezetime is set to 1,\nHow long should they be frozen?\nIn seconds.", FCVAR_NOTIFY, true, 0.5);
 	AutoExecConfig_ExecuteFile();
 	AutoExecConfig_CleanFile();
 	
