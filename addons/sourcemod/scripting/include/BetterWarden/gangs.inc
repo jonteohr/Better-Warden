@@ -11,6 +11,8 @@ Database gH_Db;
 
 /**
 * Initiates the database connection
+*
+* @error				Cannot create DB connection
 */
 stock void SQL_InitDB() {
 	char sError[255];
@@ -226,7 +228,7 @@ stock bool SQL_IsInGang(int client) {
 /**
 * Returns the gang ID from a gang name
 *
-* @param				Gang name (Non-Case specific)
+* @param GangName		Gang name (Non-Case specific)
 * @return				Gang ID if successful, -1 if not
 */
 stock int SQL_GetGangId(char[] GangName) {
@@ -251,9 +253,9 @@ stock int SQL_GetGangId(char[] GangName) {
 /**
 * Returns gang ID from the owner of a gang
 *
-* @param			client entity index of the owner
-* @return			Gang ID
-* @error			Invalid client ID, or client owns no gang (-1)
+* @param client			Client entity index of the owner
+* @return				Gang ID
+* @error				Invalid client ID, or client owns no gang (-1)
 */
 stock int SQL_GetGangIdFromOwner(int client) {
 	char sQuery[255];
@@ -279,7 +281,7 @@ stock int SQL_GetGangIdFromOwner(int client) {
 /**
 * Deletes a gang from the database
 *
-* @param				Gang ID
+* @param GangID			Gang ID
 * @return				true if successful
 * @error				Invalid database handle
 */
@@ -302,8 +304,7 @@ stock bool SQL_DeleteGang(int GangID) {
 /**
 * Kicks a player from a gang
 *
-* @param				Kicked client ID
-* @param				Gang ID
+* @param client			Kicked client ID
 * @return				true if successful
 * @error				Invalid client/gang ID, or database connection
 */
@@ -328,8 +329,8 @@ stock bool SQL_KickFromGang(int client) {
 /**
 * Adds a player to a gang
 *
-* @param				Client ID
-* @param				Gang ID
+* @param client			Client ID
+* @param gang			Gang ID
 * @return				success if successful
 * @error				Invalid client/gang ID or database connection
 */
@@ -389,7 +390,7 @@ stock int SQL_GetGangOwner(int gang) {
 /**
 * Send a message to the gang chat
 *
-* @param				Gang ID
+* @param gang			Gang ID
 * @param message		Message to send (formatting rules)
 * @error				Invalid gang ID
 */
