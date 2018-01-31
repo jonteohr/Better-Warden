@@ -26,11 +26,10 @@
 		"sv"	"Antingen är du redan med i ett gäng eller så finns det redan ett gäng döpt till \"{1}\"."
 	}
 	
-	"Could not Invite"
+	"Not In Gang"
 	{
-		"#format"	"{1:N}"
-		"en"	"{1} could not be invited to your gang."
-		"sv"	"Kunde inte bjuda in {1} till ditt gäng."
+		"en"	"You're not in any gang."
+		"sv"	"Du är inte med i något gäng."
 	}
 	
 	"Cannot Invite Self"
@@ -108,7 +107,7 @@
 		"sv"	"Du har blivit inbjuden att gå med i \"{2}\" av {1}. Skriv {lightgreen}!accept{gold} eller {lightred}!deny{gold} för att svara inom 30 sekunder."
 	}
 	
-	"Client Joined Gang"
+	"Announce Client Joined Gang"
 	{
 		"#format"	"{1:N}"
 		"en"	"{1} has joined the gang!"
@@ -145,5 +144,11 @@
 		"#format"	"{1:N}"
 		"en"	"Couldn't find a online player named \"{1}\"."
 		"sv"	"Kunde inte hitta en aktiv spelare med namnet \"{1}\"."
+	}
+	
+	"Client Came Online" {
+		"#format"	"{1:N}"
+		"en"	"Your gang member {1} has joined the server!"
+		"sv"	"Din gängmedlem {1} har gått med i servern!"
 	}
 }

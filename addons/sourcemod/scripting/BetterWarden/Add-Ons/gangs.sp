@@ -33,6 +33,7 @@ ConVar gc_bClanTag;
 ConVar gc_bChatTag;
 ConVar gc_fTagTimer;
 ConVar gc_bGangChat;
+ConVar gc_bOwnerInvite;
 
 // Integers
 int g_iInviteTime[MAXPLAYERS +1];
@@ -67,6 +68,7 @@ public void OnPluginStart() {
 	gc_bChatTag = AutoExecConfig_CreateConVar("sm_warden_gang_chattag", "1", "Show the player's gang name in chat before the name.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	gc_bClanTag = AutoExecConfig_CreateConVar("sm_warden_gang_clantag", "1", "Show the player's gang name as a clan tag.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	gc_fTagTimer = AutoExecConfig_CreateConVar("sm_warden_gang_clantag_timer", "5", "This only matters if sm_warden_gang_clantag is set to 1!\nThe amount of seconds the plugin should check a clients tag.", FCVAR_NOTIFY, true, 0.1);
+	gc_bOwnerInvite = AutoExecConfig_CreateConVar("sm_warden_gang_ownerinvite", "1", "Only allow the owner to invite other players to the gang?\n1 = Only owner can invite.\n0 = Every member can invite.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	AutoExecConfig_ExecuteFile();
 	AutoExecConfig_CleanFile();
 	
@@ -100,6 +102,13 @@ public void OnMapEnd() {
 public void OnClientPutInServer(int client) {
 	if(!SQL_UserExists(client)) // If user is not in DB, add him without a gang
 		SQL_AddUserToBWTable(client);
+	
+	if(SQL_IsInGang(client)) {
+		char buff[255];
+		SQL_GetGang(client, buff, sizeof(buff));
+		
+		SendToGang(SQL_GetGangId(buff), "%t", "Client Came Online", client);
+	}
 }
 
 public Action OnPlayerChat(int client, char[] command, int args) {
@@ -210,7 +219,13 @@ public Action Command_Gang(int client, int args) {
 			DeleteGang(client);
 		}
 		if(StrEqual(arg, "inv", false)) {
-			InviteGang(client, name);
+			if(gc_bOwnerInvite.IntValue == 1)
+				if(SQL_OwnsGang(client))
+					InviteGang(client, name);
+				else
+					CPrintToChat(client, "%s {error}%t", g_sPrefix, "Not Owner");
+			else
+				InviteGang(client, name);
 		}
 		if(StrEqual(arg, "kick", false)) {
 			KickGang(client, name);
@@ -225,7 +240,7 @@ public Action Command_MyGang(int client, int args) {
 	if(!IsValidClient(client, _, true))
 		return Plugin_Handled;
 	if(!SQL_IsInGang(client)) {
-		CPrintToChat(client, "%s {error}You're not in a gang.", g_sPrefix);
+		CPrintToChat(client, "%s {error}%t", g_sPrefix, "Not In Gang");
 		return Plugin_Handled;
 	}
 	
@@ -246,7 +261,7 @@ public Action Command_AcceptInvite(int client, int args) {
 	g_iInviteTime[client] = -1;
 	SQL_AddToGang(client, g_iInviteGang[client]);
 	
-	SendToGang(g_iInviteGang[client], "%t", "Client Joined Gang", client);
+	SendToGang(g_iInviteGang[client], "%t", "Announce Client Joined Gang", client);
 	CPrintToChat(client, "%s %t", g_sPrefix, "Invite Accepted");
 	
 	return Plugin_Handled;
@@ -320,8 +335,8 @@ public void InviteGang(int client, char[] arg) { // Invites a client to the give
 			CPrintToChat(client, "%s {error}%t", g_sPrefix, "Cannot Invite Self");
 			break;
 		}
-		if(!SQL_OwnsGang(client)) {
-			CPrintToChat(client, "%s {error}%t", g_sPrefix, "Could not Invite", target_list[usr]);
+		if(!SQL_IsInGang(client)) {
+			CPrintToChat(client, "%s {error}%t", g_sPrefix, "Not In Gang");
 		} else {
 			SQL_GetGang(client, sGang, sizeof(sGang));
 			iGang = SQL_GetGangId(sGang);
