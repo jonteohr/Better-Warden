@@ -67,7 +67,7 @@ public void OnPluginStart() {
 	gc_bGangChat = AutoExecConfig_CreateConVar("sm_warden_gang_chat", "1", "Enable private gang chat channels?\nThis is done by typing a % before the message in team-chat.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	gc_bChatTag = AutoExecConfig_CreateConVar("sm_warden_gang_chattag", "1", "Show the player's gang name in chat before the name.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	gc_bClanTag = AutoExecConfig_CreateConVar("sm_warden_gang_clantag", "1", "Show the player's gang name as a clan tag.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	gc_fTagTimer = AutoExecConfig_CreateConVar("sm_warden_gang_clantag_timer", "5", "This only matters if sm_warden_gang_clantag is set to 1!\nThe amount of seconds the plugin should check a clients tag.", FCVAR_NOTIFY, true, 0.1);
+	gc_fTagTimer = AutoExecConfig_CreateConVar("sm_warden_gang_clantag_timer", "15", "This only matters if sm_warden_gang_clantag is set to 1!\nThe amount of seconds the plugin should check a clients tag.\nYou only really need to modify this if you have another plugin conflicting.", FCVAR_NOTIFY, true, 0.1);
 	gc_bOwnerInvite = AutoExecConfig_CreateConVar("sm_warden_gang_ownerinvite", "1", "Only allow the owner to invite other players to the gang?\n1 = Only owner can invite.\n0 = Every member can invite.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	AutoExecConfig_ExecuteFile();
 	AutoExecConfig_CleanFile();
