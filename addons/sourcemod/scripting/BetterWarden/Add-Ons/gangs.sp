@@ -28,6 +28,7 @@
 #pragma newdecls required
 
 // Console Variables
+ConVar gc_bTSide;
 ConVar gc_bClanTag;
 ConVar gc_bChatTag;
 ConVar gc_fTagTimer;
@@ -61,6 +62,7 @@ public void OnPluginStart() {
 	// Config
 	AutoExecConfig_SetFile("Gangs", "BetterWarden/Add-Ons");
 	AutoExecConfig_SetCreateFile(true);
+	gc_bTSide = AutoExecConfig_CreateConVar("sm_warden_gang_tside", "1", "Only allow Terrorists to use Gang-functions?\nThis is usually a good idea since CT can ghost via gang chat otherwise.\n1= Enable.\n0 = Disable", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	gc_bGangChat = AutoExecConfig_CreateConVar("sm_warden_gang_chat", "1", "Enable private gang chat channels?\nThis is done by typing a % before the message in team-chat.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	gc_bChatTag = AutoExecConfig_CreateConVar("sm_warden_gang_chattag", "1", "Show the player's gang name in chat before the name.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	gc_bClanTag = AutoExecConfig_CreateConVar("sm_warden_gang_clantag", "1", "Show the player's gang name as a clan tag.\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
@@ -107,6 +109,8 @@ public Action OnPlayerChat(int client, char[] command, int args) {
 		return Plugin_Continue;
 	if(GetClientTeam(client) != CS_TEAM_T && GetClientTeam(client) != CS_TEAM_CT) // Only show to active players
 		return Plugin_Continue;
+	if(gc_bTSide.IntValue == 1 && GetClientTeam(client) != CS_TEAM_T) // Is client CT
+		return Plugin_Continue;
 	if(IsClientWarden(client)) // If client is warden, then warden tag should show
 		return Plugin_Continue;
 	if(!SQL_IsInGang(client)) // Make sure the client is actually in a gang
@@ -135,6 +139,8 @@ public Action OnPlayerTeamChat(int client, char[] command, int args) {
 		return Plugin_Continue;
 	if(GetClientTeam(client) != CS_TEAM_T && GetClientTeam(client) != CS_TEAM_CT)
 		return Plugin_Continue;
+	if(gc_bTSide.IntValue == 1 && GetClientTeam(client) != CS_TEAM_T)
+		return Plugin_Continue;
 	if(!SQL_IsInGang(client))
 		return Plugin_Continue;
 	
@@ -161,7 +167,7 @@ public Action OnPlayerTeamChat(int client, char[] command, int args) {
 
 public Action ClanTagTimer(Handle timer) {
 	for(int i = 1; i <= MaxClients; i++) {
-		if(!IsValidClient(i) || !SQL_IsInGang(i)) // Make sure client is actually in a gang and/or is valid
+		if(!IsValidClient(i, _, true) || !SQL_IsInGang(i) || (gc_bTSide.IntValue == 1 && GetClientTeam(i) != CS_TEAM_T)) // Make sure client is actually in a gang and/or is valid
 			continue;
 		char buffer[255];
 		char clanTag[255];
@@ -180,6 +186,10 @@ public Action ClanTagTimer(Handle timer) {
 public Action Command_Gang(int client, int args) {
 	if(!IsValidClient(client, _, true))
 		return Plugin_Handled;
+	if(gc_bTSide.IntValue == 1 && GetClientTeam(client) != CS_TEAM_T) {
+		CPrintToChat(client, "%s {error}%t", g_sPrefix, "Only T");
+		return Plugin_Handled;
+	}
 	
 	if(args < 1) {
 		CPrintToChat(client, "%s %t", g_sPrefix, "Available Commands");
@@ -228,7 +238,7 @@ public Action Command_MyGang(int client, int args) {
 }
 
 public Action Command_AcceptInvite(int client, int args) {
-	if(!IsValidClient(client))
+	if(!IsValidClient(client, _, true))
 		return Plugin_Handled;
 	if(g_iInviteTime[client] < GetTime()) // Invite timed out
 		return Plugin_Handled;
@@ -243,7 +253,7 @@ public Action Command_AcceptInvite(int client, int args) {
 }
 
 public Action Command_DenyInvite(int client, int args) {
-	if(!IsValidClient(client))
+	if(!IsValidClient(client, _, true))
 		return Plugin_Handled;
 	if(g_iInviteTime[client] < GetTime()) // Invite timed out
 		return Plugin_Handled;
@@ -302,6 +312,10 @@ public void InviteGang(int client, char[] arg) { // Invites a client to the give
 	}
 	
 	for(int usr = 1; usr <= target_count; usr++) { // target_list[usr] is now the target entity index
+		if(!IsValidClient(target_list[usr], _, true)) {
+			CPrintToChat(client, "%s {error}%t", g_sPrefix, "Could Not Find Target", target_list[usr]);
+			break;
+		}
 		if(target_list[usr] == client) { // Make sure target is not the client
 			CPrintToChat(client, "%s {error}%t", g_sPrefix, "Cannot Invite Self");
 			break;
@@ -322,7 +336,6 @@ public void InviteGang(int client, char[] arg) { // Invites a client to the give
 				CPrintToChat(client, "%s {error}%t", g_sPrefix, "Already In Gang", target_list[usr]);
 				break;
 			}
-			
 		}
 	}
 }
@@ -378,7 +391,7 @@ public int Native_SendToGang(Handle plugin, int numParams) {
 	FormatNativeString(1, 2, 3, sizeof(sBuffer), written, sBuffer);
 	
 	for(int i = 1; i <= MaxClients; i++) {
-		if(!IsValidClient(i))
+		if(!IsValidClient(i, _, true))
 			continue;
 			
 		char sGang[255];
@@ -401,7 +414,7 @@ public int Native_CPrintToChatGang(Handle plugin, int numParams) {
 	FormatNativeString(2, 3, 4, sizeof(sBuffer), written, sBuffer);
 	
 	for(int i = 1; i <= MaxClients; i++) {
-		if(!IsValidClient(i))
+		if(!IsValidClient(i, _, true))
 			continue;
 			
 		char sGang[255];

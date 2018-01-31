@@ -133,4 +133,17 @@
 		"en"	"{1} has declined your invite to join the gang."
 		"sv"	"{1} har nekat din inbjudan för att gå med i ditt gäng."
 	}
+	
+	"Only T"
+	{
+		"en"	"Only terrorists are able to use gang functions."
+		"sv"	"Endast terroristerna kan använda gängfunktionerna."
+	}
+	
+	"Could Not Find Target"
+	{
+		"#format"	"{1:N}"
+		"en"	"Couldn't find a online player named \"{1}\"."
+		"sv"	"Kunde inte hitta en aktiv spelare med namnet \"{1}\"."
+	}
 }
