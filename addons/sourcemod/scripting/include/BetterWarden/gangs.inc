@@ -370,7 +370,7 @@ stock int SQL_GetGangOwner(int gang) {
 		if(SQL_FetchRow(SQL)) {
 			SQL_FetchString(SQL, 0, sID, sizeof(sID));
 			for(int i = 1; i <= MaxClients; i++) {
-				if(!IsValidClient(i))
+				if(!IsValidClient(i, _, true))
 					continue;
 				char buff[64];
 				GetClientAuthId(i, AuthId_Steam2, buff, sizeof(buff));
