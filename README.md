@@ -27,6 +27,9 @@
 	<a href="https://github.com/condolent/Better-Warden/blob/master/LICENSE">
 		<img src="https://img.shields.io/badge/License-GPL3-red.svg?style=flat">
 	</a>
+	<a href="//discord.gg/XJqgf7T">
+		<img src="https://img.shields.io/badge/Join-Discord-yellow.svg?logo=discord">
+	</a>
 </p>
 <p align="center">
 	<sup><strong>An improved and more advanced warden plugin with a custom menu for CS:GO jailbreak servers!</strong></sup>
