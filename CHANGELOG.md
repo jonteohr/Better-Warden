@@ -3,3 +3,4 @@
 - Added gangs <sup>Add-On!</sup>
 - Code cleanup
 - Warden-menu bug fixes
+- Added announcer
