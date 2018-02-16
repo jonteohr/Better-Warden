@@ -28,7 +28,7 @@
 		<img src="https://img.shields.io/badge/License-GPL3-red.svg?style=flat">
 	</a>
 	<a href="//discord.gg/XJqgf7T">
-		<img src="https://img.shields.io/badge/Join-Discord-yellow.svg?logo=discord">
+		<img src="https://discordapp.com/api/guilds/411133988598710304/widget.png">
 	</a>
 </p>
 <p align="center">
