@@ -118,7 +118,7 @@ public void OnClientDisconnect(int client) {
 */
 public Action OnPlayerChat(int client, char[] command, int args) {
 	if(!IsValidClient(client)) // Make sure warden isn't glitched and is in fact alive etc.
-		return Plugin_Handled;
+		return Plugin_Continue;
 	if(!IsClientWarden(client)) // Client is warden; let's make the message cool!
 		return Plugin_Continue;
 	
