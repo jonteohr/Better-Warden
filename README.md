@@ -1,3 +1,7 @@
+<p align="center">
+	<sup><strong>You are highly discouraged to use the versions in the <i>dev</i> branch unless you have at the very least basic knowledge of SourcePawn programming!</strong></sup>
+<p>
+
 <h1 align="center">Better Warden</h1>
 
 <p align="center">
@@ -23,6 +27,9 @@
 	<a href="https://github.com/condolent/Better-Warden/blob/master/LICENSE">
 		<img src="https://img.shields.io/badge/License-GPL3-red.svg?style=flat">
 	</a>
+	<a href="//discord.gg/XJqgf7T">
+		<img src="https://discordapp.com/api/guilds/411133988598710304/widget.png">
+	</a>
 </p>
 <p align="center">
 	<sup><strong>An improved and more advanced warden plugin with a custom menu for CS:GO jailbreak servers!</strong></sup>
@@ -41,10 +48,11 @@
 1. [Download the plugin package](https://github.com/condolent/Better-Warden/releases)
 2. In the `SERVER FILES` folder, drag all of its' content to your servers root folder (`csgo`)
 3. Everything in the `FASTDL` folder should be uploaded to your FastDL webserver
-4. Restart your server or change map
-5. Make your desired changes in the configs located in `csgo/cfg/BetterWarden` folder
-6. Change map or restart the server
-7. Done!
+4. Add the database entry named `betterwarden` to your databases.cfg file in _root/addons/sourcemod/configs_
+5. Restart your server or change map
+6. Make your desired changes in the configs located in `csgo/cfg/BetterWarden` folder
+7. Change map or restart the server
+8. Done!
 
 ## Dependencies
 * [SmartJailDoors](https://forums.alliedmods.net/showthread.php?t=264100) _by Kailo_
@@ -56,6 +64,8 @@ The major function this plugin offers is that the warden can choose special even
 2. Freeday
 3. Warday
 4. Gravity Freeday
+
+Also introducing gangs. Prisoners can now create gangs where they can communicate in their own gangchat and such.
 
 There's also some other functions in the menu that the warden can take advantage of in order to make the game more comfortable.  
 Some of the other entries in the menu include:  
@@ -82,6 +92,8 @@ Some of the other entries in the menu include:
 |`sm_warden_createsound`|**1**|Play a sound to everyone when someone becomes warden 1 = Enable. 0 = Disable.|
 |`sm_warden_logs`|**0**|Do you want the plugin to write logs? Generally only necessary when you're experiencing any sort of issue. 1 = Enable. 0 = Disable.|
 |`sm_warden_nolr`|**1**|Allow warden to control if terrorists can do a !lastrequest or !lr when available? 1 = Enable. 0 = Disable.|
+|`sm_warden_servertag`|**1**|Add Better Warden tags to your servers sv_tags?|
+|`sm_warden_announcer`|**1**|Allow automatic messages to show in chat each 4th minute with tips and commands for Better Warden?|
 
 ### WardenMenu
 | ConVar      | Default | Description   |
@@ -109,3 +121,5 @@ Some of the other entries in the menu include:
 * Swedish ✓
 * French ✓
 * Russian ×
+
+_Wish to help the translation? [Go here!](http://translator.mitchdempsey.com/sourcemod_plugins/tagged/betterwarden)_

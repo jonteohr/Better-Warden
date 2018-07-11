@@ -1,0 +1,154 @@
+"Phrases"
+{
+	"Not Owner"
+	{
+		"en"	"You don't own a gang."
+		"sv"	"Du äger inte ett gäng."
+	}
+	
+	"Available Commands"
+	{
+		"en"	"Available gang commands:"
+		"sv"	"Tillgängliga gäng-kommands:"
+	}
+	
+	"Success Create Gang"
+	{
+		"#format"	"{1:s}"
+		"en"	"Successfully created the gang \"{1}\"!"
+		"sv"	"Lyckades skapa gänget \"{1}\"!"
+	}
+	
+	"Gang Create Error"
+	{
+		"#format"	"{1:s}"
+		"en"	"You're already a member of a gang or there already exists a gang named \"{1}\"."
+		"sv"	"Antingen är du redan med i ett gäng eller så finns det redan ett gäng döpt till \"{1}\"."
+	}
+	
+	"Not In Gang"
+	{
+		"en"	"You're not in any gang."
+		"sv"	"Du är inte med i något gäng."
+	}
+	
+	"Cannot Invite Self"
+	{
+		"en"	"You cannot invite yourself."
+		"sv"	"Du kan inte bjuda in dig själv."
+	}
+	
+	"Already In Gang"
+	{
+		"#format"	"{1:N}"
+		"en"	"{1} is already in a gang."
+		"sv"	"{1} är redan i ett gäng."
+	}
+	
+	"Could not Kick"
+	{
+		"#format"	"{1:N}"
+		"en"	"{1} could not be kicked from your gang."
+		"sv"	"Kunde inte kicka {1} från ditt gäng."
+	}
+	
+	"Kicked Client"
+	{
+		"#format"	"{1:N},{2:s}"
+		"en"	"{1} has been successfully kicked from \"{2}\"!"
+		"sv"	"{1} har blivit kickad från \"{2}\"!"
+	}
+	
+	"Cannot Kick Self"
+	{
+		"en"	"You cannot kick yourself."
+		"sv"	"Du kan inte kicka dig själv."
+	}
+	
+	"Client Not in Gang"
+	{
+		"#format"	"{1:N}"
+		"en"	"{1} is not in your gang."
+		"sv"	"{1} är inte i ditt gäng."
+	}
+	
+	"You Have Been Kicked"
+	{
+		"#format"	"{1:N},{2:s}"
+		"en"	"You have been kicked by {1} from \"{2}\"."
+		"sv"	"Du har blivit kickad från \"{2}\" av {1}."
+	}
+	
+	"Announce Kick"
+	{
+		"#format"	"{1:N}"
+		"en"	"{1} has been kicked from the gang."
+		"sv"	"{1} har blivit kickad från gänget."
+	}
+	
+	"Success Delete Gang"
+	{
+		"#format"	"{1:s}"
+		"en"	"Successfully deleted gang \"{1}\"!"
+		"sv"	"Lyckades med att ta bort gänget \"{1}\"!"
+	}
+	
+	"Failed Delete Gang"
+	{
+		"#format"	"{1:s}"
+		"en"	"Failed to delete gang \"{1}\"."
+		"sv"	"Misslyckades med att ta bort gänget \"{1}\"."
+	}
+	
+	"Invitation"
+	{
+		"#format"	"{1:N},{2:s}"
+		"en"	"You've been invited by {1} to join the gang \"{2}\". Type {lightgreen}!accept{gold} or {lightred}!deny{gold} in chat to reply within 30 seconds."
+		"sv"	"Du har blivit inbjuden att gå med i \"{2}\" av {1}. Skriv {lightgreen}!accept{gold} eller {lightred}!deny{gold} för att svara inom 30 sekunder."
+	}
+	
+	"Announce Client Joined Gang"
+	{
+		"#format"	"{1:N}"
+		"en"	"{1} has joined the gang!"
+		"sv"	"{1} har gått med i gänget!"
+	}
+	
+	"Invite Accepted"
+	{
+		"en"	"You've accepted the gang invite."
+		"sv"	"Du har accepterat inbjudan."
+	}
+	
+	"You Declined Invite"
+	{
+		"en"	"You declined the invite to join a gang."
+		"sv"	"Du nekade inbjudan för att gå med i ett gäng."
+	}
+	
+	"Invite Declined"
+	{
+		"#format"	"{1:N}"
+		"en"	"{1} has declined your invite to join the gang."
+		"sv"	"{1} har nekat din inbjudan för att gå med i ditt gäng."
+	}
+	
+	"Only T"
+	{
+		"en"	"Only terrorists are able to use gang functions."
+		"sv"	"Endast terroristerna kan använda gängfunktionerna."
+	}
+	
+	"Could Not Find Target"
+	{
+		"#format"	"{1:N}"
+		"en"	"Couldn't find a online player named \"{1}\"."
+		"sv"	"Kunde inte hitta en aktiv spelare med namnet \"{1}\"."
+	}
+	
+	"Client Came Online" {
+		"#format"	"{1:N}"
+		"en"	"Your gang member {1} has joined the server!"
+		"sv"	"Din gängmedlem {1} har gått med i servern!"
+	}
+}

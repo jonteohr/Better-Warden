@@ -91,6 +91,7 @@ public int WardenMenuHandler(Menu menu, MenuAction action, int client, int param
 						g_bAllowVotes = true;
 						CPrintToChatAll("%s %t", g_sPrefix, "Votes Opened");
 					}
+					openMenu(client);
 				}
 				if(StrEqual(info, CHOICE8)) {
 					FakeClientCommand(client, "sm_rw");
@@ -159,9 +160,9 @@ public int WardenMenuHandler(Menu menu, MenuAction action, int client, int param
 			}
 			if(StrEqual(info, CHOICE6)) {
 				if(!g_bAllowVotes)
-					Format(display, sizeof(display), "%t", "Allow Votes");
-				if(g_bAllowVotes)
 					Format(display, sizeof(display), "%t", "Dis-Allow Votes");
+				if(g_bAllowVotes)
+					Format(display, sizeof(display), "%t", "Allow Votes");
 				
 				return RedrawMenuItem(display);
 			}
