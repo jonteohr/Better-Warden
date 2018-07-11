@@ -7,7 +7,7 @@
 <p align="center">
 	<img src="http://i.imgur.com/WXfuF5Y.png" width="572px"><br/>
 	<a href="https://travis-ci.org/condolent/Better-Warden">
-		<img src="https://travis-ci.org/condolent/Better-Warden.svg?branch=master">
+		<img src="https://travis-ci.org/condolent/Better-Warden.svg?branch=dev">
 	</a>
 	<a href="https://github.com/condolent/Better-Warden/wiki">
 		<img src="https://img.shields.io/badge/Plugin-Wiki-orange.svg?style=flat">
