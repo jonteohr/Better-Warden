@@ -21,7 +21,6 @@
 #include <wardenmenu>
 #include <emitsoundany>
 #include <autoexecconfig>
-#include <sdktools_variant_t>
 #undef REQUIRE_PLUGIN
 #include <updater>
 #include <smartjaildoors>
