@@ -36,10 +36,16 @@ stock void SQL_InitDB() {
 stock void SQL_CreateBWTable() {
 	char sQuery[255];
 	char sQuery2[255];
-	Format(sQuery, sizeof(sQuery), "CREATE TABLE IF NOT EXISTS betterwarden_players (ID int NOT NULL AUTO_INCREMENT, STEAMID varchar(255), GangID int);");
-	Format(sQuery2, sizeof(sQuery2), "CREATE TABLE IF NOT EXISTS betterwarden_gangs (ID int NOT NULL AUTO_INCREMENT, Name varchar(255), Owner varchar(255));");
+	Format(sQuery, sizeof(sQuery), "CREATE TABLE IF NOT EXISTS betterwarden_players (ID int NOT NULL AUTO_INCREMENT, STEAMID varchar(255), GangID int, PRIMARY KEY(ID));");
+	Format(sQuery2, sizeof(sQuery2), "CREATE TABLE IF NOT EXISTS betterwarden_gangs (ID int NOT NULL AUTO_INCREMENT, Name varchar(255), Owner varchar(255), PRIMARY KEY(ID));");
 	
 	if(!SQL_FastQuery(gH_Db, sQuery)) {
+		char err[255];
+		SQL_GetError(gH_Db, err, sizeof(err));
+		PrintToServer("Error: %s", err);
+	}
+	
+	if(!SQL_FastQuery(gH_Db, sQuery2)) {
 		char err[255];
 		SQL_GetError(gH_Db, err, sizeof(err));
 		PrintToServer("Error: %s", err);
