@@ -117,7 +117,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 }
 
 public void OnPluginStart() {
-	
+
 	// CVars
 	AutoExecConfig_SetFile("warden", "BetterWarden"); // What's the configs name and location?
 	AutoExecConfig_SetCreateFile(true); // Create config if it does not exist
@@ -141,6 +141,11 @@ public void OnPluginStart() {
 	
 	AutoExecConfig_ExecuteFile(); // Execute the config
 	AutoExecConfig_CleanFile(); // Clean the .cfg from spaces etc.
+	
+	// Fetch CVars
+	gc_bNoblock = FindConVar("mp_solid_teammates");
+	GetConVarString(gc_sWardenIconPath, g_sWardenIconPath, sizeof(g_sWardenIconPath));
+	//gc_sWardenIconPath.GetString(g_sWardenIconPath, sizeof(g_sWardenIconPath));
 	
 	// Translation stuff
 	LoadTranslations("BetterWarden.phrases.txt");
@@ -202,10 +207,6 @@ public void OnPluginStart() {
 		if(LibraryExists("bwvoteday"))
 			PushArrayString(g_adtAnnouncer, "If the warden has allowed voting, inmates can vote for event days via !freeday | !gravday | !hns | !warday | !catch | !west | !zombie");
 	}
-	
-	// Fetch CVars
-	gc_bNoblock = FindConVar("mp_solid_teammates");
-	gc_sWardenIconPath.GetString(g_sWardenIconPath, sizeof(g_sWardenIconPath));
 	
 	// Updater
 	if(LibraryExists("updater")) {
