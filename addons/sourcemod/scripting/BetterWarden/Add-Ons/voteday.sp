@@ -72,6 +72,7 @@ public void OnPluginStart() {
 	
 	HookEvent("round_start", OnRoundStart, EventHookMode_Pre);
 	
+	AutoExecConfig_SetCreateDirectory(true);
 	AutoExecConfig_SetFile("voteday", "BetterWarden/Add-Ons");
 	AutoExecConfig_SetCreateFile(true);
 	gc_fVoteTime = AutoExecConfig_CreateConVar("sm_warden_vote_duration", "30.0", "The duration of event day votes.", FCVAR_NOTIFY, true, 1.0, true, 120.0);

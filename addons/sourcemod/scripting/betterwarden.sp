@@ -119,6 +119,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 public void OnPluginStart() {
 
 	// CVars
+	AutoExecConfig_SetCreateDirectory(true);
 	AutoExecConfig_SetFile("warden", "BetterWarden"); // What's the configs name and location?
 	AutoExecConfig_SetCreateFile(true); // Create config if it does not exist
 	AutoExecConfig_CreateConVar("sm_warden_version", VERSION, "Current version of this plugin. DO NOT CHANGE THIS!", FCVAR_DONTRECORD|FCVAR_NOTIFY);

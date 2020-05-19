@@ -61,6 +61,7 @@ public void OnPluginStart() {
 	SetGlobalTransTarget(LANG_SERVER);
 	
 	// Config
+	AutoExecConfig_SetCreateDirectory(true);
 	AutoExecConfig_SetFile("Gangs", "BetterWarden/Add-Ons");
 	AutoExecConfig_SetCreateFile(true);
 	gc_bTSide = AutoExecConfig_CreateConVar("sm_warden_gang_tside", "1", "Only allow Terrorists to use Gang-functions?\nThis is usually a good idea since CT can ghost via gang chat otherwise.\n1= Enable.\n0 = Disable", FCVAR_NOTIFY, true, 0.0, true, 1.0);

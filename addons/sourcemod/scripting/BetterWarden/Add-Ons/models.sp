@@ -43,6 +43,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 }
 
 public void OnPluginStart() {
+	AutoExecConfig_SetCreateDirectory(true);
 	AutoExecConfig_SetFile("models", "BetterWarden/Add-Ons"); // Create a addon-specific config!
 	AutoExecConfig_SetCreateFile(true);
 	gc_bWardenModel = AutoExecConfig_CreateConVar("sm_warden_model", "1", "Enable or disable the warden getting a player model.", FCVAR_NOTIFY, true, 0.0, true, 1.0);

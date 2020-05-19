@@ -55,6 +55,7 @@ public void OnPluginStart() {
 	
 	gc_bInfAmmo = FindConVar("sv_infinite_ammo"); // This will be changed to 2 when it starts and reset to the value in server.cfg when game ends
 	
+	AutoExecConfig_SetCreateDirectory(true);
 	AutoExecConfig_SetFile("wildwest", "BetterWarden/Add-Ons");
 	AutoExecConfig_SetCreateFile(true);
 	gc_sWeaponUsed = AutoExecConfig_CreateConVar("sm_betterwarden_wildwest_weapon", "weapon_revolver", "What weapon is supposed to be used?\nUse the entity names.", FCVAR_NOTIFY);

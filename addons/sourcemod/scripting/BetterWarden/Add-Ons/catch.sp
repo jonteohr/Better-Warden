@@ -52,6 +52,7 @@ public void OnPluginStart() {
 	LoadTranslations("BetterWarden.Catch.phrases.txt");
 	SetGlobalTransTarget(LANG_SERVER);
 	
+	AutoExecConfig_SetCreateDirectory(true);
 	AutoExecConfig_SetFile("Catch", "BetterWarden/Add-Ons");
 	AutoExecConfig_SetCreateFile(true);
 	gc_bFreezeTime = AutoExecConfig_CreateConVar("sm_warden_catch_freezetime", "1", "Freeze all CT's for a specified time when game is started?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
