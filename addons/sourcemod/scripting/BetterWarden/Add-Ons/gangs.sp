@@ -35,6 +35,16 @@ ConVar gc_fTagTimer;
 ConVar gc_bGangChat;
 ConVar gc_bOwnerInvite;
 
+// Forward handles
+Handle gF_OnGangCreated			= null;
+Handle gF_OnGangDisbanded 		= null;
+Handle gF_OnGangInvite			= null;
+Handle gF_OnGangInviteAccepted	= null;
+Handle gF_OnGangInviteDeclined	= null;
+Handle gF_OnGangChat			= null;
+Handle gF_OnGangMemberLeave		= null;
+Handle gF_OnGangMemberKicked	= null;
+
 // Integers
 int g_iInviteTime[MAXPLAYERS +1];
 int g_iInviteGang[MAXPLAYERS +1];
@@ -51,6 +61,15 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	CreateNative("SendToGang", Native_SendToGang);
 	CreateNative("CPrintToChatGang", Native_CPrintToChatGang);
 	RegPluginLibrary("bwgangs"); // Register library so main plugin can check if this is loaded
+	
+	gF_OnGangCreated = CreateGlobalForward("OnGangCreated", ET_Ignore, Param_Cell, Param_String);
+	gF_OnGangDisbanded = CreateGlobalForward("OnGangDisbanded", ET_Ignore, Param_String);
+	gF_OnGangInvite = CreateGlobalForward("OnGangInvite", ET_Ignore, Param_Cell, Param_Cell, Param_String);
+	gF_OnGangInviteAccepted = CreateGlobalForward("OnGangInviteAccepted", ET_Ignore, Param_Cell, Param_String);
+	gF_OnGangInviteDeclined = CreateGlobalForward("OnGangInviteDeclined", ET_Ignore, Param_Cell, Param_String);
+	gF_OnGangChat = CreateGlobalForward("OnGangChat", ET_Ignore, Param_Cell, Param_String);
+	gF_OnGangMemberLeave = CreateGlobalForward("OnGangMemberLeave", ET_Ignore, Param_Cell, Param_String);
+	gF_OnGangMemberKicked = CreateGlobalForward("OnGangMemberKicked", ET_Ignore, Param_Cell, Param_Cell, Param_String);
 	
 	return APLRes_Success;
 }
@@ -127,7 +146,7 @@ public Action OnPlayerChat(int client, char[] command, int args) {
 		return Plugin_Continue;
 	if(!SQL_IsInGang(client)) // Make sure the client is actually in a gang
 		return Plugin_Continue;
-	
+		
 	char message[255];
 	char gang[255];
 	GetCmdArg(1, message, sizeof(message));
@@ -310,7 +329,7 @@ public Action Command_LeaveGang(int client, int args) {
 		}
 		
 		SQL_KickFromGang(client);
-		CPrintToChatAll(client, "%s %t", g_sPrefix, "Left Gang", client, sGang);
+		CPrintToChatAll("%s %t", g_sPrefix, "Left Gang", client, sGang);
 	} else { // Client is not in a gang
 		CPrintToChat(client, "%s %t", g_sPrefix, "Not In Gang");
 	}
@@ -325,6 +344,12 @@ public void CreateGang(int client, char[] name) { // Creates gangs
 	if(!SQL_GangExists(name) && !SQL_IsInGang(client)) { // User is not in a gang and gang name is not taken
 		SQL_CreateGang(client, name);
 		CPrintToChat(client, "%s %t", g_sPrefix, "Success Create Gang", name);
+		
+		// API
+		Call_StartForward(gF_OnGangCreated);
+		Call_PushCell(client);
+		Call_PushString(name);
+		Call_Finish();
 	} else {
 		CPrintToChat(client, "%s {error}%t", g_sPrefix, "Gang Create Error", name);
 	}
@@ -339,6 +364,11 @@ public void DeleteGang(int client) { // Deletes gangs
 		
 		if(SQL_DeleteGang(gangID)) {
 			CPrintToChat(client, "%s %t", g_sPrefix, "Success Delete Gang", gang); // Success!
+			
+			// API
+			Call_StartForward(gF_OnGangDisbanded);
+			Call_PushString(gang);
+			Call_Finish();
 		} else {
 			CPrintToChat(client, "%s {error}%t", g_sPrefix, "Failed Delete Gang", gang);
 		}

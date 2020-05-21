@@ -533,6 +533,28 @@ native void SendToGang(int gang, const char[] message, any ...);
 */
 native void CPrintToChatGang(int sender, int gang, const char[] message, any ...);
 
+/**
+* Called once a gang is created by a client.
+*
+* @param client			Client ID of the creating entity
+* @param gang			Name of the created gang
+*/
+forward void OnGangCreated(int client, const char[] gang);
+
+forward void OnGangDisbanded(const char[] gang);
+
+forward void OnGangInvite(int client, int admin, const char[] gang);
+
+forward void OnGangInviteAccepted(int client, const char[] gang);
+
+forward void OnGangInviteDeclined(int client, const char[] gang);
+
+forward void OnGangChat(int client, const char[] gang);
+
+forward void OnGangMemberLeave(int client, const char[] gang);
+
+forward void OnGangMemberKicked(int client, int admin, const char[] gang);
+
 public SharedPlugin __pl_bwgangs = 
 {
 	name = "gangs",
