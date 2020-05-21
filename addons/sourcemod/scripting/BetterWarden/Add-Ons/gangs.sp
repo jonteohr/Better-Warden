@@ -224,13 +224,17 @@ public Action Command_Gang(int client, int args) {
 			DeleteGang(client);
 		}
 		if(StrEqual(arg, "inv", false)) {
-			if(gc_bOwnerInvite.IntValue == 1)
-				if(SQL_OwnsGang(client))
-					InviteGang(client, name);
+			if(args >= 2) {
+				if(gc_bOwnerInvite.IntValue == 1)
+					if(SQL_OwnsGang(client))
+						InviteGang(client, name);
+					else
+						CPrintToChat(client, "%s {error}%t", g_sPrefix, "Not Owner");
 				else
-					CPrintToChat(client, "%s {error}%t", g_sPrefix, "Not Owner");
-			else
-				InviteGang(client, name);
+					InviteGang(client, name);
+			} else {
+				CPrintToChat(client, "%s {error}%t", g_sPrefix, "No target specified");
+			}
 		}
 		if(StrEqual(arg, "kick", false)) {
 			KickGang(client, name);
@@ -319,7 +323,7 @@ public void DeleteGang(int client) { // Deletes gangs
 	}
 }
 
-public void InviteGang(int client, char[] arg) { // Invites a client to the given gang
+public bool InviteGang(int client, char[] arg) { // Invites a client to the given gang
 	char target_name[MAX_TARGET_LENGTH];
 	int target_list[MAXPLAYERS], target_count;
 	bool tn_is_ml;
@@ -327,14 +331,18 @@ public void InviteGang(int client, char[] arg) { // Invites a client to the give
 	int iGang = -1;
 	char sGang[255];
 	
-	if((target_count = ProcessTargetString(arg, client, target_list, sizeof(target_list), COMMAND_FILTER_NO_BOTS, target_name, sizeof(target_name), tn_is_ml)) <= 0) {
+	if((target_count = ProcessTargetString(arg, client, target_list, MAXPLAYERS, COMMAND_FILTER_ALIVE, target_name, sizeof(target_name), tn_is_ml)) <= 0) {
 		ReplyToTargetError(client, target_count);
+		return false;
 	}
 	
-	for(int usr = 1; usr <= target_count; usr++) { // target_list[usr] is now the target entity index
+	for(int usr = 0; usr < target_count; usr++) { // target_list[usr] is now the target entity index
 		if(!IsValidClient(target_list[usr], _, true)) {
-			CPrintToChat(client, "%s {error}%t", g_sPrefix, "Could Not Find Target", target_list[usr]);
-			break;
+			if(usr == target_count) { // if at last try, give up!
+				CPrintToChat(client, "%s {error}%t", g_sPrefix, "Could Not Find Target", target_list[usr]);
+				break;
+			}
+			continue;
 		}
 		if(target_list[usr] == client) { // Make sure target is not the client
 			CPrintToChat(client, "%s {error}%t", g_sPrefix, "Cannot Invite Self");
@@ -358,6 +366,8 @@ public void InviteGang(int client, char[] arg) { // Invites a client to the give
 			}
 		}
 	}
+	
+	return true;
 }
 
 public void KickGang(int client, char[] arg) { // Kicks a client from their gang

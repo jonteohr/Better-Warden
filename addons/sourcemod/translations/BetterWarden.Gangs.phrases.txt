@@ -157,4 +157,10 @@
 		"en"	"Your gang member {1} has joined the server!"
 		"sv"	"Din gängmedlem {1} har gått med i servern!"
 	}
+	
+	"No target specified"
+	{
+		"en"	"No player was specified!"
+		"sv"	"Ingen spelare specifierades!"
+	}
 }
