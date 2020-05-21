@@ -58,6 +58,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 public void OnPluginStart() {
 	// Translations
 	LoadTranslations("BetterWarden.Gangs.phrases.txt");
+	LoadTranslations("common.phrases.txt");
 	SetGlobalTransTarget(LANG_SERVER);
 	
 	// Config
@@ -214,7 +215,10 @@ public Action Command_Gang(int client, int args) {
 		GetCmdArg(2, name, sizeof(name));
 		
 		if(StrEqual(arg, "create", false)) {
-			CreateGang(client, name);
+			if(args >= 2 && !StrEqual(name, " "))
+				CreateGang(client, name);
+			else
+				CPrintToChat(client, "%s {error}%t", g_sPrefix, "No name specified");
 		}
 		if(StrEqual(arg, "del", false)) {
 			DeleteGang(client);

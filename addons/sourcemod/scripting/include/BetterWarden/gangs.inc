@@ -16,14 +16,15 @@ Database gH_Db;
 */
 stock void SQL_InitDB() {
 	char sError[255];
-	
-	gH_Db = SQL_Connect("betterwarden", true, sError, sizeof(sError));
-	
-	if(gH_Db != null) { // Success on connection
-		SQL_CreateBWTable();
-	} else { // Shit, we messed up
-		PrintToServer("### Could not connect to the database! ##");
-		PrintToServer("%s", sError);
+	if(gH_Db == INVALID_HANDLE) {
+		gH_Db = SQL_Connect("betterwarden", true, sError, sizeof(sError));
+		
+		if(gH_Db == INVALID_HANDLE) {
+			PrintToServer("### Could not connect to the database! ##");
+			PrintToServer("%s", sError);
+		} else {
+			SQL_CreateBWTable();
+		}
 	}
 }
 
@@ -50,6 +51,8 @@ stock void SQL_CreateBWTable() {
 		SQL_GetError(gH_Db, err, sizeof(err));
 		PrintToServer("Error: %s", err);
 	}
+	
+	CloseHandle(gH_Db);
 }
 
 /**
@@ -62,19 +65,34 @@ stock bool SQL_UserExists(int client) {
 	char sQuery[255];
 	char sSteamID[64];
 	
+	char sError[255];
+	gH_Db = SQL_Connect("betterwarden", true, sError, sizeof(sError));
+	
 	GetClientAuthId(client, AuthId_Steam2, sSteamID, sizeof(sSteamID));
 	
 	Format(sQuery, sizeof(sQuery), "SELECT * FROM betterwarden_players WHERE STEAMID LIKE '%s'", sSteamID);
 	
 	DBResultSet SQL = SQL_Query(gH_Db, sQuery);
 	
-	if(SQL != null) {
-		if(SQL_FetchRow(SQL)) {
-			CloseHandle(SQL);
-			return true;
+	if(gH_Db != INVALID_HANDLE) {
+		if(SQL != INVALID_HANDLE) {
+			if(SQL_FetchRow(SQL)) {
+				CloseHandle(SQL);
+				CloseHandle(gH_Db);
+				return true;
+			}
+			CloseHandle(gH_Db);
+			return false;
+		} else {
+			PrintToServer("#################");
+			PrintToServer("INVALID_HANDLE in SQL_UserExists()");
 		}
+	} else {
+		PrintToServer("#################");
+		PrintToServer("Database = INVALID_HANDLE in SQL_UserExists(): %s", sError);
 	}
 	
+	CloseHandle(gH_Db);
 	CloseHandle(SQL);
 	return false;
 }
@@ -90,14 +108,16 @@ stock void SQL_AddUserToBWTable(int client) {
 	char sSteamID[64];
 	GetClientAuthId(client, AuthId_Steam2, sSteamID, sizeof(sSteamID));
 	
+	char sError[255];
+	gH_Db = SQL_Connect("betterwarden", true, sError, sizeof(sError));
+	
 	Format(sQuery, sizeof(sQuery), "INSERT INTO betterwarden_players (STEAMID) VALUES ('%s');", sSteamID);
 	
 	if(!SQL_FastQuery(gH_Db, sQuery)) {
-		char err[255];
-		SQL_GetError(gH_Db, err, sizeof(err));
-		PrintToServer("DB Error: %s", err);
+		PrintToServer("Database Error: %s", sError);
 	}
 	
+	CloseHandle(gH_Db);
 }
 
 /**
@@ -109,17 +129,37 @@ stock void SQL_AddUserToBWTable(int client) {
 stock bool SQL_GangExists(char[] name) {
 	char sQuery[255];
 	
+	char sError[255];
+	gH_Db = SQL_Connect("betterwarden", true, sError, sizeof(sError));
+	
 	Format(sQuery, sizeof(sQuery), "SELECT * FROM betterwarden_gangs WHERE Name LIKE '%s'", name);
 	
-	DBResultSet SQL = SQL_Query(gH_Db, sQuery);
+	if(gH_Db != INVALID_HANDLE) {
+		DBResultSet SQL = SQL_Query(gH_Db, sQuery);
 	
-	if(SQL != null) {
-		if(SQL_FetchRow(SQL)) {
+		if(SQL != INVALID_HANDLE) {
+			if(SQL_FetchRow(SQL)) {
+				if(!SQL_IsFieldNull(SQL, 0)) { // Gang exist
+					CloseHandle(SQL);
+					CloseHandle(gH_Db);
+					return true;
+				}
+				
+				// Gang does not exist
+				CloseHandle(SQL);
+				CloseHandle(gH_Db);
+				return false;
+			}
+			// Gang does not exist
 			CloseHandle(SQL);
-			return true;
+			CloseHandle(gH_Db);
+			return false;
 		}
+	} else {
+		PrintToServer("Database error: %s", sError);
 	}
 	
+	CloseHandle(gH_Db);
 	return false;
 }
 
@@ -134,12 +174,20 @@ stock void SQL_CreateGang(int client, char[] name) {
 	char sID[64];
 	GetClientAuthId(client, AuthId_Steam2, sID, sizeof(sID));
 	
-	Format(sQuery, sizeof(sQuery), "INSERT INTO betterwarden_gangs (Name, Owner) VALUES ('%s', '%s');", name, sID);
-	
-	if(!SQL_FastQuery(gH_Db, sQuery)) {
-		char err[255];
-		SQL_GetError(gH_Db, err, sizeof(err));
-		PrintToServer("DB Error: %s", err);
+	char sError[255];
+	gH_Db = SQL_Connect("betterwarden", true, sError, sizeof(sError));
+	if(gH_Db != INVALID_HANDLE) {
+		Format(sQuery, sizeof(sQuery), "INSERT INTO betterwarden_gangs (Name, Owner) VALUES ('%s', '%s');", name, sID);
+		
+		if(!SQL_FastQuery(gH_Db, sQuery)) {
+			PrintToServer("Database Error: %s", sError);
+		}
+		
+		// Add the user to that gang
+		int iGang = SQL_GetGangId(name);
+		SQL_AddToGang(client, iGang);
+		
+		CloseHandle(gH_Db);
 	}
 }
 
@@ -154,14 +202,23 @@ stock bool SQL_OwnsGang(int client) {
 	char sID[64];
 	GetClientAuthId(client, AuthId_Steam2, sID, sizeof(sID));
 	
+	char sError[255];
+	gH_Db = SQL_Connect("betterwarden", true, sError, sizeof(sError));
+	
 	Format(sQuery, sizeof(sQuery), "SELECT * FROM betterwarden_gangs WHERE Owner LIKE '%s'", sID);
 	
 	DBResultSet SQL = SQL_Query(gH_Db, sQuery);
-	if(SQL != null) {
-		if(SQL_FetchRow(SQL)) {
-			CloseHandle(SQL);
-			return true;
+	
+	if(gH_Db != INVALID_HANDLE) {
+		if(SQL != null) {
+			if(SQL_FetchRow(SQL)) {
+				CloseHandle(SQL);
+				CloseHandle(gH_Db);
+				return true;
+			}
 		}
+	} else {
+		PrintToServer("Database error: %s", sError);
 	}
 	
 	CloseHandle(SQL);
@@ -182,29 +239,38 @@ stock void SQL_GetGang(int client, char[] buffer, int maxlen) {
 	char sID[64];
 	GetClientAuthId(client, AuthId_Steam2, sID, sizeof(sID));
 	
-	// Stage one
-	Format(sQuery, sizeof(sQuery), "SELECT GangID FROM betterwarden_players WHERE STEAMID LIKE '%s'", sID);
+	char sError[255];
+	gH_Db = SQL_Connect("betterwarden", true, sError, sizeof(sError));
 	
-	DBResultSet SQL = SQL_Query(gH_Db, sQuery);
-	if(SQL != null) {
-		if(SQL_FetchRow(SQL)) {
-			GangID = SQL_FetchInt(SQL, 0);
-			CloseHandle(SQL);
+	if(gH_Db != INVALID_HANDLE) {
+		// Stage one
+		Format(sQuery, sizeof(sQuery), "SELECT GangID FROM betterwarden_players WHERE STEAMID LIKE '%s'", sID);
+		
+		DBResultSet SQL = SQL_Query(gH_Db, sQuery);
+		if(SQL != null) {
+			if(SQL_FetchRow(SQL)) {
+				GangID = SQL_FetchInt(SQL, 0);
+				CloseHandle(SQL);
+			}
 		}
+		
+		// Stage two
+		Format(sQuery, sizeof(sQuery), "SELECT Name FROM betterwarden_gangs WHERE ID LIKE %d", GangID);
+		DBResultSet SQL2 = SQL_Query(gH_Db, sQuery);
+		if(SQL2 != null) {
+			if(SQL_FetchRow(SQL2)) {
+				char result[255];
+				SQL_FetchString(SQL2, 0, result, sizeof(result));
+				CloseHandle(SQL2);
+				
+				Format(buffer, maxlen, "%s", result);
+			}
+		}
+	} else {
+		PrintToServer("Database error: %s", sError);
 	}
 	
-	// Stage two
-	Format(sQuery, sizeof(sQuery), "SELECT Name FROM betterwarden_gangs WHERE ID LIKE %d", GangID);
-	DBResultSet SQL2 = SQL_Query(gH_Db, sQuery);
-	if(SQL2 != null) {
-		if(SQL_FetchRow(SQL2)) {
-			char result[255];
-			SQL_FetchString(SQL2, 0, result, sizeof(result));
-			CloseHandle(SQL2);
-			
-			Format(buffer, maxlen, "%s", result);
-		}
-	}
+	CloseHandle(gH_Db);
 }
 
 /**
@@ -218,14 +284,31 @@ stock bool SQL_IsInGang(int client) {
 	char sID[64];
 	GetClientAuthId(client, AuthId_Steam2, sID, sizeof(sID));
 	
-	Format(sQuery, sizeof(sQuery), "SELECT GangID FROM betterwarden_players WHERE STEAMID LIKE '%s'", sID);
+	char sError[255];
+	gH_Db = SQL_Connect("betterwarden", true, sError, sizeof(sError));
 	
-	DBResultSet SQL = SQL_Query(gH_Db, sQuery);
-	if(SQL != null) {
-		if(SQL_FetchRow(SQL)) {
+	if(gH_Db != INVALID_HANDLE) {
+		Format(sQuery, sizeof(sQuery), "SELECT GangID FROM betterwarden_players WHERE STEAMID LIKE '%s'", sID);
+		
+		DBResultSet SQL = SQL_Query(gH_Db, sQuery);
+		if(SQL != null) {
+			if(SQL_FetchRow(SQL)) {
+				if(SQL_IsFieldNull(SQL, 0)) {
+					CloseHandle(SQL);
+					CloseHandle(gH_Db);
+					return false;
+				}
+				CloseHandle(SQL);
+				CloseHandle(gH_Db);
+				return true;
+			}
+			
 			CloseHandle(SQL);
-			return true;
+			CloseHandle(gH_Db);
+			return false;
 		}
+	} else {
+		PrintToServer("Database error: %s", sError);
 	}
 	
 	return false;
@@ -241,16 +324,26 @@ stock int SQL_GetGangId(char[] GangName) {
 	int gangID;
 	char sQuery[255];
 	
-	Format(sQuery, sizeof(sQuery), "SELECT ID FROM betterwarden_gangs WHERE Name LIKE '%s'", GangName);
+	char sError[255];
+	gH_Db = SQL_Connect("betterwarden", true, sError, sizeof(sError));
 	
-	DBResultSet SQL = SQL_Query(gH_Db, sQuery);
-	if(SQL != null) {
-		if(SQL_FetchRow(SQL)) {
-			gangID = SQL_FetchInt(SQL, 0);
-			CloseHandle(SQL);
+	if(gH_Db != INVALID_HANDLE) {
+		Format(sQuery, sizeof(sQuery), "SELECT ID FROM betterwarden_gangs WHERE Name LIKE '%s'", GangName);
+		
+		DBResultSet SQL = SQL_Query(gH_Db, sQuery);
+		if(SQL != null) {
+			if(SQL_FetchRow(SQL)) {
+				gangID = SQL_FetchInt(SQL, 0);
+				CloseHandle(SQL);
+				CloseHandle(gH_Db);
+				
+				return gangID;
+			}
 			
-			return gangID;
+			CloseHandle(gH_Db);
 		}
+	} else {
+		PrintToServer("Database error: %s", sError);
 	}
 	
 	return -1;
@@ -269,16 +362,25 @@ stock int SQL_GetGangIdFromOwner(int client) {
 	int gangID;
 	GetClientAuthId(client, AuthId_Steam2, SteamID, sizeof(SteamID));
 	
-	Format(sQuery, sizeof(sQuery), "SELECT ID FROM betterwarden_gangs WHERE Owner LIKE '%s'", SteamID);
+	char sError[255];
+	gH_Db = SQL_Connect("betterwarden", true, sError, sizeof(sError));
 	
-	DBResultSet SQL = SQL_Query(gH_Db, sQuery);
-	if(SQL != null) {
-		if(SQL_FetchRow(SQL)) {
-			gangID = SQL_FetchInt(SQL, 0);
-			CloseHandle(SQL);
+	if(gH_Db != INVALID_HANDLE) {
+		Format(sQuery, sizeof(sQuery), "SELECT ID FROM betterwarden_gangs WHERE Owner LIKE '%s'", SteamID);
+		
+		DBResultSet SQL = SQL_Query(gH_Db, sQuery);
+		if(SQL != null) {
+			if(SQL_FetchRow(SQL)) {
+				gangID = SQL_FetchInt(SQL, 0);
+				CloseHandle(SQL);
+				CloseHandle(gH_Db);
+				return gangID;
+			}
 			
-			return gangID;
+			CloseHandle(gH_Db);
 		}
+	} else {
+		PrintToServer("Database error: %s", sError);
 	}
 	
 	return -1;
@@ -293,17 +395,23 @@ stock int SQL_GetGangIdFromOwner(int client) {
 */
 stock bool SQL_DeleteGang(int GangID) {
 	char sQuery[255];
+	int client = SQL_GetGangOwner(GangID);
 	
 	Format(sQuery, sizeof(sQuery), "DELETE FROM betterwarden_gangs WHERE ID = %d", GangID);
 	
+	char sError[255];
+	gH_Db = SQL_Connect("betterwarden", true, sError, sizeof(sError));
+	
 	if(!SQL_FastQuery(gH_Db, sQuery)) {
-		char err[255];
-		SQL_GetError(gH_Db, err, sizeof(err));
-		PrintToServer("DB Error: %s", err);
+		PrintToServer("Database Error: %s", sError);
+		CloseHandle(gH_Db);
 		
 		return false;
 	}
 	
+	CloseHandle(gH_Db);
+	
+	SQL_KickFromGang(client);
 	return true;
 }
 
@@ -319,12 +427,13 @@ stock bool SQL_KickFromGang(int client) {
 	char sID[64];
 	GetClientAuthId(client, AuthId_Steam2, sID, sizeof(sID));
 	
+	char sError[255];
+	gH_Db = SQL_Connect("betterwarden", true, sError, sizeof(sError));
+	
 	Format(sQuery, sizeof(sQuery), "UPDATE betterwarden_players SET GangID = NULL WHERE SteamID LIKE '%s'", sID);
 	
 	if(!SQL_FastQuery(gH_Db, sQuery)) {
-		char err[255];
-		SQL_GetError(gH_Db, err, sizeof(err));
-		PrintToServer("DB Error: %s", err);
+		PrintToServer("Database Error: %s", sError);
 		
 		return false;
 	}
@@ -345,12 +454,13 @@ stock bool SQL_AddToGang(int client, int gang) {
 	char sID[64];
 	GetClientAuthId(client, AuthId_Steam2, sID, sizeof(sID));
 	
+	char sError[255];
+	gH_Db = SQL_Connect("betterwarden", true, sError, sizeof(sError));
+	
 	Format(sQuery, sizeof(sQuery), "UPDATE betterwarden_players SET GangID = %d WHERE SteamID LIKE '%s'", gang, sID);
 	
 	if(!SQL_FastQuery(gH_Db, sQuery)) {
-		char err[255];
-		SQL_GetError(gH_Db, err, sizeof(err));
-		PrintToServer("DB Error: %s", err);
+		PrintToServer("Database Error: %s", sError);
 		
 		return false;
 	}
@@ -369,26 +479,37 @@ stock int SQL_GetGangOwner(int gang) {
 	char sQuery[255];
 	char sID[64]; // buffer
 	
-	Format(sQuery, sizeof(sQuery), "SELECT Owner FROM betterwarden_gangs WHERE ID = %d", gang);
+	char sError[255];
+	gH_Db = SQL_Connect("betterwarden", true, sError, sizeof(sError));
 	
-	DBResultSet SQL = SQL_Query(gH_Db, sQuery);
-	
-	if(SQL != null) {
-		if(SQL_FetchRow(SQL)) {
-			SQL_FetchString(SQL, 0, sID, sizeof(sID));
-			for(int i = 1; i <= MaxClients; i++) {
-				if(!IsValidClient(i, _, true))
-					continue;
-				char buff[64];
-				GetClientAuthId(i, AuthId_Steam2, buff, sizeof(buff));
+	if(gH_Db != INVALID_HANDLE) {
+		Format(sQuery, sizeof(sQuery), "SELECT Owner FROM betterwarden_gangs WHERE ID = %d", gang);
+		
+		DBResultSet SQL = SQL_Query(gH_Db, sQuery);
+		
+		if(SQL != null) {
+			if(SQL_FetchRow(SQL)) {
+				SQL_FetchString(SQL, 0, sID, sizeof(sID));
+				for(int i = 1; i <= MaxClients; i++) {
+					if(!IsValidClient(i, _, true))
+						continue;
+					char buff[64];
+					GetClientAuthId(i, AuthId_Steam2, buff, sizeof(buff));
+					
+					if(!StrEqual(buff, sID, false))
+						continue;
+					
+					CloseHandle(gH_Db);
+					return i;
+				}
 				
-				if(!StrEqual(buff, sID, false))
-					continue;
-				
-				return i;
+				CloseHandle(gH_Db);
+				return -1;
 			}
 		}
 	}
+	
+	PrintToServer("Database error: %s", sError);
 	
 	return -1; // Owner not online or not found
 }
