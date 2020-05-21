@@ -1,3 +1,22 @@
+/**
+ * AutoExecConfig 
+ *
+ * Copyright (C) 2013-2019 Impact
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
+ */
+ 
 #if defined _autoexecconfig_included
 	#endinput
 #endif
@@ -6,7 +25,7 @@
 
 #include <sourcemod>
 
-#define AUTOEXECCONFIG_VERSION "0.1.1"
+#define AUTOEXECCONFIG_VERSION "0.1.5"
 #define AUTOEXECCONFIG_URL     "https://forums.alliedmods.net/showthread.php?t=204254"
 
 // Append
@@ -49,12 +68,11 @@ static char g_sConfigFile[PLATFORM_MAX_PATH];
 static char g_sRawFileName[PLATFORM_MAX_PATH];
 static char g_sFolderPath[PLATFORM_MAX_PATH];
 
-static StringMap g_hConvarTrie = null;
-static bool g_bCacheEnabled = false;
-
 static bool g_bCreateFile = false;
 static Handle g_hPluginHandle = null;
 
+static bool g_bCreateDirectory = false;
+static int g_bCreateDirectoryMode = FPERM_U_READ|FPERM_U_WRITE|FPERM_U_EXEC|FPERM_G_READ|FPERM_G_EXEC|FPERM_O_READ|FPERM_O_EXEC;
 
 
 // Workaround for now
@@ -102,6 +120,21 @@ stock void AutoExecConfig_SetCreateFile(bool create)
 
 
 /**
+ * Set if the config file's folder should be created by the autoexecconfig include itself if it doesn't exist.
+ * Note: Must be used before AutoExecConfig_SetFile as the potential creation of it happens there 
+ *
+ * @param create        True if config file should be created, false otherwise.
+ * @param mode          Folder permission mode, default is u=rwx,g=rx,o=rx.
+ * @noreturn
+ */
+stock void AutoExecConfig_SetCreateDirectory(bool create, int mode=FPERM_U_READ|FPERM_U_WRITE|FPERM_U_EXEC|FPERM_G_READ|FPERM_G_EXEC|FPERM_O_READ|FPERM_O_EXEC)
+{
+	g_bCreateDirectory = create;
+	g_bCreateDirectoryMode = mode;
+}
+
+
+/**
  * Returns if the config file should be created if it doesn't exist.
  *
  * @return        Returns true, if the config file should be created or false if it should not.
@@ -139,6 +172,7 @@ stock Handle AutoExecConfig_GetPlugin()
 
 /**
  * Set the global autoconfigfile used by functions of this file.
+ * Note: does not support subfolders like folder1/folder2
  *
  * @param file          Name of the config file, path and .cfg extension is being added if not given.
  * @param folder        Folder under cfg/ to use.  By default this is "sourcemod."
@@ -267,7 +301,7 @@ stock static int AutoExecConfig_FormatFileName(char[] buffer, int size, char[] f
 	
 	
 	// Can't be an cfgfile
-	if (StrContains(g_sConfigFile, ".cfg") == -1 && strlen(g_sConfigFile) < 4)
+	if (StrContains(g_sConfigFile, ".cfg") != -1 && strlen(g_sConfigFile) < 4)
 	{
 		return AUTOEXEC_FORMAT_BAD_FILENAME;
 	}
@@ -278,6 +312,11 @@ stock static int AutoExecConfig_FormatFileName(char[] buffer, int size, char[] f
 	if (strlen(folder) > 0)
 	{
 		Format(pathprefixbuffer, sizeof(pathprefixbuffer), "cfg/%s/", folder);
+		
+		if (g_bCreateDirectory && !DirExists(pathprefixbuffer))
+		{
+			CreateDirectory(pathprefixbuffer, g_bCreateDirectoryMode);
+		}
 	}
 	else
 	{
@@ -423,12 +462,7 @@ stock int AutoExecConfig_AppendValue(const char[] name, const char[] defaultValu
 		fFile.WriteLine(writebuffer);
 		
 		
-		fFile.Close();
-		
-		
-		// Clean up the file
-		//AutoExecConfig_CleanFile(filebuffer, false);
-		
+		fFile.Close();		
 		
 		return AUTOEXEC_APPEND_SUCCESS;
 	}
@@ -460,20 +494,6 @@ stock int AutoExecConfig_FindValue(const char[] cvar, char[] value, int size, bo
 	if (strlen(g_sConfigFile) < 1)
 	{
 		return AUTOEXEC_NO_CONFIG;
-	}
-	
-	if (g_bCacheEnabled)
-	{
-		char sTrieValue[64];
-		
-		if (g_hConvarTrie.GetString(cvar, sTrieValue, sizeof(sTrieValue)))
-		{
-			strcopy(value, size, sTrieValue);
-			
-			return AUTOEXEC_FIND_SUCCESS;
-		}
-		
-		return AUTOEXEC_FIND_NOT_FOUND;
 	}
 	
 	
@@ -515,7 +535,7 @@ stock int AutoExecConfig_FindValue(const char[] cvar, char[] value, int size, bo
 		while (!fFile.EndOfFile() && fFile.ReadLine(readbuffer, sizeof(readbuffer)))
 		{
 			// Is a comment or not valid
-			if (IsCharSpace(readbuffer[0]) || readbuffer[0] == '/' || !IsCharAlpha(readbuffer[0]))
+			if (IsCharSpace(readbuffer[0]) || readbuffer[0] == '/' || (!IsCharNumeric(readbuffer[0]) && !IsCharAlpha(readbuffer[0])) )
 			{
 				continue;
 			}
@@ -738,140 +758,8 @@ stock static int GetCharCountInStr(int character, const char[] str)
 
 
 
-/**
- * Reads the existing config file and caches any convars and values that were found.
- *
- * @return        True when config existed and could be read, false otherwise.
-*/
+#pragma deprecated
 stock bool AutoExecConfig_CacheConvars()
 {
-	if (g_hConvarTrie == null)
-	{
-		g_hConvarTrie = new StringMap();
-	}
-		
-	// No config set
-	if (strlen(g_sConfigFile) < 1)
-	{
-		return false;
-	}
-	
-	
-	char filebuffer[PLATFORM_MAX_PATH];
-	strcopy(filebuffer, sizeof(filebuffer), g_sConfigFile);
-	
-	
-	
-	//PrintToServer("pathbuffer: %s", filebuffer);
-	
-	bool bFileExists = FileExists(filebuffer);
-	
-	// We want to create the config file and it doesn't exist yet.
-	if (!bFileExists)
-	{
-		return false;
-	}
-	
-	
-	
-	File fFile = OpenFile(filebuffer, "r");
-	int valuestart;
-	int valueend;
-	int cvarend;
-	
-	// Just an reminder to self, leave the values that high
-	char sConvar[64];
-	char sValue[64];
-	char readbuffer[2048];
-	char copybuffer[2048];
-	
-	if (fFile == null)
-	{
-		return false;
-	}
-	
-	
-	while (!fFile.EndOfFile() && fFile.ReadLine(readbuffer, sizeof(readbuffer)))
-	{
-		// Is a comment or not valid
-		if (IsCharSpace(readbuffer[0]) || readbuffer[0] == '/' || !IsCharAlpha(readbuffer[0]))
-		{
-			continue;
-		}
-		
-		
-		// Has not enough spaces, must have at least 1
-		if (GetCharCountInStr(' ', readbuffer) < 1)
-		{
-			continue;
-		}
-
-		
-		// Ignore cvars which aren't quoted
-		if (GetCharCountInStr('"', readbuffer) != 2)
-		{
-			continue;
-		}
-		
-		
-		
-		// Get the start of the value
-		if ( (valuestart = StrContains(readbuffer, "\"")) == -1 )
-		{
-			continue;
-		}
-		
-		
-		// Get the end of the value
-		if ( (valueend = StrContains(readbuffer[valuestart+1], "\"")) == -1 )
-		{
-			continue;
-		}
-		
-		
-		// Get the start of the cvar, 
-		if ( (cvarend = StrContains(readbuffer, " ")) == -1 || cvarend >= valuestart)
-		{
-			continue;
-		}
-		
-		
-		// Skip if cvarendindex is before valuestartindex
-		if (cvarend >= valuestart)
-		{
-			continue;
-		}
-		
-		
-		// Convar
-		// Tempcopy for security
-		strcopy(copybuffer, sizeof(copybuffer), readbuffer);
-		copybuffer[cvarend] = '\0';
-		
-		strcopy(sConvar, sizeof(sConvar), copybuffer);
-		
-
-		// Value
-		// Tempcopy for security
-		strcopy(copybuffer, sizeof(copybuffer), readbuffer[valuestart+1]);
-		copybuffer[valueend] = '\0';
-		
-		strcopy(sValue, sizeof(sValue), copybuffer);
-		
-		
-		//PrintToServer("Cvar %s has a value of %s", sConvar, sValue);
-		
-		char sTrieValue[64];
-		if (!g_hConvarTrie.GetString(sConvar, sTrieValue, sizeof(sTrieValue)))
-		{
-			//PrintToServer("Adding convar %s to trie", sConvar);
-			g_hConvarTrie.SetString(sConvar, sValue);
-		}					
-	}
-	
-	fFile.Close();	
-	
-	g_bCacheEnabled = true;
-	
-	return true;
+	return false;
 }
