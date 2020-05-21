@@ -176,4 +176,11 @@
 		"en"	"You own the gang and cannot leave it. Disband the gang via {lime}!gang del"
 		"sv"	"Du äger gänget och kan inte lämna det. Radera gänger med {lime}!gang del"
 	}
+	
+	"Invite Sent"
+	{
+		"#format"	"{1:s},{2:N}"
+		"en"	"Invite to join {1} was sent to {2}"
+		"sv"	"En inbjudan till {1} skickades till {2}"
+	}
 }

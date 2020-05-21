@@ -356,7 +356,7 @@ public bool InviteGang(int client, char[] arg) { // Invites a client to the give
 	int iGang = -1;
 	char sGang[255];
 	
-	if((target_count = ProcessTargetString(arg, client, target_list, MAXPLAYERS, COMMAND_FILTER_NO_BOTS, target_name, sizeof(target_name), tn_is_ml)) <= 0) {
+	if((target_count = ProcessTargetString(arg, client, target_list, MAXPLAYERS, COMMAND_FILTER_NO_BOTS|COMMAND_FILTER_NO_MULTI, target_name, sizeof(target_name), tn_is_ml)) <= 0) {
 		ReplyToTargetError(client, target_count);
 		return false;
 	}
@@ -375,21 +375,21 @@ public bool InviteGang(int client, char[] arg) { // Invites a client to the give
 		}
 		if(!SQL_IsInGang(client)) {
 			CPrintToChat(client, "%s {error}%t", g_sPrefix, "Not In Gang");
-		} else {
-			SQL_GetGang(client, sGang, sizeof(sGang));
-			iGang = SQL_GetGangId(sGang);
-			
-			if(!SQL_IsInGang(target_list[usr])) { // Target is not in a gang, let's send the invite!
-				
-				g_iInviteTime[target_list[usr]] = (GetTime() + 30);
-				g_iInviteGang[target_list[usr]] = iGang;
-				CPrintToChat(target_list[usr], "%s {gold}%t", g_sPrefix, "Invitation", client, sGang);
-				
-			} else { // Target is already in a gang
-				CPrintToChat(client, "%s {error}%t", g_sPrefix, "Already In Gang", target_list[usr]);
-				break;
-			}
+			break;
 		}
+		
+		if(SQL_IsInGang(target_list[usr])) { // Target is not in a gang, let's send the invite!
+			CPrintToChat(client, "%s {error}%t", g_sPrefix, "Already In Gang", target_list[usr]);
+			break;
+		}
+		
+		SQL_GetGang(client, sGang, sizeof(sGang));
+		iGang = SQL_GetGangId(sGang);
+			
+		g_iInviteTime[target_list[usr]] = (GetTime() + 30);
+		g_iInviteGang[target_list[usr]] = iGang;
+		CPrintToChat(target_list[usr], "%s {gold}%t", g_sPrefix, "Invitation", client, sGang);
+		CPrintToChat(client, "%s %t", g_sPrefix, "Invite Sent", target_list[usr]);
 	}
 	
 	return true;
