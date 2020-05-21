@@ -331,7 +331,7 @@ public bool InviteGang(int client, char[] arg) { // Invites a client to the give
 	int iGang = -1;
 	char sGang[255];
 	
-	if((target_count = ProcessTargetString(arg, client, target_list, MAXPLAYERS, COMMAND_FILTER_ALIVE, target_name, sizeof(target_name), tn_is_ml)) <= 0) {
+	if((target_count = ProcessTargetString(arg, client, target_list, MAXPLAYERS, COMMAND_FILTER_NO_BOTS, target_name, sizeof(target_name), tn_is_ml)) <= 0) {
 		ReplyToTargetError(client, target_count);
 		return false;
 	}
@@ -370,7 +370,7 @@ public bool InviteGang(int client, char[] arg) { // Invites a client to the give
 	return true;
 }
 
-public void KickGang(int client, char[] arg) { // Kicks a client from their gang
+public bool KickGang(int client, char[] arg) { // Kicks a client from their gang
 	char target_name[MAX_TARGET_LENGTH];
 	int target_list[MAXPLAYERS], target_count;
 	bool tn_is_ml;
@@ -378,11 +378,12 @@ public void KickGang(int client, char[] arg) { // Kicks a client from their gang
 	int GangID = -1;
 	char sGang[255];
 	
-	if((target_count = ProcessTargetString(arg, client, target_list, sizeof(target_list), COMMAND_FILTER_NO_BOTS, target_name, sizeof(target_name), tn_is_ml)) <= 0) {
+	if((target_count = ProcessTargetString(arg, client, target_list, MAXPLAYERS, COMMAND_FILTER_NO_BOTS, target_name, sizeof(target_name), tn_is_ml)) <= 0) {
 		ReplyToTargetError(client, target_count);
+		return false;
 	}
 	
-	for(int usr = 1; usr <= target_count; usr++) {
+	for(int usr = 0; usr < target_count; usr++) {
 		if(target_list[usr] == client) { // Make sure target is not the client
 			CPrintToChat(client, "%s {error}%t", g_sPrefix, "Cannot Kick Self");
 			break;
@@ -409,6 +410,8 @@ public void KickGang(int client, char[] arg) { // Kicks a client from their gang
 			
 		}
 	}
+	
+	return true;
 }
 
 ////////////////////////////////////
