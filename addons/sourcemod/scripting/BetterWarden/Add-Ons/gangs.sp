@@ -303,12 +303,12 @@ public Action Command_LeaveGang(int client, int args) {
 	SQL_GetGang(client, sGang, sizeof(sGang));
 	int iGang = SQL_GetGangId(sGang);
 	
-	if(SQL_GetGangOwner(iGang) == client) { // Client owns the gang
-		CPrintToChat(client, "%s %t", g_sPrefix, "Owner Cannot Leave");
-		return Plugin_Handled;
-	}
-	
 	if(SQL_IsInGang(client)) {
+		if(SQL_GetGangOwner(iGang) == client) { // Client owns the gang
+			CPrintToChat(client, "%s %t", g_sPrefix, "Owner Cannot Leave");
+			return Plugin_Handled;
+		}
+		
 		SQL_KickFromGang(client);
 		CPrintToChatAll(client, "%s %t", g_sPrefix, "Left Gang", client, sGang);
 	} else { // Client is not in a gang
