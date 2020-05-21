@@ -163,4 +163,17 @@
 		"en"	"No player was specified!"
 		"sv"	"Ingen spelare specifierades!"
 	}
+	
+	"Left Gang"
+	{
+		"#format"	"{1:N},{2:s}"
+		"en"	"{1} has left the gang {2}"
+		"sv"	"{1} lämnade gänget {2}"
+	}
+	
+	"Owner Cannot Leave"
+	{
+		"en"	"You own the gang and cannot leave it. Disband the gang via {lime}!gang del"
+		"sv"	"Du äger gänget och kan inte lämna det. Radera gänger med {lime}!gang del"
+	}
 }

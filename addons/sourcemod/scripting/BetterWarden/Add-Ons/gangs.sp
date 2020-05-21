@@ -82,6 +82,7 @@ public void OnPluginStart() {
 	RegConsoleCmd("sm_mygang", Command_MyGang);
 	RegConsoleCmd("sm_accept", Command_AcceptInvite);
 	RegConsoleCmd("sm_deny", Command_DenyInvite);
+	RegConsoleCmd("sm_leave", Command_LeaveGang);
 	
 	// Command Listeners
 	AddCommandListener(OnPlayerChat, "say");
@@ -208,6 +209,8 @@ public Action Command_Gang(int client, int args) {
 		CPrintToChat(client, "%s    !gang del", g_sPrefix);
 		CPrintToChat(client, "%s    !gang inv <player>", g_sPrefix);
 		CPrintToChat(client, "%s    !gang kick <player>", g_sPrefix);
+		CPrintToChat(client, "%s    !mygang", g_sPrefix);
+		CPrintToChat(client, "%s    !leave", g_sPrefix);
 	} else if(args >= 1) {
 		char arg[64]; // First argument
 		char name[128]; // Gang name or player name
@@ -289,6 +292,28 @@ public Action Command_DenyInvite(int client, int args) {
 	
 	g_iInviteTime[client] = -1;
 	g_iInviteGang[client] = -1;
+	
+	return Plugin_Handled;
+}
+
+public Action Command_LeaveGang(int client, int args) {
+	if(!IsValidClient(client, _, true))
+		return Plugin_Handled;
+	char sGang[64];
+	SQL_GetGang(client, sGang, sizeof(sGang));
+	int iGang = SQL_GetGangId(sGang);
+	
+	if(SQL_GetGangOwner(iGang) == client) { // Client owns the gang
+		CPrintToChat(client, "%s %t", g_sPrefix, "Owner Cannot Leave");
+		return Plugin_Handled;
+	}
+	
+	if(SQL_IsInGang(client)) {
+		SQL_KickFromGang(client);
+		CPrintToChatAll(client, "%s %t", g_sPrefix, "Left Gang", client, sGang);
+	} else { // Client is not in a gang
+		CPrintToChat(client, "%s %t", g_sPrefix, "Not In Gang");
+	}
 	
 	return Plugin_Handled;
 }
