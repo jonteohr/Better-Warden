@@ -525,7 +525,7 @@ public int Native_CPrintToChatGang(Handle plugin, int numParams) {
 	int iGang = GetNativeCell(2);
 	char sBuffer[1024];
 	int written;
-	FormatNativeString(2, 3, 4, sizeof(sBuffer), written, sBuffer);
+	FormatNativeString(0, 3, 4, sizeof(sBuffer), written, sBuffer);
 	
 	for(int i = 1; i <= MaxClients; i++) {
 		if(!IsValidClient(i, _, true))
