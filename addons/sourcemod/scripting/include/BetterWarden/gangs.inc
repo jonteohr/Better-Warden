@@ -541,18 +541,62 @@ native void CPrintToChatGang(int sender, int gang, const char[] message, any ...
 */
 forward void OnGangCreated(int client, const char[] gang);
 
+/**
+* Called once a gang leader disbands their gang.
+* 
+* @param gang			Name of the gang
+*/
 forward void OnGangDisbanded(const char[] gang);
 
+/**
+* Called once a gang invite was created and sent to another entity.
+* 
+* @param client			Client ID of the invited entity
+* @param admin			Client ID of the admin entity
+* @param gang			Name of the gang
+*/
 forward void OnGangInvite(int client, int admin, const char[] gang);
 
-forward void OnGangInviteAccepted(int client, const char[] gang);
+/**
+* Called once an invite has been accepted.
+* 
+* @param client			Client ID of the entity
+* @param gang			ID of the gang
+*/
+forward void OnGangInviteAccepted(int client, int gang);
 
+/**
+* Called once an invite has been declined.
+* 
+* @param client			Client ID of the entity
+* @param gang			Name of the gang
+*/
 forward void OnGangInviteDeclined(int client, const char[] gang);
 
-forward void OnGangChat(int client, const char[] gang);
+/**
+* Called once a gang-chat message was sent
+* 
+* @param client			Client ID of the entity
+* @param msg			Message sent to chat
+* @param gang			Name of the gang
+*/
+forward void OnGangChat(int client, const char[] msg, const char[] gang);
 
+/**
+* Called once a gang member leaves their gang.
+*
+* @param client			Client ID of the entity
+* @param gang			Name of the gang
+*/
 forward void OnGangMemberLeave(int client, const char[] gang);
 
+/**
+* Called once a gang member has been kicked from their gang.
+* 
+* @param client			Client ID of the entity
+* @param admin			Client ID of the admin issuing the command
+* @param gang			Name of the gang
+*/
 forward void OnGangMemberKicked(int client, int admin, const char[] gang);
 
 public SharedPlugin __pl_bwgangs = 

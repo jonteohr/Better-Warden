@@ -65,9 +65,9 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	gF_OnGangCreated = CreateGlobalForward("OnGangCreated", ET_Ignore, Param_Cell, Param_String);
 	gF_OnGangDisbanded = CreateGlobalForward("OnGangDisbanded", ET_Ignore, Param_String);
 	gF_OnGangInvite = CreateGlobalForward("OnGangInvite", ET_Ignore, Param_Cell, Param_Cell, Param_String);
-	gF_OnGangInviteAccepted = CreateGlobalForward("OnGangInviteAccepted", ET_Ignore, Param_Cell, Param_String);
-	gF_OnGangInviteDeclined = CreateGlobalForward("OnGangInviteDeclined", ET_Ignore, Param_Cell, Param_String);
-	gF_OnGangChat = CreateGlobalForward("OnGangChat", ET_Ignore, Param_Cell, Param_String);
+	gF_OnGangInviteAccepted = CreateGlobalForward("OnGangInviteAccepted", ET_Ignore, Param_Cell, Param_Cell);
+	gF_OnGangInviteDeclined = CreateGlobalForward("OnGangInviteDeclined", ET_Ignore, Param_Cell, Param_Cell);
+	gF_OnGangChat = CreateGlobalForward("OnGangChat", ET_Ignore, Param_Cell, Param_String, Param_String);
 	gF_OnGangMemberLeave = CreateGlobalForward("OnGangMemberLeave", ET_Ignore, Param_Cell, Param_String);
 	gF_OnGangMemberKicked = CreateGlobalForward("OnGangMemberKicked", ET_Ignore, Param_Cell, Param_Cell, Param_String);
 	
@@ -295,6 +295,12 @@ public Action Command_AcceptInvite(int client, int args) {
 	SendToGang(g_iInviteGang[client], "%t", "Announce Client Joined Gang", client);
 	CPrintToChat(client, "%s %t", g_sPrefix, "Invite Accepted");
 	
+	// API
+	Call_StartForward(gF_OnGangInviteAccepted);
+	Call_PushCell(client);
+	Call_PushCell(g_iInviteGang[client]);
+	Call_Finish();
+	
 	return Plugin_Handled;
 }
 
@@ -308,6 +314,12 @@ public Action Command_DenyInvite(int client, int args) {
 	
 	if(SQL_GetGangOwner(g_iInviteGang[client]) != -1)
 		CPrintToChat(g_iInviteGang[client], "%s {error}%t", g_sPrefix, "Invite Declined", client);
+		
+	// API
+	Call_StartForward(gF_OnGangInviteDeclined);
+	Call_PushCell(client);
+	Call_PushCell(g_iInviteGang[client]);
+	Call_Finish();
 	
 	g_iInviteTime[client] = -1;
 	g_iInviteGang[client] = -1;
@@ -330,6 +342,12 @@ public Action Command_LeaveGang(int client, int args) {
 		
 		SQL_KickFromGang(client);
 		CPrintToChatAll("%s %t", g_sPrefix, "Left Gang", client, sGang);
+		
+		// API
+		Call_StartForward(gF_OnGangMemberLeave);
+		Call_PushCell(client);
+		Call_PushString(sGang);
+		Call_Finish();
 	} else { // Client is not in a gang
 		CPrintToChat(client, "%s %t", g_sPrefix, "Not In Gang");
 	}
@@ -420,6 +438,13 @@ public bool InviteGang(int client, char[] arg) { // Invites a client to the give
 		g_iInviteGang[target_list[usr]] = iGang;
 		CPrintToChat(target_list[usr], "%s {gold}%t", g_sPrefix, "Invitation", client, sGang);
 		CPrintToChat(client, "%s %t", g_sPrefix, "Invite Sent", target_list[usr]);
+		
+		// API
+		Call_StartForward(gF_OnGangInvite);
+		Call_PushCell(target_list[usr]);
+		Call_PushCell(client);
+		Call_PushString(sGang);
+		Call_Finish();
 	}
 	
 	return true;
@@ -457,6 +482,13 @@ public bool KickGang(int client, char[] arg) { // Kicks a client from their gang
 				CPrintToChat(target_list[usr], "%s %t", g_sPrefix, "You Have Been Kicked", client, sGang); // Let the target know he was kicked
 				
 				SendToGang(GangID, "%t", sGang, "Announce Kick", target_list[usr]); // Announce in gangchat
+				
+				// API
+				Call_StartForward(gF_OnGangMemberKicked);
+				Call_PushCell(target_list[usr]);
+				Call_PushCell(client);
+				Call_PushString(sGang);
+				Call_Finish();
 				
 			} else { // Target not in same gang
 				CPrintToChat(client, "%s {error}%t", g_sPrefix, "Client Not in Gang", target_list[usr]);
@@ -512,6 +544,13 @@ public int Native_CPrintToChatGang(Handle plugin, int numParams) {
 			continue;
 		
 		CPrintToChat(i, "{green}(%s) %N :{default} %s", sGang, sender, sBuffer);
+		
+		// API
+		Call_StartForward(gF_OnGangChat);
+		Call_PushCell(sender);
+		Call_PushString(sBuffer);
+		Call_PushString(sGang);
+		Call_Finish();
 	}
 	
 	return true;
