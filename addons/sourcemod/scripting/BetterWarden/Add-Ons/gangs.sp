@@ -445,54 +445,54 @@ public bool InviteGang(int client, char[] arg) { // Invites a client to the give
 }
 
 public bool KickGang(int client, char[] arg) { // Kicks a client from their gang
-	char target_name[MAX_TARGET_LENGTH];
-	int target_list[MAXPLAYERS], target_count;
-	bool tn_is_ml;
-	
 	int GangID = -1;
 	char sGang[255];
 	
-	if((target_count = ProcessTargetString(arg, client, target_list, MAXPLAYERS, COMMAND_FILTER_NO_BOTS, target_name, sizeof(target_name), tn_is_ml)) <= 0) {
-		ReplyToTargetError(client, target_count);
+	int target;
+	
+	if((target = FindTarget(client, arg, true, false)) <= 0) {
+		ReplyToTargetError(client, target);
 		return false;
 	}
 	
-	for(int usr = 0; usr < target_count; usr++) {
-		if(target_list[usr] == client) { // Make sure target is not the client
-			CPrintToChat(client, "%s {error}%t", g_sPrefix, "Cannot Kick Self");
-			break;
-		}
-		
-		if(!SQL_OwnsGang(client)) {
-			CPrintToChat(client, "%s {error}%t", g_sPrefix, "Could not Kick", target_list[usr]);
-		} else {
-			
-			SQL_GetGang(target_list[usr], sGang, sizeof(sGang));
-			GangID = SQL_GetGangId(sGang);
-			
-			if(SQL_GetGangIdFromOwner(client) == GangID) { // Gang match! Let's kick the target
-				SQL_KickFromGang(target_list[usr]);
-				CPrintToChat(client, "%s %t", g_sPrefix, "Kicked Client", target_list[usr], sGang); // Tell the owner about the success
-				CPrintToChat(target_list[usr], "%s %t", g_sPrefix, "You Have Been Kicked", client, sGang); // Let the target know he was kicked
-				
-				SendToGang(GangID, "%t", sGang, "Announce Kick", target_list[usr]); // Announce in gangchat
-				
-				// API
-				Call_StartForward(gF_OnGangMemberKicked);
-				Call_PushCell(target_list[usr]);
-				Call_PushCell(client);
-				Call_PushString(sGang);
-				Call_Finish();
-				
-			} else { // Target not in same gang
-				CPrintToChat(client, "%s {error}%t", g_sPrefix, "Client Not in Gang", target_list[usr]);
-				break;
-			}
-			
-		}
+	if(!IsValidClient(target, _, true)) {
+		CPrintToChat(client, "%s {error}%t", g_sPrefix, "Could Not Find Target", target);
+		return false;
 	}
 	
-	return true;
+	if(target == client) { // Make sure target is not the client
+		CPrintToChat(client, "%s {error}%t", g_sPrefix, "Cannot Kick Self");
+		return false;
+	}
+	
+	if(!SQL_OwnsGang(client)) {
+		CPrintToChat(client, "%s {error}%t", g_sPrefix, "Could not Kick", target);
+		return false;
+	}
+		
+	SQL_GetGang(target, sGang, sizeof(sGang));
+	GangID = SQL_GetGangId(sGang);
+	
+	if(SQL_GetGangIdFromOwner(client) == GangID) { // Gang match! Let's kick the target
+		SQL_KickFromGang(target);
+		CPrintToChat(client, "%s %t", g_sPrefix, "Kicked Client", target, sGang); // Tell the owner about the success
+		CPrintToChat(target, "%s %t", g_sPrefix, "You Have Been Kicked", client, sGang); // Let the target know he was kicked
+		
+		SendToGang(GangID, "%t", sGang, "Announce Kick", target); // Announce in gangchat
+		
+		// API
+		Call_StartForward(gF_OnGangMemberKicked);
+		Call_PushCell(target);
+		Call_PushCell(client);
+		Call_PushString(sGang);
+		Call_Finish();
+		
+		return true;
+		
+	} else { // Target not in same gang
+		CPrintToChat(client, "%s {error}%t", g_sPrefix, "Client Not in Gang", target);
+		return false;
+	}
 }
 
 ////////////////////////////////////
