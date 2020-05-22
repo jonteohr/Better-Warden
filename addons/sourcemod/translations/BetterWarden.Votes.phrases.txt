@@ -100,14 +100,14 @@
 	
 	"Allow Votes"
 	{
-		"en"	"Voting Allowed"
-		"sv"	"Omröstningar tillåtna"
+		"en"	"Allow Votes"
+		"sv"	"Tillåt omröstningar"
 	}
 	
 	"Dis-Allow Votes"
 	{
-		"en"	"Voting disabled"
-		"sv"	"Omröstningar avstängt"
+		"en"	"Dis-Allow Votes"
+		"sv"	"Stäng av omröstningar"
 	}
 	
 	"Votes Not Allowed"

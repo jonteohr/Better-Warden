@@ -397,55 +397,49 @@ public void DeleteGang(int client) { // Deletes gangs
 }
 
 public bool InviteGang(int client, char[] arg) { // Invites a client to the given gang
-	char target_name[MAX_TARGET_LENGTH];
-	int target_list[MAXPLAYERS], target_count;
-	bool tn_is_ml;
-	
 	int iGang = -1;
 	char sGang[255];
 	
-	if((target_count = ProcessTargetString(arg, client, target_list, MAXPLAYERS, COMMAND_FILTER_NO_BOTS|COMMAND_FILTER_NO_MULTI, target_name, sizeof(target_name), tn_is_ml)) <= 0) {
-		ReplyToTargetError(client, target_count);
+	int target;
+	
+	if((target = FindTarget(client, arg, true, false)) <= 0) {
+		ReplyToTargetError(client, target);
 		return false;
 	}
 	
-	for(int usr = 0; usr < target_count; usr++) { // target_list[usr] is now the target entity index
-		if(!IsValidClient(target_list[usr], _, true)) {
-			if(usr == target_count) { // if at last try, give up!
-				CPrintToChat(client, "%s {error}%t", g_sPrefix, "Could Not Find Target", target_list[usr]);
-				break;
-			}
-			continue;
-		}
-		if(target_list[usr] == client) { // Make sure target is not the client
-			CPrintToChat(client, "%s {error}%t", g_sPrefix, "Cannot Invite Self");
-			break;
-		}
-		if(!SQL_IsInGang(client)) {
-			CPrintToChat(client, "%s {error}%t", g_sPrefix, "Not In Gang");
-			break;
-		}
-		
-		if(SQL_IsInGang(target_list[usr])) { // Target is not in a gang, let's send the invite!
-			CPrintToChat(client, "%s {error}%t", g_sPrefix, "Already In Gang", target_list[usr]);
-			break;
-		}
-		
-		SQL_GetGang(client, sGang, sizeof(sGang));
-		iGang = SQL_GetGangId(sGang);
-			
-		g_iInviteTime[target_list[usr]] = (GetTime() + 30);
-		g_iInviteGang[target_list[usr]] = iGang;
-		CPrintToChat(target_list[usr], "%s {gold}%t", g_sPrefix, "Invitation", client, sGang);
-		CPrintToChat(client, "%s %t", g_sPrefix, "Invite Sent", target_list[usr]);
-		
-		// API
-		Call_StartForward(gF_OnGangInvite);
-		Call_PushCell(target_list[usr]);
-		Call_PushCell(client);
-		Call_PushString(sGang);
-		Call_Finish();
+	if(!IsValidClient(target, _, true)) {
+		CPrintToChat(client, "%s {error}%t", g_sPrefix, "Could Not Find Target", target);
+		return false;
 	}
+	
+	if(target == client) { // Make sure target is not the client
+		CPrintToChat(client, "%s {error}%t", g_sPrefix, "Cannot Invite Self");
+		return false;
+	}
+	if(!SQL_IsInGang(client)) {
+		CPrintToChat(client, "%s {error}%t", g_sPrefix, "Not In Gang");
+		return false;
+	}
+	
+	if(SQL_IsInGang(target)) { // Target is not in a gang, let's send the invite!
+		CPrintToChat(client, "%s {error}%t", g_sPrefix, "Already In Gang", target);
+		return false;
+	}
+	
+	SQL_GetGang(client, sGang, sizeof(sGang));
+	iGang = SQL_GetGangId(sGang);
+		
+	g_iInviteTime[target] = (GetTime() + 30);
+	g_iInviteGang[target] = iGang;
+	CPrintToChat(target, "%s {gold}%t", g_sPrefix, "Invitation", client, sGang);
+	CPrintToChat(client, "%s %t", g_sPrefix, "Invite Sent", sGang, target);
+	
+	// API
+	Call_StartForward(gF_OnGangInvite);
+	Call_PushCell(target);
+	Call_PushCell(client);
+	Call_PushString(sGang);
+	Call_Finish();
 	
 	return true;
 }
