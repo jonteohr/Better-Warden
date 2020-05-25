@@ -1,3 +1,7 @@
+<p align="center">
+	<sup><strong>You are highly discouraged to use the version in the <i>dev</i> branch unless you have at the very least basic knowledge of SourcePawn programming!</strong></sup>
+<p>
+
 <h1 align="center">Better Warden</h1>
 
 <p align="center">
