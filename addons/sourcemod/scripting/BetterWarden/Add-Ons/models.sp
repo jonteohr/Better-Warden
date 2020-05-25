@@ -26,10 +26,168 @@ ConVar gc_bWardenModel;
 ConVar gc_bDeputyModel;
 ConVar gc_bPrisonerModel;
 
-int g_iModelSet[MAXPLAYERS +1] = {0, ...};
-
 char g_sPreviousModel[256];
 char g_sPrevArms[256];
+
+char anarchistModelsT[][] = 
+{
+	"models/player/custom_player/legacy/tm_anarchist.mdl",
+	"models/player/custom_player/legacy/tm_anarchist_variantA.mdl",
+	"models/player/custom_player/legacy/tm_anarchist_variantB.mdl",
+	"models/player/custom_player/legacy/tm_anarchist_variantC.mdl",
+	"models/player/custom_player/legacy/tm_anarchist_variantD.mdl"
+};
+
+char balkanModelsT[][] = 
+{ 
+	"models/player/custom_player/legacy/tm_balkan_variantA.mdl",
+	"models/player/custom_player/legacy/tm_balkan_variantB.mdl",
+	"models/player/custom_player/legacy/tm_balkan_variantC.mdl",
+	"models/player/custom_player/legacy/tm_balkan_variantD.mdl",
+	"models/player/custom_player/legacy/tm_balkan_variantE.mdl"
+};
+
+char leetModelsT[][] = 
+{ 	
+	"models/player/custom_player/legacy/tm_leet_variantA.mdl",
+	"models/player/custom_player/legacy/tm_leet_variantB.mdl",
+	"models/player/custom_player/legacy/tm_leet_variantC.mdl",
+	"models/player/custom_player/legacy/tm_leet_variantD.mdl",
+	"models/player/custom_player/legacy/tm_leet_variantE.mdl"
+};
+
+char phoenixModelsT[][] = 
+{ 
+	"models/player/custom_player/legacy/tm_phoenix.mdl",
+	"models/player/custom_player/legacy/tm_phoenix_heavy.mdl",	
+	"models/player/custom_player/legacy/tm_phoenix_variantA.mdl",
+	"models/player/custom_player/legacy/tm_phoenix_variantB.mdl",
+	"models/player/custom_player/legacy/tm_phoenix_variantC.mdl",
+	"models/player/custom_player/legacy/tm_phoenix_variantD.mdl"
+};
+
+char pirateModelsT[][] = 
+{ 
+	"models/player/custom_player/legacy/tm_pirate.mdl",	
+	"models/player/custom_player/legacy/tm_pirate_variantA.mdl",
+	"models/player/custom_player/legacy/tm_pirate_variantB.mdl",
+	"models/player/custom_player/legacy/tm_pirate_variantC.mdl",
+	"models/player/custom_player/legacy/tm_pirate_variantD.mdl"
+};
+
+char professionalModelsT[][] = 
+{ 
+	"models/player/custom_player/legacy/tm_professional.mdl",	
+	"models/player/custom_player/legacy/tm_professional_var1.mdl",
+	"models/player/custom_player/legacy/tm_professional_var2.mdl",
+	"models/player/custom_player/legacy/tm_professional_var3.mdl",
+	"models/player/custom_player/legacy/tm_professional_var4.mdl"
+};
+
+char separatistModelsT[][] = 
+{ 
+	"models/player/custom_player/legacy/tm_separatist.mdl",	
+	"models/player/custom_player/legacy/tm_separatist_variantA.mdl",
+	"models/player/custom_player/legacy/tm_separatist_variantB.mdl",
+	"models/player/custom_player/legacy/tm_separatist_variantC.mdl",
+	"models/player/custom_player/legacy/tm_separatist_variantD.mdl"
+};
+
+char fbiModelsCT[][] = 
+{
+	"models/player/custom_player/legacy/ctm_fbi.mdl",
+	"models/player/custom_player/legacy/ctm_fbi_variantA.mdl",
+	"models/player/custom_player/legacy/ctm_fbi_variantB.mdl",
+	"models/player/custom_player/legacy/ctm_fbi_variantC.mdl",
+	"models/player/custom_player/legacy/ctm_fbi_variantD.mdl"
+};
+
+char gignModelsCT[][] = 
+{
+	"models/player/custom_player/legacy/ctm_gign.mdl",
+	"models/player/custom_player/legacy/ctm_gign_variantA.mdl",
+	"models/player/custom_player/legacy/ctm_gign_variantB.mdl",
+	"models/player/custom_player/legacy/ctm_gign_variantC.mdl",
+	"models/player/custom_player/legacy/ctm_gign_variantD.mdl"	
+};
+
+char gsg9ModelsCT[][] = 
+{
+	"models/player/custom_player/legacy/ctm_gsg9.mdl",
+	"models/player/custom_player/legacy/ctm_gsg9_variantA.mdl",
+	"models/player/custom_player/legacy/ctm_gsg9_variantB.mdl",
+	"models/player/custom_player/legacy/ctm_gsg9_variantC.mdl",
+	"models/player/custom_player/legacy/ctm_gsg9_variantD.mdl"	
+};
+
+char idfModelsCT[][] = 
+{
+	"models/player/custom_player/legacy/ctm_idf.mdl",
+	"models/player/custom_player/legacy/ctm_idf_variantA.mdl",
+	"models/player/custom_player/legacy/ctm_idf_variantB.mdl",
+	"models/player/custom_player/legacy/ctm_idf_variantC.mdl",
+	"models/player/custom_player/legacy/ctm_idf_variantD.mdl",	
+	"models/player/custom_player/legacy/ctm_idf_variantE.mdl",
+	"models/player/custom_player/legacy/ctm_idf_variantF.mdl"	
+};
+
+char sasModelsCT[][] = 
+{
+	"models/player/custom_player/legacy/ctm_sas.mdl",
+	"models/player/custom_player/legacy/ctm_sas_variantA.mdl",
+	"models/player/custom_player/legacy/ctm_sas_variantB.mdl",
+	"models/player/custom_player/legacy/ctm_sas_variantC.mdl",
+	"models/player/custom_player/legacy/ctm_sas_variantD.mdl",	
+	"models/player/custom_player/legacy/ctm_sas_variantE.mdl"	
+};
+
+char st6ModelsCT[][] = 
+{
+	"models/player/custom_player/legacy/ctm_st6.mdl",
+	"models/player/custom_player/legacy/ctm_st6_variantA.mdl",
+	"models/player/custom_player/legacy/ctm_st6_variantB.mdl",
+	"models/player/custom_player/legacy/ctm_st6_variantC.mdl",
+	"models/player/custom_player/legacy/ctm_st6_variantD.mdl"
+};
+
+char swatModelsCT[][] = 
+{
+	"models/player/custom_player/legacy/ctm_swat.mdl",
+	"models/player/custom_player/legacy/ctm_swat_variantA.mdl",
+	"models/player/custom_player/legacy/ctm_swat_variantB.mdl",
+	"models/player/custom_player/legacy/ctm_swat_variantC.mdl",
+	"models/player/custom_player/legacy/ctm_swat_variantD.mdl"
+};
+
+char AgentModelsT[][] = 
+{
+	"models/player/custom_player/legacy/tm_balkan_variantf.mdl",	
+	"models/player/custom_player/legacy/tm_balkan_variantg.mdl",
+	"models/player/custom_player/legacy/tm_balkan_varianth.mdl",
+	"models/player/custom_player/legacy/tm_balkan_varianti.mdl",
+	"models/player/custom_player/legacy/tm_balkan_variantj.mdl",
+	"models/player/custom_player/legacy/tm_leet_variantf.mdl",
+	"models/player/custom_player/legacy/tm_leet_variantg.mdl",
+	"models/player/custom_player/legacy/tm_leet_varianth.mdl",
+	"models/player/custom_player/legacy/tm_leet_varianti.mdl",	
+	"models/player/custom_player/legacy/tm_phoenix_variantf.mdl",
+	"models/player/custom_player/legacy/tm_phoenix_variantg.mdl",
+	"models/player/custom_player/legacy/tm_phoenix_varianth.mdl"
+};
+
+char AgentModelsCT[][] = 
+{
+	"models/player/custom_player/legacy/ctm_fbi_variante.mdl",
+	"models/player/custom_player/legacy/ctm_fbi_variantf.mdl",
+	"models/player/custom_player/legacy/ctm_fbi_variantg.mdl",
+	"models/player/custom_player/legacy/ctm_fbi_varianth.mdl",
+	"models/player/custom_player/legacy/ctm_st6_variante.mdl",	
+	"models/player/custom_player/legacy/ctm_st6_variantg.mdl",
+	"models/player/custom_player/legacy/ctm_st6_varianti.mdl",
+	"models/player/custom_player/legacy/ctm_st6_variantk.mdl",
+	"models/player/custom_player/legacy/ctm_st6_variantm.mdl",
+	"models/player/custom_player/legacy/ctm_sas_variantf.mdl"	
+};
 
 public Plugin myinfo = {
 	name = "[BetterWarden] Player Models",
@@ -150,23 +308,8 @@ public void OnMapStart() {
 public void OnPlayerSpawn(Event event, const char[] name, bool dontBroadcast) {
 	int client = GetClientOfUserId(GetEventInt(event, "userid"));
 	
-	// Make sure we only set the player model once per map.
-	// This way we can kind of support other models-plugins.
-	if(g_iModelSet[client] == 0) {
-		if(GetClientTeam(client) == CS_TEAM_CT && IsValidClient(client) && gc_bDeputyModel.IntValue == 1) { // Set the deputy skin
-			SetEntityModel(client, "models/player/custom_player/kuristaja/jailbreak/guard5/guard5.mdl");
-			SetEntPropString(client, Prop_Send, "m_szArmsModel", "models/player/custom_player/kuristaja/jailbreak/guard5/guard5_arms.mdl");
-			
-			g_iModelSet[client] = 1;
-		}
-		
-		if(GetClientTeam(client) == CS_TEAM_T && IsValidClient(client) && gc_bPrisonerModel.IntValue == 1) { // Set the prisoner skin
-			SetEntityModel(client, "models/player/custom_player/kuristaja/jailbreak/prisoner3/prisoner3.mdl");
-			SetEntPropString(client, Prop_Send, "m_szArmsModel", "models/player/custom_player/kuristaja/jailbreak/prisoner3/prisoner3_arms.mdl");
-			
-			g_iModelSet[client] = 1;
-		}
-	}
+	// We want to wait a bit before setting the actual player models
+	CreateTimer(2.0, SetModel, client);
 }
 
 public void OnWardenCreated(int client) { // When warden is created, set the models!
@@ -194,4 +337,131 @@ public void OnWardenRemoved(int client) { // Make sure to reset the model when t
 		SetEntityModel(client, g_sPreviousModel); // Reset the model
 		SetEntPropString(client, Prop_Send, "m_szArmsModel", g_sPrevArms);
 	}
+}
+
+public Action SetModel(Handle timer, int client) {
+	// We only want to set their model if they're using a default model
+	// This way we can kind of support other custom model plugins
+	char curModel[256];
+	GetEntPropString(client, Prop_Data, "m_ModelName", curModel, sizeof(curModel));
+	
+	if(gc_bDeputyModel.IntValue == 1 || gc_bPrisonerModel.IntValue == 1) {
+		if(IsDefaultModel(curModel)) {
+			if(GetClientTeam(client) == CS_TEAM_CT && IsValidClient(client) && gc_bDeputyModel.IntValue == 1) { // Set the deputy skin
+				SetEntityModel(client, "models/player/custom_player/kuristaja/jailbreak/guard5/guard5.mdl");
+				SetEntPropString(client, Prop_Send, "m_szArmsModel", "models/player/custom_player/kuristaja/jailbreak/guard5/guard5_arms.mdl");
+			}
+			
+			if(GetClientTeam(client) == CS_TEAM_T && IsValidClient(client) && gc_bPrisonerModel.IntValue == 1) { // Set the prisoner skin
+				SetEntityModel(client, "models/player/custom_player/kuristaja/jailbreak/prisoner3/prisoner3.mdl");
+				SetEntPropString(client, Prop_Send, "m_szArmsModel", "models/player/custom_player/kuristaja/jailbreak/prisoner3/prisoner3_arms.mdl");
+			}
+		}
+	}
+}
+
+public bool IsDefaultModel(char[] curModel) {
+	int conflict = 0;
+	
+	for (int i = 0; i < sizeof(AgentModelsCT); i++) {
+		if(StrEqual(curModel, AgentModelsCT[i])) {
+			conflict = 1;
+			break;
+		}
+	}
+	for (int i = 0; i < sizeof(AgentModelsT); i++) {
+		if(StrEqual(curModel, AgentModelsT[i])) {
+			conflict = 1;
+			break;
+		}
+	}
+	for (int i = 0; i < sizeof(swatModelsCT); i++) {
+		if(StrEqual(curModel, swatModelsCT[i])) {
+			conflict = 1;
+			break;
+		}
+	}
+	for (int i = 0; i < sizeof(st6ModelsCT); i++) {
+		if(StrEqual(curModel, st6ModelsCT[i])) {
+			conflict = 1;
+			break;
+		}
+	}
+	for (int i = 0; i < sizeof(sasModelsCT); i++) {
+		if(StrEqual(curModel, sasModelsCT[i])) {
+			conflict = 1;
+			break;
+		}
+	}
+	for (int i = 0; i < sizeof(idfModelsCT); i++) {
+		if(StrEqual(curModel, idfModelsCT[i])) {
+			conflict = 1;
+			break;
+		}
+	}
+	for (int i = 0; i < sizeof(gsg9ModelsCT); i++) {
+		if(StrEqual(curModel, gsg9ModelsCT[i])) {
+			conflict = 1;
+			break;
+		}
+	}
+	for (int i = 0; i < sizeof(gignModelsCT); i++) {
+		if(StrEqual(curModel, gignModelsCT[i])) {
+			conflict = 1;
+			break;
+		}
+	}
+	for (int i = 0; i < sizeof(fbiModelsCT); i++) {
+		if(StrEqual(curModel, fbiModelsCT[i])) {
+			conflict = 1;
+			break;
+		}
+	}
+	for (int i = 0; i < sizeof(separatistModelsT); i++) {
+		if(StrEqual(curModel, separatistModelsT[i])) {
+			conflict = 1;
+			break;
+		}
+	}
+	for (int i = 0; i < sizeof(professionalModelsT); i++) {
+		if(StrEqual(curModel, professionalModelsT[i])) {
+			conflict = 1;
+			break;
+		}
+	}
+	for (int i = 0; i < sizeof(pirateModelsT); i++) {
+		if(StrEqual(curModel, pirateModelsT[i])) {
+			conflict = 1;
+			break;
+		}
+	}
+	for (int i = 0; i < sizeof(phoenixModelsT); i++) {
+		if(StrEqual(curModel, phoenixModelsT[i])) {
+			conflict = 1;
+			break;
+		}
+	}
+	for (int i = 0; i < sizeof(leetModelsT); i++) {
+		if(StrEqual(curModel, leetModelsT[i])) {
+			conflict = 1;
+			break;
+		}
+	}
+	for (int i = 0; i < sizeof(balkanModelsT); i++) {
+		if(StrEqual(curModel, balkanModelsT[i])) {
+			conflict = 1;
+			break;
+		}
+	}
+	for (int i = 0; i < sizeof(anarchistModelsT); i++) {
+		if(StrEqual(curModel, anarchistModelsT[i])) {
+			conflict = 1;
+			break;
+		}
+	}
+	
+	if(conflict == 1)
+		return true;
+	else
+		return false;
 }
