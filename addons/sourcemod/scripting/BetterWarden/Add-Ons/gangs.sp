@@ -114,7 +114,7 @@ public void OnPluginStart() {
 
 public void OnMapStart() {
 	if(gc_bClanTag.IntValue == 1)
-		CreateTimer(gc_fTagTimer.FloatValue, ClanTagTimer, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
+		CreateTimer(gc_fTagTimer.FloatValue, ClanTagTimer, _, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
 }
 
 public void OnMapEnd() {
@@ -122,6 +122,9 @@ public void OnMapEnd() {
 }
 
 public void OnClientPutInServer(int client) {
+	if(!IsValidClient(client, _, true))
+		return;
+		
 	if(!SQL_UserExists(client)) // If user is not in DB, add him without a gang
 		SQL_AddUserToBWTable(client);
 	

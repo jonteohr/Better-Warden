@@ -24,6 +24,7 @@
 
 ConVar gc_bWardenModel;
 ConVar gc_bDeputyModel;
+ConVar gc_bPrisonerModel;
 
 char g_sPreviousModel[256];
 char g_sPrevArms[256];
@@ -48,6 +49,7 @@ public void OnPluginStart() {
 	AutoExecConfig_SetCreateFile(true);
 	gc_bWardenModel = AutoExecConfig_CreateConVar("sm_warden_model", "1", "Enable or disable the warden getting a player model.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	gc_bDeputyModel = AutoExecConfig_CreateConVar("sm_warden_deputy_model", "0", "Give the other CT's a fitting model aswell?", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bPrisonerModel = AutoExecConfig_CreateConVar("sm_warden_prisoner_model", "0", "Give all the T a prisoner model?", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	
 	AutoExecConfig_ExecuteFile();
 	AutoExecConfig_CleanFile();
@@ -56,7 +58,7 @@ public void OnPluginStart() {
 }
 
 public void OnMapStart() {
-	if(gc_bWardenModel.IntValue == 1 || gc_bDeputyModel.IntValue == 1) { // If one of the models are enabled, make sure to download the shared mats.
+	if(gc_bWardenModel.IntValue == 1 || gc_bDeputyModel.IntValue == 1 || gc_bPrisonerModel.IntValue == 1) { // If one of the models are enabled, make sure to download the shared mats.
 		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/shared/brown_eye01_an_d.vmt");
 		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/shared/police_body_d.vmt");
 		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/shared/prisoner1_body.vmt");
@@ -117,14 +119,43 @@ public void OnMapStart() {
 		PrecacheModel("models/player/custom_player/kuristaja/jailbreak/guard5/guard5.mdl", true);
 		PrecacheModel("models/player/custom_player/kuristaja/jailbreak/guard5/guard5_arms.mdl", true);
 	}
+	
+	if(gc_bPrisonerModel.IntValue == 1) { // Download the prisoner models!
+		// Material files
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/prisoner3/eyes.vmt");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/prisoner3/eyes.vtf");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/prisoner3/gi_head_14.vmt");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/prisoner3/gi_head_14.vtf");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/prisoner3/gi_head_nml.vtf");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/prisoner3/m_white_13_co.vmt");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/prisoner3/m_white_13_co.vtf");
+		AddFileToDownloadsTable("materials/models/player/kuristaja/jailbreak/prisoner3/m_white_13_n.vtf");
+		// Model files
+		AddFileToDownloadsTable("models/player/custom_player/kuristaja/jailbreak/prisoner3/prisoner3.dx90.vtx");
+		AddFileToDownloadsTable("models/player/custom_player/kuristaja/jailbreak/prisoner3/prisoner3.mdl");
+		AddFileToDownloadsTable("models/player/custom_player/kuristaja/jailbreak/prisoner3/prisoner3.phy");
+		AddFileToDownloadsTable("models/player/custom_player/kuristaja/jailbreak/prisoner3/prisoner3.vvd");
+		AddFileToDownloadsTable("models/player/custom_player/kuristaja/jailbreak/prisoner3/prisoner3_arms.dx90.vtx");
+		AddFileToDownloadsTable("models/player/custom_player/kuristaja/jailbreak/prisoner3/prisoner3_arms.mdl");
+		AddFileToDownloadsTable("models/player/custom_player/kuristaja/jailbreak/prisoner3/prisoner3_arms.vvd");
+		
+		// Precache models
+		PrecacheModel("models/player/custom_player/kuristaja/jailbreak/prisoner3/prisoner3.mdl");
+		PrecacheModel("models/player/custom_player/kuristaja/jailbreak/prisoner3/prisoner3_arms.mdl");
+	}
 }
 
 public void OnPlayerSpawn(Event event, const char[] name, bool dontBroadcast) {
 	int client = GetClientOfUserId(GetEventInt(event, "userid"));
 	
-	if(GetClientTeam(client) == CS_TEAM_CT && IsValidClient(client) && gc_bDeputyModel.IntValue == 1) {
-		SetEntityModel(client, "models/player/custom_player/kuristaja/jailbreak/guard5/guard5.mdl"); // Set the deputy skin
+	if(GetClientTeam(client) == CS_TEAM_CT && IsValidClient(client) && gc_bDeputyModel.IntValue == 1) { // Set the deputy skin
+		SetEntityModel(client, "models/player/custom_player/kuristaja/jailbreak/guard5/guard5.mdl");
 		SetEntPropString(client, Prop_Send, "m_szArmsModel", "models/player/custom_player/kuristaja/jailbreak/guard5/guard5_arms.mdl");
+	}
+	
+	if(GetClientTeam(client) == CS_TEAM_T && IsValidClient(client) && gc_bPrisonerModel.IntValue == 1) { // Set the prisoner skin
+		SetEntityModel(client, "models/player/custom_player/kuristaja/jailbreak/prisoner3/prisoner3.mdl");
+		SetEntPropString(client, Prop_Send, "m_szArmsModel", "models/player/custom_player/kuristaja/jailbreak/prisoner3/prisoner3_arms.mdl");
 	}
 }
 

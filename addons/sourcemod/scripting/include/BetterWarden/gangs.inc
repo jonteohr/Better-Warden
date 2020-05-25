@@ -31,7 +31,6 @@ stock void SQL_InitDB() {
 /**
 * Creates the table if it doesn't exist
 *
-* @param name			The table name
 * @error				Database connection issues
 */
 stock void SQL_CreateBWTable() {
