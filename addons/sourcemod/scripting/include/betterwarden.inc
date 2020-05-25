@@ -8,7 +8,7 @@
  #endinput
 #endif
 #define bwardenincluded
-#define VERSION "0.6.3.4"
+#define VERSION "0.6.3.5"
 
 stock char g_sPrefix[] = "[{blue}Warden{default}] ";
 stock char g_sLogPath[PLATFORM_MAX_PATH] = "addons/sourcemod/logs/betterwarden.log";
