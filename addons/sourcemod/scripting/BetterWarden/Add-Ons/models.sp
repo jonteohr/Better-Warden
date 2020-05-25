@@ -26,6 +26,8 @@ ConVar gc_bWardenModel;
 ConVar gc_bDeputyModel;
 ConVar gc_bPrisonerModel;
 
+int g_iModelSet[MAXPLAYERS +1] = {0, ...};
+
 char g_sPreviousModel[256];
 char g_sPrevArms[256];
 
@@ -148,14 +150,22 @@ public void OnMapStart() {
 public void OnPlayerSpawn(Event event, const char[] name, bool dontBroadcast) {
 	int client = GetClientOfUserId(GetEventInt(event, "userid"));
 	
-	if(GetClientTeam(client) == CS_TEAM_CT && IsValidClient(client) && gc_bDeputyModel.IntValue == 1) { // Set the deputy skin
-		SetEntityModel(client, "models/player/custom_player/kuristaja/jailbreak/guard5/guard5.mdl");
-		SetEntPropString(client, Prop_Send, "m_szArmsModel", "models/player/custom_player/kuristaja/jailbreak/guard5/guard5_arms.mdl");
-	}
-	
-	if(GetClientTeam(client) == CS_TEAM_T && IsValidClient(client) && gc_bPrisonerModel.IntValue == 1) { // Set the prisoner skin
-		SetEntityModel(client, "models/player/custom_player/kuristaja/jailbreak/prisoner3/prisoner3.mdl");
-		SetEntPropString(client, Prop_Send, "m_szArmsModel", "models/player/custom_player/kuristaja/jailbreak/prisoner3/prisoner3_arms.mdl");
+	// Make sure we only set the player model once per map.
+	// This way we can kind of support other models-plugins.
+	if(g_iModelSet[client] == 0) {
+		if(GetClientTeam(client) == CS_TEAM_CT && IsValidClient(client) && gc_bDeputyModel.IntValue == 1) { // Set the deputy skin
+			SetEntityModel(client, "models/player/custom_player/kuristaja/jailbreak/guard5/guard5.mdl");
+			SetEntPropString(client, Prop_Send, "m_szArmsModel", "models/player/custom_player/kuristaja/jailbreak/guard5/guard5_arms.mdl");
+			
+			g_iModelSet[client] = 1;
+		}
+		
+		if(GetClientTeam(client) == CS_TEAM_T && IsValidClient(client) && gc_bPrisonerModel.IntValue == 1) { // Set the prisoner skin
+			SetEntityModel(client, "models/player/custom_player/kuristaja/jailbreak/prisoner3/prisoner3.mdl");
+			SetEntPropString(client, Prop_Send, "m_szArmsModel", "models/player/custom_player/kuristaja/jailbreak/prisoner3/prisoner3_arms.mdl");
+			
+			g_iModelSet[client] = 1;
+		}
 	}
 }
 
