@@ -57,3 +57,17 @@ public Action JBToolTip(Handle timer) {
 	
 	return Plugin_Continue;
 }
+
+public Action Announcer(Handle timer) {
+	if(gc_bAnnouncer.IntValue != 1) // if user has changed cvar mid-game, then act!
+		return Plugin_Handled;
+	
+	int iPos = GetRandomInt(0, GetArraySize(g_adtAnnouncer) - 1); // Get random int to specify position in the array
+	char buff[255];
+	
+	GetArrayString(g_adtAnnouncer, iPos, buff, sizeof(buff));
+	
+	CPrintToChatAll("%s %s", g_sPrefix, buff);
+	
+	return Plugin_Continue;
+}

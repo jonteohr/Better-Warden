@@ -27,6 +27,7 @@
 #define REQUIRE_PLUGIN
 
 #define BW_UPDATE_URL "http://updater.ecoround.se/betterwarden/updater.txt"
+#define SERVERTAG "BetterWarden, Better Warden"
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -53,6 +54,7 @@ Handle gF_OnAdminRemoveWarden = null;
 Handle gF_OnWardenCreated = null;
 Handle gF_OnWardenCreatedByAdmin = null;
 Handle gF_OnWardenRemoved = null;
+Handle g_adtAnnouncer = null;
 
 // Regular ConVars
 ConVar gc_bEnableNoblock;
@@ -70,6 +72,8 @@ ConVar gc_bWardenDeathSound;
 ConVar gc_bWardenCreatedSound;
 ConVar gc_bLogging;
 ConVar gc_bNoLR;
+ConVar gc_bServerTag;
+ConVar gc_bAnnouncer;
 
 // Modules
 #include "BetterWarden/commands.sp"
@@ -113,8 +117,9 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 }
 
 public void OnPluginStart() {
-	
+
 	// CVars
+	AutoExecConfig_SetCreateDirectory(true);
 	AutoExecConfig_SetFile("warden", "BetterWarden"); // What's the configs name and location?
 	AutoExecConfig_SetCreateFile(true); // Create config if it does not exist
 	AutoExecConfig_CreateConVar("sm_warden_version", VERSION, "Current version of this plugin. DO NOT CHANGE THIS!", FCVAR_DONTRECORD|FCVAR_NOTIFY);
@@ -132,9 +137,16 @@ public void OnPluginStart() {
 	gc_bWardenDeathSound = AutoExecConfig_CreateConVar("sm_warden_deathsound", "1", "Play a sound telling everyone the warden has died?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	gc_bWardenCreatedSound = AutoExecConfig_CreateConVar("sm_warden_createsound", "1", "Play a sound to everyone when someone becomes warden\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	gc_bNoLR = AutoExecConfig_CreateConVar("sm_warden_nolr", "1", "Allow warden to control if terrorists can do a !lastrequest or !lr when available?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bServerTag = AutoExecConfig_CreateConVar("sm_warden_servertag", "1", "Add Better Warden tags to your servers sv_tags?", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bAnnouncer = AutoExecConfig_CreateConVar("sm_warden_announcer", "1", "Allow automatic messages to show in chat each 4th minute with tips and commands for Better Warden?", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	
 	AutoExecConfig_ExecuteFile(); // Execute the config
 	AutoExecConfig_CleanFile(); // Clean the .cfg from spaces etc.
+	
+	// Fetch CVars
+	gc_bNoblock = FindConVar("mp_solid_teammates");
+	GetConVarString(gc_sWardenIconPath, g_sWardenIconPath, sizeof(g_sWardenIconPath));
+	//gc_sWardenIconPath.GetString(g_sWardenIconPath, sizeof(g_sWardenIconPath));
 	
 	// Translation stuff
 	LoadTranslations("BetterWarden.phrases.txt");
@@ -175,15 +187,47 @@ public void OnPluginStart() {
 	// Timers
 	if(gc_bStatsHint.IntValue == 1)
 		CreateTimer(0.1, JBToolTip, _, TIMER_REPEAT);
-	
-	// Fetch CVars
-	gc_bNoblock = FindConVar("mp_solid_teammates");
-	gc_sWardenIconPath.GetString(g_sWardenIconPath, sizeof(g_sWardenIconPath));
+
+	if(gc_bAnnouncer.IntValue == 1) {
+		CreateTimer(240.0, Announcer, _, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
+		
+		g_adtAnnouncer = CreateArray(32);
+		
+		PushArrayString(g_adtAnnouncer, "Have you joined the Better Warden discord? https://discord.gg/XJqgf7T");
+		PushArrayString(g_adtAnnouncer, "The warden can open up the Warden Menu via !wmenu or !cmenu. In there, he has access to different game mode settings for the current round.");
+		
+		if(gc_bNoLR.IntValue == 1)
+			PushArrayString(g_adtAnnouncer, "The warden can prevent inmates from starting a Last Request via the !nolr command.");
+		if(gc_bNoblock.IntValue == 1)
+			PushArrayString(g_adtAnnouncer, "Warden can toggle noblock for the current round via !noblock or the menu.");
+		if(gc_bOpenCells.IntValue == 1)
+			PushArrayString(g_adtAnnouncer, "Warden can also open cell doors via !open or the menu.");
+		
+		if(LibraryExists("bwgangs"))
+			PushArrayString(g_adtAnnouncer, "Start your own gang of inmates! Type !gang in chat for more information.");
+		if(LibraryExists("bwvoteday"))
+			PushArrayString(g_adtAnnouncer, "If the warden has allowed voting, inmates can vote for event days via !freeday | !gravday | !hns | !warday | !catch | !west | !zombie");
+	}
 	
 	// Updater
 	if(LibraryExists("updater")) {
 		Updater_AddPlugin(BW_UPDATE_URL);
 		Updater_ForceUpdate();
+	}
+	
+	if(gc_bServerTag.IntValue == 1) {
+		ConVar gc_sTags = FindConVar("sv_tags");
+		char sTags[128];
+		
+		GetConVarString(gc_sTags, sTags, sizeof(sTags));
+		
+		if(StrContains(sTags, SERVERTAG, false) == -1) {
+			char wardenTag[64];
+			Format(wardenTag, sizeof(wardenTag), ", %s", SERVERTAG);
+			
+			StrCat(sTags, sizeof(sTags), wardenTag);
+			SetConVarString(gc_sTags, sTags);
+		}
 	}
 	
 }
@@ -208,6 +252,8 @@ public void OnAllPluginsLoaded() {
 	if(LibraryExists("bwmodels"))
 		addons++;
 	if(LibraryExists("bwvoteday"))
+		addons++;
+	if(LibraryExists("bwgangs"))
 		addons++;
 	
 	PrintToServer("");

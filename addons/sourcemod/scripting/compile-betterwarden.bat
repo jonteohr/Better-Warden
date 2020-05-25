@@ -31,4 +31,5 @@ spcomp BetterWarden/Add-Ons/wildwest.sp -o../plugins/BetterWarden/Add-Ons/wildwe
 spcomp BetterWarden/Add-Ons/models.sp -o../plugins/BetterWarden/Add-Ons/models.smx
 spcomp BetterWarden/Add-Ons/zombie.sp -o../plugins/BetterWarden/Add-Ons/zombie.smx
 spcomp BetterWarden/Add-Ons/voteday.sp -o../plugins/BetterWarden/Add-Ons/voteday.smx
+spcomp BetterWarden/Add-Ons/gangs.sp -o../plugins/BetterWarden/Add-Ons/gangs.smx
 pause

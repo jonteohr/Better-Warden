@@ -34,17 +34,17 @@
 	"Current Warden Hint"
 	{
 		"#format"	"{1:s}"
-		"en"	"<font size='22'><font color='#4B69FF'>Warden:</font> {1}</font>"
-		"sv"	"<font size='22'><font color='#4B69FF'>Direktör:</font> {1}</font>"
-		"fr"	"<font size='22'><font color='#4B69FF'>Gardien:</font> {1}</font>"
+		"en"	"Warden: {1}"
+		"sv"	"Direktör: {1}"
+		"fr"	"Gardien: {1}"
 	}
 	
 	"Players Stat Hint"
 	{
 		"#format"	"{1:d},{2:d},{3:d},{4:d}"
-		"en"	"<font color='#5E98D8'>Guards:</font> {1}/{2}         <font color='#E4AD39'>Prisoners:</font> {3}/{4}"
-		"sv"	"<font color='#5E98D8'>Vakter:</font> {1}/{2}         <font color='#E4AD39'>Fångar:</font> {3}/{4}"
-		"fr"	"<font color='#5E98D8'>Gardes:</font> {1}/{2}         <font color='#E4AD39'>Prisonniers:</font> {3}/{4}"
+		"en"	"Guards: {1}/{2}         Prisoners: {3}/{4}"
+		"sv"	"Vakter: {1}/{2}         Fångar: {3}/{4}"
+		"fr"	"Gardes: {1}/{2}         Prisonniers: {3}/{4}"
 	}
 	
 	"Doors Opened"
@@ -129,31 +129,34 @@
 		"#format"	"{1:N}"
 		"en"	"You have made {1} the warden for this round!"
 		"sv"	"Du har satt {1} som warden för denna runda!"
-		"fr"	"Tu as designé {1} Gardien pour cette manche! "
+		"fr"	"Tu as designé {1} comme Gardien pour cette manche! "
 	}
 	
 	"Client must be CT"
 	{
 		"en"	"Client is not a Counter-Terrorist."
 		"sv"	"Användaren är inte en Counter-Terrorist."
-		"fr"	"Le joueur est pas un Counter-Terrorist."
+		"fr"	"Le joueur est pas un Antiterrorisme."
 	}
 	
 	"Deactivated LR"
 	{
 		"en"	"The warden has deactivated Last Request."
 		"sv"	"Direktören har avaktiverat Last Request."
+		"fr"	"Le Gardien a désactivé Last Request."
 	}
 	
 	"Activated LR"
 	{
 		"en"	"The warden has activated Last Request!"
 		"sv"	"Direktören har aktiverat Last Request!"
+		"fr"	"Le Gardien a activé Last Request!"
 	}
 	
 	"No LR Allowed"
 	{
 		"en"	"The warden does not allow LR right now."
 		"sv"	"Direktören tillåter inte LR för tillfället."
+		"fr"	"Le Gardien n'autorise pas LR maintenant."
 	}
 }

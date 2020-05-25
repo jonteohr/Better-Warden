@@ -59,6 +59,7 @@ public void OnPluginStart() {
 	HookEvent("player_spawn", OnPlayerSpawn, EventHookMode_Pre);
 	HookEvent("round_end", OnRoundEnd, EventHookMode_PostNoCopy);
 	
+	AutoExecConfig_SetCreateDirectory(true);
 	AutoExecConfig_SetFile("zombie", "BetterWarden/Add-Ons");
 	AutoExecConfig_SetCreateFile(true);
 	gc_bSwapBack = AutoExecConfig_CreateConVar("sm_warden_zombie_swapback", "1", "In the round after a zombie round, swap back the CT's, that were infected, to Counter-Terrorists?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);

@@ -1,5 +1,5 @@
 /*
- * Better Warden - Day Votes
+ * Better Warden - Vote Day
  * By: Hypr
  * https://github.com/condolent/BetterWarden/
  * 
@@ -72,6 +72,7 @@ public void OnPluginStart() {
 	
 	HookEvent("round_start", OnRoundStart, EventHookMode_Pre);
 	
+	AutoExecConfig_SetCreateDirectory(true);
 	AutoExecConfig_SetFile("voteday", "BetterWarden/Add-Ons");
 	AutoExecConfig_SetCreateFile(true);
 	gc_fVoteTime = AutoExecConfig_CreateConVar("sm_warden_vote_duration", "30.0", "The duration of event day votes.", FCVAR_NOTIFY, true, 1.0, true, 120.0);
@@ -281,8 +282,10 @@ public void StartVote(int client, int game) {
 	g_iVoted[client] = 1;
 	g_iVoteYes++;
 	g_iVoteRound = 1;
+	
 	CreateTimer(gc_fVoteTime.FloatValue, VoteTimer);
 	CPrintToChat(client, "%s %t", g_sPrefix, "Vote Started");
+	
 	for(int i = 1; i <= MaxClients; i++) {
 		if(!IsValidClient(i))
 			continue;
@@ -290,100 +293,117 @@ public void StartVote(int client, int game) {
 			continue;
 		BWVoteMenu(i);
 	}
+	
 	AddToBWLog("%N started a vote.", client);
 }
 
 public bool VoteFinished() {
-	if(g_iGameVote == 0) {
-		if(g_iVoteYes > g_iVoteNo) {
-			ExecWarday();
-			g_iGameVote = -1;
-			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
-			return true;
-		} else {
-			CPrintToChatAll("%s %t", g_sPrefix, "Voted Down");
-			g_iGameVote = -1;
-			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
-			return true;
+	
+	switch(g_iGameVote) {
+		case 0:
+		{
+			if(g_iVoteYes > g_iVoteNo) {
+				ExecWarday();
+				g_iGameVote = -1;
+				for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
+				return true;
+			} else {
+				CPrintToChatAll("%s %t", g_sPrefix, "Voted Down");
+				g_iGameVote = -1;
+				for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
+				return true;
+			}
 		}
-	}
-	if(g_iGameVote == 1) {
-		if(g_iVoteYes > g_iVoteNo) {
-			int randomInt = GetRandomInt(1, 2); // Set the number of winners randomly
-			ExecHnS(randomInt);
-			g_iGameVote = -1;
-			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
-			return true;
-		} else {
-			CPrintToChatAll("%s %t", g_sPrefix, "Voted Down");
-			g_iGameVote = -1;
-			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
-			return true;
+		
+		case 1:
+		{
+			if(g_iVoteYes > g_iVoteNo) {
+				int randomInt = GetRandomInt(1, 2); // Set the number of winners randomly
+				ExecHnS(randomInt);
+				g_iGameVote = -1;
+				for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
+				return true;
+			} else {
+				CPrintToChatAll("%s %t", g_sPrefix, "Voted Down");
+				g_iGameVote = -1;
+				for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
+				return true;
+			}
 		}
-	}
-	if(g_iGameVote == 2) {
-		if(g_iVoteYes > g_iVoteNo) {
-			ExecGravday();
-			g_iGameVote = -1;
-			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
-			return true;
-		} else {
-			CPrintToChatAll("%s %t", g_sPrefix, "Voted Down");
-			g_iGameVote = -1;
-			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
-			return true;
+		
+		case 2:
+		{
+			if(g_iVoteYes > g_iVoteNo) {
+				ExecGravday();
+				g_iGameVote = -1;
+				for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
+				return true;
+			} else {
+				CPrintToChatAll("%s %t", g_sPrefix, "Voted Down");
+				g_iGameVote = -1;
+				for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
+				return true;
+			}
 		}
-	}
-	if(g_iGameVote == 3) {
-		if(g_iVoteYes > g_iVoteNo) {
-			ExecFreeday();
-			g_iGameVote = -1;
-			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
-			return true;
-		} else {
-			CPrintToChatAll("%s %t", g_sPrefix, "Voted Down");
-			g_iGameVote = -1;
-			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
-			return true;
+		
+		case 3:
+		{
+			if(g_iVoteYes > g_iVoteNo) {
+				ExecFreeday();
+				g_iGameVote = -1;
+				for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
+				return true;
+			} else {
+				CPrintToChatAll("%s %t", g_sPrefix, "Voted Down");
+				g_iGameVote = -1;
+				for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
+				return true;
+			}
 		}
-	}
-	if(g_iGameVote == 4) {
-		if(g_iVoteYes > g_iVoteNo) {
-			initWW();
-			g_iGameVote = -1;
-			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
-			return true;
-		} else {
-			CPrintToChatAll("%s %t", g_sPrefix, "Voted Down");
-			g_iGameVote = -1;
-			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
-			return true;
+		
+		case 4:
+		{
+			if(g_iVoteYes > g_iVoteNo) {
+				initWW();
+				g_iGameVote = -1;
+				for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
+				return true;
+			} else {
+				CPrintToChatAll("%s %t", g_sPrefix, "Voted Down");
+				g_iGameVote = -1;
+				for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
+				return true;
+			}
 		}
-	}
-	if(g_iGameVote == 5) {
-		if(g_iVoteYes > g_iVoteNo) {
-			initZombie();
-			g_iGameVote = -1;
-			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
-			return true;
-		} else {
-			CPrintToChatAll("%s %t", g_sPrefix, "Voted Down");
-			g_iGameVote = -1;
-			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
-			return true;
+		
+		case 5:
+		{
+			if(g_iVoteYes > g_iVoteNo) {
+				initZombie();
+				g_iGameVote = -1;
+				for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
+				return true;
+			} else {
+				CPrintToChatAll("%s %t", g_sPrefix, "Voted Down");
+				g_iGameVote = -1;
+				for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
+				return true;
+			}
 		}
-	}
-	if(g_iGameVote == 6) {
-		if(g_iVoteYes > g_iVoteNo) {
-			initCatch();
-			g_iGameVote = -1;
-			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
-			return true;
-		} else {
-			CPrintToChatAll("%s %t", g_sPrefix, "Voted Down");
-			g_iGameVote = -1;
-			for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
-			return true;
+		
+		case 6:
+		{
+			if(g_iVoteYes > g_iVoteNo) {
+				initCatch();
+				g_iGameVote = -1;
+				for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
+				return true;
+			} else {
+				CPrintToChatAll("%s %t", g_sPrefix, "Voted Down");
+				g_iGameVote = -1;
+				for(int i = 0; i < sizeof(g_iVoted); i++) g_iVoted[i] = 0;
+				return true;
+			}
 		}
 	}
 	

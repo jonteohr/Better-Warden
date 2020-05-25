@@ -1,0 +1,14 @@
+vertexlitgeneric
+{
+$baseTexture "models\player\kuristaja\jailbreak\prisoner3\GI_head_14"
+$bumpmap "models\player\kuristaja\jailbreak\prisoner3\GI_head_nml"
+//$nocull 1
+
+$phong 1
+$phongboost "3"
+$phongexponent 10
+$phongtint "[.85 .85 1]"
+$phongfresnelranges "[.2 .5 5]"
+
+$halflambert 0
+}
