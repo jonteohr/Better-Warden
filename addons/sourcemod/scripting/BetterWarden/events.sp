@@ -3,7 +3,7 @@
  * By: Hypr
  * https://github.com/condolent/BetterWarden/
  * 
- * Copyright (C) 2017 Jonathan Öhrström (Hypr/Condolent)
+ * Copyright (C) 2020 Jonathan Öhrström (Hypr/Condolent)
  *
  * This file is part of the BetterWarden SourceMod Plugin.
  *
