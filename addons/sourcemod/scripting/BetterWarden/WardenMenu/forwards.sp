@@ -107,6 +107,22 @@ public void OnMapStart() {
 	}
 	
 	delete gameConfig;
+	
+	// Preload overlays if enabled
+	if(gc_bOverlay.IntValue == 1) {
+		PrecacheDecalAnyDownload("overlays/BetterWarden/freeday");
+		PrecacheDecalAnyDownload("overlays/BetterWarden/gravity");
+		PrecacheDecalAnyDownload("overlays/BetterWarden/hns");
+		PrecacheDecalAnyDownload("overlays/BetterWarden/restfreeday");
+		PrecacheDecalAnyDownload("overlays/BetterWarden/warday");
+		
+		if(g_bCatchLoaded) // only download if addon is enabled
+			PrecacheDecalAnyDownload("overlays/BetterWarden/catch");
+		if(g_bWWLoaded) // only download if addon is enabled
+			PrecacheDecalAnyDownload("overlays/BetterWarden/wildwest");
+		if(g_bZombieLoaded) // only download if addon is enabled
+			PrecacheDecalAnyDownload("overlays/BetterWarden/zombie");
+	}
 }
 
 public void OnWardenCreated(int client) {

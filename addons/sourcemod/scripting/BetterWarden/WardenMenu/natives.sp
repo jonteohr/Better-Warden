@@ -133,6 +133,10 @@ public int Native_ExecWarday(Handle plugin, int numParams) {
 		g_iWardayActive = 1;
 		g_bIsGameActive = true;
 		AddToBWLog("A warday was executed.");
+		
+		if(gc_bOverlay.IntValue == 1) // Only show an overlay if it's enabled in cfg
+			ShowOverlayAll("overlays/BetterWarden/warday", gc_fOverlayTime.FloatValue);
+			
 		return true;
 	} else if(gc_iWardayTimes.IntValue != 0 && g_iWarTimes >= gc_iWardayTimes.IntValue) {
 		CPrintToChat(client, "%s %t", "Too many wardays", g_iWarTimes, gc_iWardayTimes.IntValue);
@@ -147,6 +151,10 @@ public int Native_ExecWarday(Handle plugin, int numParams) {
 		g_bIsGameActive = true;
 		g_iWarTimes++;
 		AddToBWLog("A warday was executed.");
+		
+		if(gc_bOverlay.IntValue == 1) // Only show an overlay if it's enabled in cfg
+			ShowOverlayAll("overlays/BetterWarden/warday", gc_fOverlayTime.FloatValue);
+			
 		return true;
 	}
 	
@@ -164,6 +172,10 @@ public int Native_ExecFreeday(Handle plugin, int numParams) {
 		g_iFreedayActive = 1;
 		g_bIsGameActive = true;
 		AddToBWLog("A Freeday was executed.");
+		
+		if(gc_bOverlay.IntValue == 1) // Only show an overlay if it's enabled in cfg
+			ShowOverlayAll("overlays/BetterWarden/freeday", gc_fOverlayTime.FloatValue);
+			
 		return true;
 	} else if(gc_iFreedayTimes.IntValue != 0 && g_iFreedayTimes >= gc_iFreedayTimes.IntValue) {
 		CPrintToChat(client, "%s %t", g_sCMenuPrefix, "Too many freedays", g_iFreedayTimes, gc_iFreedayTimes.IntValue);
@@ -177,6 +189,10 @@ public int Native_ExecFreeday(Handle plugin, int numParams) {
 		g_bIsGameActive = true;
 		g_iFreedayTimes++;
 		AddToBWLog("A Freeday was executed.");
+		
+		if(gc_bOverlay.IntValue == 1) // Only show an overlay if it's enabled in cfg
+			ShowOverlayAll("overlays/BetterWarden/freeday", gc_fOverlayTime.FloatValue);
+			
 		return true;
 	}
 	
@@ -197,6 +213,10 @@ public int Native_ExecHnS(Handle plugin, int numParams) {
 			g_bIsGameActive = true;
 			CreateTimer(0.5, HnSInfo, _, TIMER_REPEAT);
 			AddToBWLog("A Hide n' Seek was executed.");
+			
+			if(gc_bOverlay.IntValue == 1) // Only show an overlay if it's enabled in cfg
+				ShowOverlayAll("overlays/BetterWarden/hns", gc_fOverlayTime.FloatValue);
+				
 			return true;
 			
 		} else if(gc_iHnSTimes.IntValue != 0 && g_iHnsTimes >= gc_iHnSTimes.IntValue) {
@@ -214,6 +234,10 @@ public int Native_ExecHnS(Handle plugin, int numParams) {
 			g_iHnsTimes++;
 			CreateTimer(0.5, HnSInfo, _, TIMER_REPEAT);
 			AddToBWLog("A Hide n' Seek was executed.");
+			
+			if(gc_bOverlay.IntValue == 1) // Only show an overlay if it's enabled in cfg
+				ShowOverlayAll("overlays/BetterWarden/hns", gc_fOverlayTime.FloatValue);
+				
 			return true;
 		}
 	} else {
@@ -251,6 +275,10 @@ public int Native_ExecGravday(Handle plugin, int numParams) {
 			}
 		}
 		AddToBWLog("A Gravity Freeday was executed.");
+		
+		if(gc_bOverlay.IntValue == 1) // Only show an overlay if it's enabled in cfg
+			ShowOverlayAll("overlays/BetterWarden/gravity", gc_fOverlayTime.FloatValue);
+				
 		return true;
 		
 	} else if(gc_iGravTimes.IntValue != 0 && g_iGravTimes >= gc_iGravTimes.IntValue) {
@@ -282,6 +310,10 @@ public int Native_ExecGravday(Handle plugin, int numParams) {
 			}
 		}
 		AddToBWLog("A Gravity Freeday was executed.");
+		
+		if(gc_bOverlay.IntValue == 1) // Only show an overlay if it's enabled in cfg
+			ShowOverlayAll("overlays/BetterWarden/gravity", gc_fOverlayTime.FloatValue);
+				
 		return true;
 	}
 	

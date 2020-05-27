@@ -32,6 +32,8 @@ int g_iCountDown = -1;
 
 ConVar gc_bFreezeTime;
 ConVar gc_iFreezeTime;
+ConVar gc_bOverlay;
+ConVar gc_fOverlayTime;
 
 public Plugin myinfo = {
 	name = "[BetterWarden] Catch",
@@ -62,6 +64,9 @@ public void OnPluginStart() {
 	
 	HookEvent("player_death", OnPlayerDeath);
 	HookEvent("round_start", OnRoundStart, EventHookMode_Pre);
+	
+	gc_bOverlay = FindConVar("sm_cmenu_overlay");
+	gc_fOverlayTime = FindConVar("sm_cmenu_overlay_time");
 }
 
 public void OnRoundStart(Event event, const char[] name, bool dontBroadcast) {
@@ -177,7 +182,6 @@ public int Native_initCatch(Handle plugin, int numParams) { // Called to start t
 		return false;
 	}
 	
-	
 	g_bIsCatchActive = true;
 	g_bIsGameActive = true;
 	CPrintToChatAll("%s %t", g_sPrefix, "Catch initiated");
@@ -205,6 +209,9 @@ public int Native_initCatch(Handle plugin, int numParams) { // Called to start t
 	}
 	
 	AddToBWLog("Catch was initiated!");
+	
+	if(gc_bOverlay.IntValue == 1) // Only show an overlay if it's enabled in cfg
+		ShowOverlayAll("overlays/BetterWarden/catch", gc_fOverlayTime.FloatValue);
 	
 	return true;
 }

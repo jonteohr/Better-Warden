@@ -8,7 +8,7 @@
  #endinput
 #endif
 #define bwardenincluded
-#define VERSION "0.6.3.5"
+#define VERSION "0.6.4"
 
 stock char g_sPrefix[] = "[{blue}Warden{default}] ";
 stock char g_sLogPath[PLATFORM_MAX_PATH] = "addons/sourcemod/logs/betterwarden.log";
@@ -159,3 +159,77 @@ stock void PrecacheModelAnyDownload(char[] sModel)
 * @return				true if successful
 */
 native bool AddToBWLog(const char[] sMessage, any ...);
+
+/**
+* Show an overlay to a specific client
+*
+* @param client			Client index
+* @param path			Path to the overlay file
+* @param lifetime		How long the overlay should be shown. 0.0 = Forever
+*/
+stock void ShowOverlay(int client, char[] path, float lifetime) {
+	if (!IsValidClient(client))
+		return;
+
+	ClientCommand(client, "r_screenoverlay \"%s.vtf\"", path);
+
+	if (lifetime != 0.0)
+	{
+		CreateTimer(lifetime, DeleteOverlay, GetClientUserId(client));
+	}
+}
+
+
+/**
+* Show an overlay to all clients on the server
+*
+* @param path			Path to the overlay file
+* @param lifetime		How long the overlay should be shown. 0.0 = Forever
+*/
+stock void ShowOverlayAll(char[] path, float lifetime) {
+	for (int i = 1; i <= MaxClients; i++)
+	{
+		if (!IsValidClient(i))
+			continue;
+
+		ClientCommand(i, "r_screenoverlay \"%s.vtf\"", path);
+
+		if (lifetime != 0.0)
+		{
+			CreateTimer(lifetime, DeleteOverlay, GetClientUserId(i));
+		}
+	}
+}
+
+
+stock Action DeleteOverlay(Handle timer, int userid) {
+	int client = GetClientOfUserId(userid);
+
+	if (!IsValidClient(client))
+		return Plugin_Handled;
+
+	ClientCommand(client, "r_screenoverlay \"\"");
+
+	return Plugin_Handled;
+}
+
+/**
+* Adds the provided decal to downloads table and precaches it.
+*
+* @param path			Path to the decal. Inside /materials/
+*/
+stock void PrecacheDecalAnyDownload(char[] path) {
+	if (strlen(path) == 0)
+		return;
+
+	char sBuffer[256];
+	Format(sBuffer, sizeof(sBuffer), "%s.vmt", path);
+	PrecacheDecal(sBuffer, true);
+	Format(sBuffer, sizeof(sBuffer), "materials/%s.vmt", path);
+	AddFileToDownloadsTable(sBuffer);
+
+	Format(sBuffer, sizeof(sBuffer), "%s.vtf", path);
+	PrecacheDecal(sBuffer, true);
+	Format(sBuffer, sizeof(sBuffer), "materials/%s.vtf", path);
+	AddFileToDownloadsTable(sBuffer);
+}

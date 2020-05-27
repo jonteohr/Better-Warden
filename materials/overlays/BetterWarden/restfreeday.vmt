@@ -1,0 +1,5 @@
+"MonitorScreen"
+{
+	"$basetexture" "overlays/BetterWarden/restfreeday"
+	"$translucent" 1
+}

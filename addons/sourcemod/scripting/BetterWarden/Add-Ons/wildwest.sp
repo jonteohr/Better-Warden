@@ -28,6 +28,8 @@ bool g_bIsWWActive;
 // ConVars
 ConVar gc_sWeaponUsed;
 ConVar gc_bInfAmmo;
+ConVar gc_bOverlay;
+ConVar gc_fOverlayTime;
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -62,6 +64,9 @@ public void OnPluginStart() {
 	
 	AutoExecConfig_ExecuteFile();
 	AutoExecConfig_CleanFile();
+	
+	gc_bOverlay = FindConVar("sm_cmenu_overlay");
+	gc_fOverlayTime = FindConVar("sm_cmenu_overlay_time");
 }
 
 
@@ -138,6 +143,9 @@ public int Native_initWW(Handle plugin, int numParams) { // Called to actually s
 			SDKHook(i, SDKHook_WeaponDropPost, WeaponDropPost);
 			SDKHook(i, SDKHook_WeaponCanUse, WeaponCanUse);
 		}
+		
+		if(gc_bOverlay.IntValue == 1) // Only show an overlay if it's enabled in cfg
+			ShowOverlayAll("overlays/BetterWarden/wildwest", gc_fOverlayTime.FloatValue);
 		
 		return true;
 	}

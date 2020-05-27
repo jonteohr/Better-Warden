@@ -36,6 +36,8 @@ int g_iCTs[MAXPLAYERS + 1];
 // ConVars
 ConVar gc_bSwapBack;
 ConVar gc_iZombieHealth;
+ConVar gc_bOverlay;
+ConVar gc_fOverlayTime;
 
 public Plugin myinfo = {
 	name = "[BetterWarden] Zombie",
@@ -67,6 +69,9 @@ public void OnPluginStart() {
 	
 	AutoExecConfig_ExecuteFile();
 	AutoExecConfig_CleanFile();
+	
+	gc_bOverlay = FindConVar("sm_cmenu_overlay");
+	gc_fOverlayTime = FindConVar("sm_cmenu_overlay_time");
 }
 
 public void OnMapStart() {
@@ -230,6 +235,9 @@ public int Native_initZombie(Handle plugin, int numParams) {
 	CPrintToChatAll("");
 	
 	AddToBWLog("Zombie mode has started!");
+	
+	if(gc_bOverlay.IntValue == 1) // Only show an overlay if it's enabled in cfg
+		ShowOverlayAll("overlays/BetterWarden/zombie", gc_fOverlayTime.FloatValue);
 	
 	return true;
 }

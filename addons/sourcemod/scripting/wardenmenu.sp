@@ -93,6 +93,8 @@ ConVar gc_bNoblock;
 ConVar gc_bEnableWeapons;
 ConVar gc_bEnablePlayerFreeday;
 ConVar gc_bEnableDoors;
+ConVar gc_bOverlay;
+ConVar gc_fOverlayTime;
 
 Handle gF_OnCMenuOpened = null;
 Handle gF_OnEventDayCreated = null;
@@ -161,6 +163,8 @@ public void OnPluginStart() {
 	gc_bRestFreeday = AutoExecConfig_CreateConVar("sm_cmenu_restricted_freeday", "1", "Add an option for a restricted freeday in the menu?\nThis event uses the same configuration as a normal freeday.\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	gc_bEnablePlayerFreeday = AutoExecConfig_CreateConVar("sm_cmenu_player_freeday", "1", "Add an option for giving a specific player a freeday in the menu?\n0 = Disable.\n1 = Enable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	gc_bEnableDoors = AutoExecConfig_CreateConVar("sm_cmenu_doors", "1", "sm_warden_cellscmd needs to be set to 1 for this to work!\nAdd an option for opening doors via the menu.\n0 = Disable.\n1 = Enable", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_bOverlay = AutoExecConfig_CreateConVar("sm_cmenu_overlay", "1", "Show an overlay for when an event day is started?", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	gc_fOverlayTime = AutoExecConfig_CreateConVar("sm_cmenu_overlay_time", "2.0", "In seconds, how long should an overlay be shown?\nThis requires sm_cmenu_overlay to be set to 1!", FCVAR_NOTIFY, true, 0.0, true, 10.0);
 	
 	AutoExecConfig_ExecuteFile(); // Execute the config
 	AutoExecConfig_CleanFile(); // Clean the .cfg from spaces etc.
@@ -254,6 +258,9 @@ public void initRestFreeday(int client) {
 		g_bIsGameActive = true;
 		g_iFreedayTimes++;
 		AddToBWLog("A Restricted Freeday was executed.");
+		
+		if(gc_bOverlay.IntValue == 1) // Only show an overlay if it's enabled in cfg
+			ShowOverlayAll("overlays/BetterWarden/restfreeday", 2.0);
 	}
 }
 
