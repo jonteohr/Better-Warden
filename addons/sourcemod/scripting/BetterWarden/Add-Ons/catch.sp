@@ -34,6 +34,7 @@ ConVar gc_bFreezeTime;
 ConVar gc_iFreezeTime;
 ConVar gc_bOverlay;
 ConVar gc_fOverlayTime;
+ConVar gc_fSpeedMultiplier;
 
 public Plugin myinfo = {
 	name = "[BetterWarden] Catch",
@@ -59,6 +60,7 @@ public void OnPluginStart() {
 	AutoExecConfig_SetCreateFile(true);
 	gc_bFreezeTime = AutoExecConfig_CreateConVar("sm_warden_catch_freezetime", "1", "Freeze all CT's for a specified time when game is started?\n1 = Enable.\n0 = Disable.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	gc_iFreezeTime = AutoExecConfig_CreateConVar("sm_warden_catch_freezetime_amount", "5.0", "If sm_warden_catch_freezetime is set to 1,\nHow long should they be frozen?\nIn seconds.", FCVAR_NOTIFY, true, 0.5);
+	gc_fSpeedMultiplier = AutoExecConfig_CreateConVar("sm_warden_catch_speed", "1.5", "The speed multiplier given to CTs when Catch starts.\n1.0 = Default.", FCVAR_NOTIFY, true, 0.1, true, 3.0);
 	AutoExecConfig_ExecuteFile();
 	AutoExecConfig_CleanFile();
 	
@@ -165,7 +167,7 @@ public Action FreezeTimer(Handle timer) {
 				continue;
 			if(GetClientTeam(i) != CS_TEAM_CT)
 				continue;
-			SetEntPropFloat(i, Prop_Data, "m_flLaggedMovementValue", 1.5);
+			SetEntPropFloat(i, Prop_Data, "m_flLaggedMovementValue", gc_fSpeedMultiplier.FloatValue);
 		}
 		return Plugin_Stop;
 	}
@@ -178,7 +180,7 @@ public Action FreezeTimer(Handle timer) {
 *    NATIVES
 ****************/
 public int Native_initCatch(Handle plugin, int numParams) { // Called to start the game
-	if(g_bIsCatchActive == true) {
+	if(g_bIsCatchActive || g_bIsGameActive) {
 		return false;
 	}
 	
