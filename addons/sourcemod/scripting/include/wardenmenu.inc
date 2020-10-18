@@ -7,6 +7,37 @@
 #endif
 #define wardenmenuincluded
 
+public SharedPlugin __pl_wardenmenu =
+{
+	name = "wardenmenu",
+	file = "wardenmenu.smx",
+	
+	#if defined REQUIRE_PLUGIN
+	required = 1,
+	#else
+	required = 0,
+	#endif
+};
+
+#if !defined REQUIRE_PLUGIN
+public __pl_wardenmenu_SetNTVOptional()
+{
+	MarkNativeAsOptional("IsEventDayActive");
+	MarkNativeAsOptional("IsHnsActive");
+	MarkNativeAsOptional("IsGravFreedayActive");
+	MarkNativeAsOptional("IsWarActive");
+	MarkNativeAsOptional("IsFreedayActive");
+	MarkNativeAsOptional("ClientHasFreeday");
+	MarkNativeAsOptional("GiveClientFreeday");
+	MarkNativeAsOptional("RemoveClientFreeday");
+	MarkNativeAsOptional("SetClientBeacon");
+	MarkNativeAsOptional("ExecWarday");
+	MarkNativeAsOptional("ExecFreeday");
+	MarkNativeAsOptional("ExecHnS");
+	MarkNativeAsOptional("ExecGravday");
+}
+#endif
+
 stock bool g_bIsGameActive;
 stock bool g_bAllowVotes;
 
